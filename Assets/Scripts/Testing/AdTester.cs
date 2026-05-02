@@ -87,7 +87,7 @@ public class AdTester : MonoBehaviour
         else
         {
             // Simulate ad failure or skip
-            AdManager.Instance.onAdFailed?.Invoke("Simulated ad skip/failure.");
+            AdManager.onAdFailed?.Invoke("Simulated ad skip/failure.");
         }
     }
 

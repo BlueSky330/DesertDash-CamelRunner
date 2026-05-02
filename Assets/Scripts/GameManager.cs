@@ -34,6 +34,13 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("GameplayScene");
     }
 
+    public void ContinueGame()
+    {
+        isGameOver = false;
+        // Logic to continue from where the player left off (e.g., restore health, position)
+        Debug.Log("GameManager: Continuing game after ad.");
+    }
+
     public void EndGame()
     {
         isGameOver = true;
@@ -53,5 +60,13 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene("MainMenuScene");
+    }
+
+    public void ResetGame()
+    {
+        score = 0;
+        isGameOver = false;
+        // Additional reset logic for other systems can be added here
+        Debug.Log("GameManager: Game state reset.");
     }
 }

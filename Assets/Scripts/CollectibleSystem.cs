@@ -107,6 +107,15 @@ public class CollectibleSystem : MonoBehaviour
         return false;
     }
 
+    public void ResetScoreAndCoins()
+    {
+        currentScore = 0;
+        currentCoins = 500; // Reset to starter bonus
+        onScoreChanged?.Invoke(currentScore);
+        onCoinsChanged?.Invoke(currentCoins);
+        Debug.Log("CollectibleSystem: Score and coins reset.");
+    }
+
     public enum CollectibleType
     {
         Date,

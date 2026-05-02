@@ -91,4 +91,15 @@ public class PlayerController : MonoBehaviour
             // Trigger game over or take damage
         }
     }
+
+    public void ResetPosition()
+    {
+        transform.position = Vector3.zero; // Or a specific starting position
+        currentLane = 1;
+        targetLaneX = 0f;
+        isJumping = false;
+        isSliding = false;
+        moveDirection = Vector3.zero;
+        Debug.Log("PlayerController: Position reset.");
+    }
 }

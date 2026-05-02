@@ -30,8 +30,8 @@ public class EconomyBalanceTester : MonoBehaviour
         report.AppendLine("--- Economy Balance Report ---");
 
         // Reset economy for a clean test
-        CollectibleSystem.Instance.currentCoins = 500; // Reset to starter bonus
-        CollectibleSystem.Instance.currentScore = 0;
+        CollectibleSystem.Instance.ResetScoreAndCoins();
+        CollectibleSystem.Instance.AddCoins(500); // Set to starter bonus after reset
         // Reset other relevant systems like unlocked countries, purchased skins
 
         totalCoinsEarned = 0;

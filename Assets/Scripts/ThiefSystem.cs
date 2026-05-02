@@ -80,7 +80,7 @@ public class ThiefSystem : MonoBehaviour
         }
 
         ThiefType spawnedThiefType = availableThieves[Random.Range(0, availableThieves.Count)];
-        ThiefSpawnPosition spawnPosition = (ThiefSpawnPosition)Random.Range(0, System.Enum.GetValues(typeof(ThiefSpawnPosition)).Length));
+        ThiefSpawnPosition spawnPosition = (ThiefSpawnPosition)Random.Range(0, System.Enum.GetValues(typeof(ThiefSpawnPosition)).Length);
 
         Debug.Log($"Spawning {spawnedThiefType} at {spawnPosition} in {currentCountry}");
 

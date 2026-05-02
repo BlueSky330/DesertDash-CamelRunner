@@ -64,11 +64,11 @@ public class GameplayTester : MonoBehaviour
     private void ResetGameForTest()
     {
         // Reset all game systems for a fresh test run
-        GameManager.Instance.ResetGame(); // Assuming GameManager has a ResetGame method
+        GameManager.Instance.ResetGame();
         HealthSystem.Instance.ResetHealth();
-        // CollectibleSystem.Instance.ResetScoreAndCoins(); // Needs to be implemented
-        // MilestoneSystem.Instance.ResetMilestones(); // Needs to be implemented
-        // PlayerController.Instance.ResetPosition(); // Needs to be implemented
+                CollectibleSystem.Instance.ResetScoreAndCoins();
+                MilestoneSystem.Instance.ResetMilestones();
+                PlayerController.Instance.ResetPosition();
         Debug.Log("Game systems reset for new test run.");
     }
 

@@ -60,4 +60,11 @@ public class MilestoneSystem : MonoBehaviour
             SetMilestone(position, index);
         }
     }
+
+    public void ResetMilestones()
+    {
+        lastMilestonePosition = Vector3.zero; // Reset to a default starting point
+        lastMilestoneIndex = -1; // No milestone reached yet
+        Debug.Log("MilestoneSystem: Milestones reset.");
+    }
 }
