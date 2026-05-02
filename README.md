@@ -4,7 +4,7 @@ An adventurous 2.5D endless runner game where players guide Kamil the Camel on a
 
 ## Project Status
 
-This project is currently in **Phase 3: Building Game Code with All Mechanics**. All core C# scripts for gameplay mechanics, monetization, health, and progression systems have been developed and are ready for integration into the Unity project.
+This project is currently in **Phase 4: Audio Generation & Ad SDK Integration**. Detailed audio specifications and generation prompts have been created, along with the `AudioManager.cs` script. Placeholder scripts for Google AdMob, Unity Ads, and Ad Mediation have been developed, and an `ad_config.json` file and `AD_SETUP_GUIDE.md` have been created.
 
 ## How to Open in Unity
 
@@ -20,7 +20,7 @@ This project is currently in **Phase 3: Building Game Code with All Mechanics**.
 
 ### Implemented:
 
-*   **Unity Project Structure**: Standard Unity folders (`Assets/Scripts`, `Assets/Scenes`, `Assets/Prefabs`, `Assets/Textures/ConceptArt`, etc.) are set up.
+*   **Unity Project Structure**: Standard Unity folders (`Assets/Scripts`, `Assets/Scenes`, `Assets/Prefabs`, `Assets/Textures/ConceptArt`, `Assets/Audio`, etc.) are set up.
 *   **.gitignore**: A standard Unity `.gitignore` file is included to manage version control.
 *   **Core Scripts**:
     *   `PlayerController.cs`: Handles 3-lane movement, jump, and slide mechanics.
@@ -44,6 +44,14 @@ This project is currently in **Phase 3: Building Game Code with All Mechanics**.
     *   `SkinManager.cs`: Manages camel skins, their functional benefits, and purchase/equip.
     *   `UIManager.cs`: Manages all UI elements.
     *   `OfflineManager.cs`: Detects online/offline status and manages related game features.
+*   **Audio System (Phase 4)**:
+    *   `audio_specs.md`: Detailed specifications and generation prompts for background music and sound effects.
+    *   `AudioManager.cs`: Script for managing background music per country and playing sound effects.
+*   **Ad SDK Integration (Phase 4)**:
+    *   `AdSDKIntegration.cs`: Placeholder script for Google AdMob and Unity Ads SDK integration.
+    *   `AdMediation.cs`: Placeholder script for ironSource/LevelPlay ad mediation.
+    *   `ad_config.json`: Configuration file for ad unit IDs, frequency, and reward amounts.
+    *   `AD_SETUP_GUIDE.md`: Guide for setting up AdMob and Unity Ads accounts, obtaining IDs, and testing.
 
 ### Next Steps:
 

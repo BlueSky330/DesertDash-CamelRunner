@@ -1,0 +1,25 @@
+{
+  "adMob": {
+    "appId": "ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy",
+    "rewardedAdUnitId": "ca-app-pub-xxxxxxxxxxxxxxxx/zzzzzzzzzz"
+  },
+  "unityAds": {
+    "gameIdAndroid": "1234567",
+    "gameIdIOS": "7654321",
+    "rewardedAdUnitIdAndroid": "Rewarded_Android",
+    "rewardedAdUnitIdIOS": "Rewarded_iOS"
+  },
+  "adFrequency": {
+    "minTimeBetweenAdsSeconds": 30,
+    "maxAdsPerHour": 4
+  },
+  "rewards": {
+    "quickWatchCoins": 120,
+    "standardWatchCoins": 250,
+    "premiumWatchCoins": 400,
+    "premiumWatchBonusPowerUp": "MagicCarpet",
+    "healthQuickRecovery": 25,
+    "healthStandardRecovery": 50,
+    "healthPremiumRecovery": 100
+  }
+}
