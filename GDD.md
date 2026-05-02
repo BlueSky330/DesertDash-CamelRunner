@@ -63,26 +63,43 @@ The game is set in a stylized, vibrant Egyptian desert. The protagonist is a cha
 
 The game employs a "Player-Driven Rewarded Ads" monetization model, ensuring an uninterrupted player experience while providing ample opportunities for engagement and revenue generation. Forced interstitial ads are entirely removed.
 
+### Key Design Principles
 *   **No Forced Ads**: Players are never interrupted by ads during gameplay.
-*   **Voluntary Rewarded Ads**: Players choose to watch ads to earn in-game currency.
-    *   A "Watch Ad = Get 100 Coins" button is always available in the shop and after a game over screen.
-    *   Rewarded ads can also offer other benefits, such as revives or temporary power-ups.
-*   **Starter Bonus**: Players begin with 500 free coins to kickstart their progress.
+*   **Play > Watch**: Players should always feel like they are playing more than watching. The ratio should be at least 10:1 (10 minutes of play for every 1 minute of ads).
+*   **Generous Rewards**: Rewards must be meaningful enough that players feel watching the ad is highly worthwhile.
+*   **Addictive Loop**: The goal is to make players want to keep playing, using ads as a tool to extend their playtime and enjoyment.
+*   **Strict Completion**: If a player skips an ad at any point (even the last second), they receive NOTHING.
+*   **Starter Bonus**: Players begin with 500 free coins, providing enough currency for the first 10-15 minutes of play before needing to consider ads.
+
+### "Watch & Earn" Tiered System
+The reward from watching ads provides meaningful play time, not just a few coins.
+
+| Tier | Ad Duration | Reward | Play Time Earned |
+| :--- | :--- | :--- | :--- |
+| **Quick Watch** | ~15 seconds | Coins x3 multiplier (enough for ~3 minutes of play) | ~3 minutes |
+| **Standard Watch** | ~30 seconds | Coins x4 multiplier (enough for ~5-7 minutes of play) | ~5-7 minutes |
+| **Premium Watch** | ~60 seconds (or 2 ads back-to-back) | Coins x4 multiplier + bonus power-up (enough for ~7-10 minutes of play) | ~7-10 minutes |
+
+### Coin Economy & Play Time Estimates
+To ensure the play time estimates are accurate, the coin economy is structured as follows:
+*   **Average Coin Spend**: Players spend approximately 30-50 coins per minute of gameplay (on revives, pre-game boosts, or saving for skins).
+*   **Quick Watch Reward**: Yields ~100-150 coins (30-50 coins/min * 3 mins).
+*   **Standard Watch Reward**: Yields ~200-300 coins (30-50 coins/min * 5-7 mins).
+*   **Premium Watch Reward**: Yields ~300-400 coins + a free power-up (valued at ~100 coins).
 *   **Coin-Based Economy**: All in-game purchases (skins, power-ups, revives) are bought using in-game coins.
-*   **Coin Earning**: Players earn coins through:
-    *   Collecting them during gameplay.
-    *   Voluntarily watching rewarded ads.
-*   **In-App Purchases (IAP)**: Remain as an option for players who prefer to purchase coins or exclusive items directly, bypassing ad viewing.
-    *   **Coin Packs (Pricing in EGP - Estimated)**:
-        *   Small Pouch: 20 EGP
-        *   Large Sack: 50 EGP
-        *   Treasure Chest: 150 EGP
-    *   **Gem Packs (Pricing in EGP - Estimated)**:
-        *   Handful of Gems: 30 EGP
-        *   Box of Gems: 80 EGP
-        *   Vault of Gems: 250 EGP
-    *   **"No Ads" Premium Pass**: 100 EGP (Removes all rewarded ad options, providing a premium, ad-free experience).
-    *   **Exclusive Skins**: Ranging from 50 EGP to 150 EGP.
+
+### In-App Purchases (IAP)
+Remain as an option for players who prefer to purchase coins or exclusive items directly, bypassing ad viewing.
+*   **Coin Packs (Pricing in EGP - Estimated)**:
+    *   Small Pouch: 20 EGP
+    *   Large Sack: 50 EGP
+    *   Treasure Chest: 150 EGP
+*   **Gem Packs (Pricing in EGP - Estimated)**:
+    *   Handful of Gems: 30 EGP
+    *   Box of Gems: 80 EGP
+    *   Vault of Gems: 250 EGP
+*   **"No Ads" Premium Pass**: 100 EGP (Removes all rewarded ad options, providing a premium, ad-free experience).
+*   **Exclusive Skins**: Ranging from 50 EGP to 150 EGP.
 *   **Weekly Challenges/Passes**: A "Desert Explorer Pass" (approx. 80 EGP/month) offering daily login bonuses, exclusive weekly challenges with high rewards, and a unique monthly skin.
 
 **Recommended Ad Networks**:
