@@ -59,7 +59,7 @@ The game is set in a stylized, vibrant Egyptian desert. The protagonist is a cha
 *   **Coins**: The main in-game currency used for purchasing upgrades and standard skins.
 *   **Gems**: Premium currency (rarely found in-game, mostly purchased) used for exclusive skins and revives.
 
-## 9. Monetization Strategy: Player-Driven Rewarded Ads
+## 9. Monetization Strategy: Player-Driven Rewarded Ads (Online/Offline System)
 
 The game employs a "Player-Driven Rewarded Ads" monetization model, ensuring an uninterrupted player experience while providing ample opportunities for engagement and revenue generation. Forced interstitial ads are entirely removed.
 
@@ -87,6 +87,27 @@ To ensure the play time estimates are accurate, the coin economy is structured a
 *   **Standard Watch Reward**: Yields ~200-300 coins (30-50 coins/min * 5-7 mins).
 *   **Premium Watch Reward**: Yields ~300-400 coins + a free power-up (valued at ~100 coins).
 *   **Coin-Based Economy**: All in-game purchases (skins, power-ups, revives) are bought using in-game coins.
+
+### Online vs. Offline Coin System
+
+**Online Mode**:
+*   Players watch ads to earn coins, which are immediately saved to their balance.
+*   The "Watch & Earn" menu is available with tiered rewards (Quick/Standard/Premium).
+*   Coins accumulate in the player's wallet, allowing them to play and earn simultaneously.
+
+**Offline Mode**:
+*   Players can continue to play the game using their saved coin balance.
+*   Coins are spent during gameplay for power-ups, revives, and other premium features.
+*   Players CANNOT earn new coins while offline (no ads are available).
+*   When the coin balance runs out, a message will prompt the player: "Go online to earn more coins!"
+*   Players can still enjoy the basic game for free (running and collecting dates for score) but will be unable to use coin-dependent premium features without an internet connection.
+
+**The Addiction Loop**:
+This system creates a healthy engagement loop:
+1.  **Online**: Players watch ads to earn coins.
+2.  **Offline**: Players use their earned coins to play and spend them on in-game features.
+3.  **Run out of Coins**: When coins are depleted, players are encouraged to go back online.
+4.  **Repeat**: The cycle continues, driving sustained engagement and ad revenue.
 
 ### In-App Purchases (IAP)
 Remain as an option for players who prefer to purchase coins or exclusive items directly, bypassing ad viewing.
