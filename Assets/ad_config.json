@@ -1,5 +1,7 @@
 {
   "adMob": {
+    "maxAdContentRating": "G",
+    "blockedCategories": ["Gambling", "Alcohol", "Dating", "Inappropriate"],
     "appId": "ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy",
     "rewardedAdUnitId": "ca-app-pub-xxxxxxxxxxxxxxxx/zzzzzzzzzz"
   },

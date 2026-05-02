@@ -31,7 +31,13 @@ Google AdMob is the primary ad network for this game. Follow these steps to inte
 2.  Ensure your device is registered as a test device in AdMob settings.
 3.  Run the game on your Android device and verify that rewarded ads load and display correctly. Check the Unity console for AdMob logs.
 
-### 1.5 Set Up Payment
+### 1.5 Configure Ad Content Filtering
+
+1.  In your AdMob account, navigate to "Blocking controls" > "Content."
+2.  Under "General categories," you can block sensitive categories like Gambling, Alcohol, Dating, and other inappropriate content.
+3.  Under "Max Ad Content Rating," set the filter to "G" (General audiences) or "PG" (Parental Guidance) to ensure only family-friendly ads are shown.
+
+### 1.6 Set Up Payment
 
 1.  In your AdMob account, go to "Payments" to set up your payment method and tax information.
 2.  Ensure your account is verified to receive revenue from your ads.

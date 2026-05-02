@@ -4,7 +4,7 @@ An adventurous 2.5D endless runner game where players guide Kamil the Camel on a
 
 ## Project Status
 
-This project is currently in **Phase 4: Audio Generation & Ad SDK Integration**. Detailed audio specifications and generation prompts have been created, along with the `AudioManager.cs` script. Placeholder scripts for Google AdMob, Unity Ads, and Ad Mediation have been developed, and an `ad_config.json` file and `AD_SETUP_GUIDE.md` have been created.
+This project is currently in **Phase 5: QA Testing, Polish & Ad Content Filtering**. All core C# scripts for automated testing, performance optimization, difficulty balancing, and visual effects have been developed and are ready for integration into the Unity project. Ad configuration has been updated to include content filtering settings.
 
 ## How to Open in Unity
 
@@ -48,10 +48,21 @@ This project is currently in **Phase 4: Audio Generation & Ad SDK Integration**.
     *   `audio_specs.md`: Detailed specifications and generation prompts for background music and sound effects.
     *   `AudioManager.cs`: Script for managing background music per country and playing sound effects.
 *   **Ad SDK Integration (Phase 4)**:
-    *   `AdSDKIntegration.cs`: Placeholder script for Google AdMob and Unity Ads SDK integration.
+    *   `AdSDKIntegration.cs`: Placeholder script for Google AdMob and Unity Ads SDK integration, updated with content filtering comments.
     *   `AdMediation.cs`: Placeholder script for ironSource/LevelPlay ad mediation.
-    *   `ad_config.json`: Configuration file for ad unit IDs, frequency, and reward amounts.
-    *   `AD_SETUP_GUIDE.md`: Guide for setting up AdMob and Unity Ads accounts, obtaining IDs, and testing.
+    *   `ad_config.json`: Configuration file for ad unit IDs, frequency, reward amounts, and content filtering settings.
+    *   `AD_SETUP_GUIDE.md`: Guide for setting up AdMob and Unity Ads accounts, obtaining IDs, testing, and content filtering configuration.
+*   **QA Testing Framework (Phase 5)**:
+    *   `GameplayTester.cs`: Automated script for simulating player input and testing core gameplay mechanics.
+    *   `EconomyBalanceTester.cs`: Script for verifying coin earning/spending rates and overall economy balance.
+    *   `PerformanceTester.cs`: Script for monitoring FPS, memory usage, and other performance metrics.
+    *   `AdTester.cs`: Script for simulating ad interactions and verifying reward granting and content filtering.
+*   **Performance Optimization (Phase 5)**:
+    *   `PerformanceOptimizer.cs`: Script outlining object pooling, LOD, texture/audio compression, and shader optimization strategies.
+*   **Difficulty Balancing (Phase 5)**:
+    *   `DifficultyManager.cs`: Script for managing speed curves, obstacle density, and thief frequency.
+*   **Polish & Visual Effects (Phase 5)**:
+    *   `VisualEffects.cs`: Script for managing particle effects, screen effects (low health warning), and camera effects (thief zoom).
 
 ### Next Steps:
 
@@ -60,3 +71,4 @@ This project is currently in **Phase 4: Audio Generation & Ad SDK Integration**.
 *   Refine player controls and physics.
 *   Implement collision detection and basic game over conditions.
 *   Begin generating actual game-ready assets based on the detailed prompts.
+*   Conduct thorough manual testing and debugging of all implemented systems.

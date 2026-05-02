@@ -48,8 +48,17 @@ public class AdSDKIntegration : MonoBehaviour
         Debug.Log("Initializing Google Mobile Ads SDK...");
         // MobileAds.Initialize(initStatus =>
         // {
+        //     // Set max ad content rating to G
+        //     MobileAds.SetRequestConfiguration(new RequestConfiguration.Builder().SetMaxAdContentRating(MaxAdContentRating.G).build());
+        //     // AdMob also allows blocking categories in the dashboard (Content -> Blocking controls -> Block adult categories)
+        //     // Programmatic blocking of categories is not directly supported via SDK, but through dashboard settings.
+
+        // {
         //     isAdMobInitialized = true;
         //     Debug.Log("AdMob initialization complete.");
+        //     // Ensure content filtering is applied as per ad_config.json
+        //     // This would typically be handled by AdMob dashboard settings.
+
         //     LoadAdMobRewardedAd();
         // });
         isAdMobInitialized = true; // Simulate initialization
@@ -114,6 +123,9 @@ public class AdSDKIntegration : MonoBehaviour
     {
         Debug.Log("Initializing Unity Ads SDK...");
         // Advertisement.Initialize(unityAdsGameId, false, this);
+        // Unity Ads content filtering is typically managed through the Unity Dashboard.
+        // Ensure content rating is set to "Everyone" or "Family" in Unity Ads settings.
+
         isUnityAdsInitialized = true; // Simulate initialization
         Debug.Log("Unity Ads (simulated) initialization complete.");
     }
