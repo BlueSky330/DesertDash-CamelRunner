@@ -4,7 +4,7 @@ An endless runner game where players guide a charming camel through a stylized d
 
 ## Project Status
 
-This project is currently in **Phase 1: Project Setup & Core Mechanics**. The basic Unity project structure has been established, and core gameplay scripts have been created. Placeholder scene files are also in place.
+This project is currently in **Phase 2: AI Asset Generation**. The Game Design Document (GDD) has been updated with a new player-driven rewarded ads monetization strategy. Detailed AI prompts for visual and audio assets have been created, and placeholder concept art has been generated.
 
 ## How to Open in Unity
 
@@ -20,7 +20,7 @@ This project is currently in **Phase 1: Project Setup & Core Mechanics**. The ba
 
 ### Implemented:
 
-*   **Unity Project Structure**: Standard Unity folders (`Assets/Scripts`, `Assets/Scenes`, `Assets/Prefabs`, etc.) are set up.
+*   **Unity Project Structure**: Standard Unity folders (`Assets/Scripts`, `Assets/Scenes`, `Assets/Prefabs`, `Assets/Textures/ConceptArt`, etc.) are set up.
 *   **.gitignore**: A standard Unity `.gitignore` file is included to manage version control.
 *   **Core Scripts**:
     *   `PlayerController.cs`: Handles 3-lane movement, jump, and slide mechanics.
@@ -29,6 +29,9 @@ This project is currently in **Phase 1: Project Setup & Core Mechanics**. The ba
     *   `ObstacleSpawner.cs`: Spawns obstacles within the lanes.
     *   `CollectibleSpawner.cs`: Spawns dates, coins, and gems.
 *   **Placeholder Scenes**: Markdown files representing `MainMenuScene`, `GameplayScene`, and `GameOverScene` are created. Actual Unity scene files will be created and configured within the Unity Editor.
+*   **Updated GDD**: The Game Design Document (`GDD.md`) has been updated with the "Player-Driven Rewarded Ads" monetization strategy.
+*   **AI Asset Specifications**: Detailed prompts for visual assets (`visual_asset_prompts.md`) and audio assets (`audio_asset_prompts.md`) have been created.
+*   **Placeholder Concept Art**: Initial concept art for characters, environment, obstacles, collectibles, power-up icons, and UI elements has been generated and saved in `Assets/Textures/ConceptArt/`.
 
 ### Next Steps:
 
@@ -36,3 +39,4 @@ This project is currently in **Phase 1: Project Setup & Core Mechanics**. The ba
 *   Integrate initial AI-generated assets (camel model, basic obstacles).
 *   Refine player controls and physics.
 *   Implement collision detection and basic game over conditions.
+*   Begin generating actual game-ready assets based on the detailed prompts.
