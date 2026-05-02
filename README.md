@@ -4,7 +4,7 @@ An adventurous 2.5D endless runner game where players guide Kamil the Camel on a
 
 ## Project Status
 
-This project is currently in **Phase 2: AI Asset Generation & GDD Refinement**. The Game Design Document (GDD) has undergone a major update, incorporating a 2.5D game format, a comprehensive World Tour system with 10 countries, a detailed gameplay flow, and a refined offline/online coin economy. All camel character concepts have been regenerated in a consistent low-poly 3D style based on client feedback and reference images.
+This project is currently in **Phase 3: Building Game Code with All Mechanics**. All core C# scripts for gameplay mechanics, monetization, health, and progression systems have been developed and are ready for integration into the Unity project.
 
 ## How to Open in Unity
 
@@ -32,6 +32,18 @@ This project is currently in **Phase 2: AI Asset Generation & GDD Refinement**. 
 *   **Updated GDD**: The Game Design Document (`GDD.md`) has been significantly updated to reflect the 2.5D game format, World Tour system, detailed gameplay flow, and the refined offline/online "Player-Driven Rewarded Ads" monetization strategy.
 *   **AI Asset Specifications**: Detailed prompts for visual assets (`visual_asset_prompts.md`) and audio assets (`audio_asset_prompts.md`) have been created.
 *   **Regenerated Concept Art**: All camel character concepts (Kamil, Pharaoh, Racing, Mummy, Golden) have been regenerated in a consistent low-poly 3D style, matching the provided reference images.
+*   **Gameplay System Scripts (Phase 3)**:
+    *   `CollectibleSystem.cs`: Manages collectibles, score, and score-to-coin conversion.
+    *   `PowerUpManager.cs`: Handles various power-ups including the Anti-Thief Shield.
+    *   `ThiefSystem.cs`: Manages random thief spawns, their behavior, and coin stealing.
+    *   `HealthSystem.cs`: Implements camel health, decay, natural and ad-based recovery.
+    *   `MilestoneSystem.cs`: Manages checkpoints and progress saving.
+    *   `WorldMapManager.cs`: Handles country data, unlock status, and mini-map display.
+    *   `AdManager.cs`: Manages rewarded ads, tiered rewards, and health restoration ads.
+    *   `CoinEconomy.cs`: Manages coin wallet, offline spending, and purchase system.
+    *   `SkinManager.cs`: Manages camel skins, their functional benefits, and purchase/equip.
+    *   `UIManager.cs`: Manages all UI elements.
+    *   `OfflineManager.cs`: Detects online/offline status and manages related game features.
 
 ### Next Steps:
 
