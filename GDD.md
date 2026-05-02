@@ -79,11 +79,24 @@ The game is structured around a "World Tour" system, featuring 10 distinct count
 *   **Magnet (Oasis Breeze)**: Automatically attracts all nearby dates and coins for a short duration.
 *   **Double Coins (Golden Scarab)**: Doubles the value of all collected coins for a limited time.
 
-## 8. Collectibles
+## 8. Collectibles & Score System
 
-*   **Dates**: The primary collectible, acting as the basic score multiplier and minor currency.
-*   **Coins**: The main in-game currency used for purchasing upgrades and standard skins.
-*   **Gems**: Premium currency (rarely found in-game, mostly purchased) used for exclusive skins and revives.
+Players collect various objects during gameplay, which contribute to their score. This score can then be converted into in-game coins.
+
+### Collectible Point Values:
+
+| Collectible | Points Earned | Rarity/Appearance |
+| :---------- | :------------ | :---------------- |
+| Dates       | 1             | Most common       |
+| Silver Coins| 3             | Medium rarity     |
+| Gems        | 10            | Rare              |
+| Golden Dates| 5             | Special, appears briefly |
+| Mystery Box | 15-50 (random)| Very rare         |
+
+### Score-to-Coins Conversion:
+
+*   **Conversion Rate**: 150 score points = 1 coin.
+*   This system encourages players to focus on collecting and achieving high scores, as it directly translates into valuable in-game currency.
 
 ## 9. Monetization Strategy: Player-Driven Rewarded Ads (Online/Offline System)
 
@@ -199,3 +212,82 @@ This timeline assumes the use of the fully automated AI pipeline (Jules, Claude 
 *   **Day 10: Polish & Refinement**: Address QA findings, add visual polish (particle effects for sand, power-ups), and finalize UI.
 *   **Day 11: Client Review & Final Tweaks**: Present the near-final build to the client, implement any minor requested changes.
 *   **Day 12: App Store Preparation**: Generate store assets (icons, screenshots, descriptions) using AI, prepare final builds for Android and iOS submission.
+
+## 10. Thieves & Pirates Mechanic
+
+To add dynamic challenge and strategic depth, random "Thieves & Pirates" events will occur during gameplay. These encounters require quick reactions and strategic lane management from the player.
+
+### Thief Encounter Types:
+*   **Ahead**: Thieves appear waiting in one of the three lanes. The player must slow down to allow the thief to move towards them, then speed up to pass them quickly before being caught.
+*   **Behind/Sides**: Thieves can appear from behind or the sides, attempting to catch up to the camel. The player must speed up to escape their pursuit.
+
+### Consequences of Being Caught:
+*   If caught by a thief, a percentage of the player's current coin balance will be stolen.
+
+### Thief Types per Country:
+
+| Thief Type      | Countries                 | Coins Stolen |
+| :-------------- | :------------------------ | :----------- |
+| Desert Bandit   | Egypt, Jordan, UAE        | 10%          |
+| Ninja Thief     | China                     | 15%          |\n| Pirate          | Brazil, Italy, France     | 20%          |
+| Shadow Thief    | Any country (rare event)  | 30%          |
+
+## 11. Anti-Thief Power-up: Shield
+
+Players can acquire a special "Shield" power-up that provides protection against one thief encounter. This power-up is designed to create a strategic choice for the player:
+
+*   **Cost**: Activating the shield costs 20% of the player's current coin balance.
+*   **Strategic Design**: This mechanic encourages players to spend coins even when they think they are saving them, maintaining a high demand for in-game currency and reinforcing the addiction loop.
+
+## 12. Skins = Functional Protection
+
+Camel skins are not merely cosmetic; they offer functional advantages that impact gameplay, making them a valuable investment for players.
+
+*   **Weather Protection**: Certain skins provide resistance to environmental hazards or weather conditions specific to different countries (e.g., a 
+winter-themed skin might reduce health decay in cold environments).
+*   **Thief Resistance**: Some skins can reduce the percentage of coins stolen by thieves, making it harder for them to impact the player's economy.
+
+## 13. Camel Health System
+
+Kamil's health is a critical gameplay mechanic that adds a layer of survival and strategic resource management. Health starts at 100% and decreases over time, influenced by environmental factors and player actions.
+
+### Health Decay Equation:
+*   **Initial Decay**: For the first 30 minutes of continuous gameplay, health decays slowly at a rate of 1% per minute. This provides a sense of safety and allows players to get into a rhythm.
+*   **Accelerated Decay**: After 30 minutes, the health decay rate increases to 2.5% per minute, creating a sense of urgency and encouraging players to seek health recovery options.
+*   **Low Health Indicator**: When health drops below 25%, Kamil will visibly slow down, and the screen edges will turn red, signaling critical health.
+
+### Health Recovery - Natural (In-Game):
+Players can recover health by interacting with specific environmental elements:
+*   **Water/Lake**: Restores 15% health. Appears every 5-8 minutes.
+*   **Grass/Bushes**: Restores 10% health. Appears every 3-5 minutes.
+*   **Oasis (Rare)**: Restores 40% health. Appears every 15-20 minutes.
+*   **Strategic Choice**: Players must actively maneuver to the correct lane to collect these health-restoring elements, adding a layer of skill and decision-making.
+
+### Health Recovery - Ads (Player-Driven):
+Players can choose to watch rewarded ads to instantly restore health:
+*   **Quick Ad (~15s)**: Restores 25% health.
+*   **Standard Ad (~30s)**: Restores 50% health.
+*   **Premium Ad (~60s)**: Restores 100% health (full restore).
+
+### Health Equation Summary:
+`Health(T) = Starting_Health - Decay(T) + Natural_Recovery_Collected + Ad_Restores`
+
+*   **Decay**: 1% per minute for the first 30 minutes, then 2.5% per minute thereafter.
+*   **Natural Recovery**: +10% (Grass/Bushes), +15% (Water/Lake), +40% (Oasis).
+*   **Ad Recovery**: +25% (Quick Ad), +50% (Standard Ad), +100% (Premium Ad).
+*   **Balancing**: Natural in-game recovery elements are designed to provide approximately 70-80% of the necessary health recovery, leaving a 20-30% gap that encourages players to watch 1-2 ads per hour to maintain optimal health.
+
+## 14. Health Hits 0% = Game Over & Ad Incentive
+
+When Kamil's health reaches 0%, the game ends with Kamil collapsing. At this point, players are presented with a critical choice, designed to maximize ad engagement:
+
+*   **Option A: Restart from Last Milestone**: Players can choose to restart their run from the last achieved milestone. This option is free but means losing all progress made since that milestone.
+*   **Option B: Continue with Full Health (Rewarded Ad)**: Players can watch the longest rewarded ad (60 seconds) to continue their run from the exact spot they collapsed, with 100% health restored. This is the strongest ad incentive, as it allows players to preserve their progress and avoid frustration.
+
+## 15. Milestones
+
+Milestones serve as crucial checkpoints throughout each country level, providing a sense of progression and mitigating player frustration.
+
+*   **Checkpoints**: Milestones are strategically placed at regular intervals within each country's level.
+*   **Progress Save**: Upon reaching a milestone, the player's progress is saved. If the player's health reaches 0% or they collide with an obstacle, they will restart from the last achieved milestone, unless they choose to watch a rewarded ad to continue from the point of collapse.
+*   **Visual Indicators**: Milestones will be visually distinct within the game environment (e.g., a small oasis, a unique archway, or a landmark marker).
