@@ -3,31 +3,57 @@
 ## 1. Game Overview
 
 *   **Game Name**: Desert Dash: Camel Runner
-*   **Genre**: Endless Runner / Hyper-Casual
+*   **Genre**: 2.5D Endless Runner (like Subway Surfers)
 *   **Platform**: Mobile (Android primary, iOS secondary)
 *   **Target Audience**: Casual gamers, particularly in the Egyptian/MENA market, looking for quick, engaging gameplay sessions. Suitable for all ages.
 
 ## 2. Story/Theme
 
-The game is set in a stylized, vibrant Egyptian desert. The protagonist is a charming, slightly goofy camel named "Kamil." Kamil has a penchant for sweet dates and has accidentally stumbled into a massive sandstorm while foraging. The goal is to run as far as possible to escape the encroaching sandstorm, collecting dates and dodging desert hazards along the way. The tone is lighthearted, fast-paced, and visually appealing.
+The game features Kamil the Camel, a charming and adventurous explorer, embarking on a grand world tour. His journey takes him through iconic landmarks and diverse landscapes across 10 different countries. The goal is to navigate challenging environments, collect valuable items, and unlock new destinations, all while enjoying a lighthearted, fast-paced, and visually appealing adventure.
 
 ## 3. Core Gameplay Mechanics
 
-*   **Endless Runner**: The camel runs forward automatically. The player's objective is to survive as long as possible to achieve a high score.
+*   **2.5D Endless Runner**: The camel runs forward automatically in a 3D environment with a fixed camera angle (behind/above the camel), utilizing a 3-lane system. The player's objective is to survive as long as possible and achieve a high score within each country's level.
 *   **Controls**: Simple swipe controls:
     *   **Swipe Left/Right**: Change lanes (3-lane system).
     *   **Swipe Up**: Jump over low obstacles.
     *   **Swipe Down**: Slide under high obstacles.
-*   **Obstacles**: Various desert-themed hazards that end the run upon collision.
+*   **Obstacles**: Various country-specific hazards that end the run upon collision.
 *   **Collectibles**: Items scattered across the lanes that provide points or currency.
 *   **Power-ups**: Temporary boosts that aid survival or increase score.
 
-## 4. Level Design
+## 4. World Tour & Level Design
 
-*   **Progression**: The game features a single, endless level that becomes progressively more difficult.
-*   **Difficulty Curve**: The running speed gradually increases over time. The density and complexity of obstacle patterns also increase.
-*   **Procedural Generation**: The environment and obstacle placements are procedurally generated using pre-designed "chunks" or segments to ensure each run feels unique while maintaining a balanced difficulty.
-*   **Environments/Zones**: While endless, the background scenery subtly shifts to provide visual variety (e.g., from sandy dunes to rocky canyons, to an oasis area).
+The game is structured around a "World Tour" system, featuring 10 distinct countries, each offering unique environments, landmarks, and obstacles. Players start in Egypt and can unlock other countries using in-game coins.
+
+### Countries & Unlock Costs:
+
+| Country | Landmark/Theme | Environment | Unlock Cost (Coins) |
+| :------ | :------------- | :---------- | :------------------ |
+| **Egypt** | Pyramids of Giza & Sphinx | Desert, sand dunes, Nile | FREE |
+| **Jordan** | Petra (Treasury) | Rocky desert, canyons | 500 |
+| **India** | Taj Mahal | Colorful streets, temples, jungle | 800 |
+| **China** | Great Wall of China | Mountains, bamboo forests, pagodas | 1,200 |
+| **Italy** | Colosseum (Rome) | Cobblestone streets, vineyards, ruins | 1,500 |
+| **Peru** | Machu Picchu | Mountains, jungle, Inca ruins | 2,000 |
+| **France** | Eiffel Tower (Paris) | City streets, gardens, cafes | 2,500 |
+| **UAE (Dubai)** | Burj Khalifa | Modern city, glass towers, desert | 3,000 |
+| **Brazil** | Christ the Redeemer (Rio) | Jungle, beaches, carnival vibes | 3,500 |
+| **USA** | Statue of Liberty (New York) | Skyscrapers, Central Park, highways | 5,000 |
+
+### Gameplay Flow:
+*   **Starting Point**: Players begin their journey in Egypt, which is freely accessible.
+*   **World Map**: Upon completing a country level (or at any time from the main menu), a world map appears, displaying all available countries and their respective unlock costs.
+*   **Player Choice**: Players can choose which country to travel to next, allowing for a non-linear progression. The only requirement is having sufficient coins to unlock the destination.
+*   **Coin Prompt**: If a player attempts to travel to an locked country without enough coins, a prompt will appear, encouraging them to watch ads to earn more.
+*   **Procedural Generation**: Each country's level is procedurally generated using pre-designed "chunks" or segments that incorporate country-specific visual elements and obstacles, ensuring variety and replayability.
+*   **Difficulty Curve**: The running speed and obstacle density gradually increase within each country's level.
+
+### Mini-Map:
+*   A small world map will be displayed in the corner of the screen during gameplay, zoomed into the current country. This mini-map will show Kamil's progress through the country, providing a sense of journey and accomplishment.
+
+### Future Updates:
+*   The World Tour system is designed for expandability, allowing for the addition of more countries and themes in future game updates to maintain player engagement.
 
 ## 5. Characters
 
