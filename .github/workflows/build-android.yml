@@ -1,0 +1,80 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type (debug or release)'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      # ── 2. Cache Unity Library ─────────────────────────────────────────────
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-Android-
+            Library-
+
+      # ── 3. Build ───────────────────────────────────────────────────────────
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 2022.3.62f1
+          targetPlatform: Android
+          buildName: DesertDash-CamelRunner
+          buildsPath: build
+          androidExportType: ${{ github.event.inputs.build_type == 'release' && 'androidAppBundle' || 'androidPackage' }}
+          androidKeystoreName: ''
+          androidKeystoreBase64: ''
+          androidKeystorePass: ''
+          androidKeyaliasName: ''
+          androidKeyaliasPass: ''
+
+      # ── 4. Upload APK ──────────────────────────────────────────────────────
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DesertDash-CamelRunner-APK
+          path: build/Android/**/*.apk
+          retention-days: 14
+
+  # ── Activate license (run this ONCE before building) ──────────────────────
+  get-unity-license:
+    name: Get Unity License File (run once)
+    runs-on: ubuntu-latest
+    if: false   # Change to: true  — run manually when setting up for first time
+    steps:
+      - name: Request Unity license activation file
+        uses: game-ci/unity-request-activation-file@v2
+        with:
+          unityVersion: 2022.3.62f1
+      - name: Upload license request file
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unity_v2022.3.62f1.alf
+          path: Unity_v2022.3.62f1.alf
