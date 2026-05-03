@@ -68,7 +68,7 @@ public class GameplayTester : MonoBehaviour
         HealthSystem.Instance.ResetHealth();
                 CollectibleSystem.Instance.ResetScoreAndCoins();
                 MilestoneSystem.Instance.ResetMilestones();
-                PlayerController.Instance.ResetPosition();
+                var pc = FindObjectOfType<PlayerController>(); if (pc != null) pc.ResetPosition();
         Debug.Log("Game systems reset for new test run.");
     }
 
