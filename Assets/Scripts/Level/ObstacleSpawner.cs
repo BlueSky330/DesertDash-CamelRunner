@@ -1,46 +1,151 @@
 using UnityEngine;
+using System.Collections.Generic;
 
+/// <summary>
+/// Spawns obstacles into lane positions using the object pool.
+/// No Instantiate calls — obstacles are recycled via ObjectPool.ReturnToPool().
+///
+/// Country flag drives variant selection so Egypt gets desert rocks,
+/// China gets terracotta warriors, etc.
+/// Spawn interval is driven by DifficultyManager for density ramp.
+/// </summary>
 public class ObstacleSpawner : MonoBehaviour
 {
-    public GameObject[] obstaclePrefabs;
-    public float spawnInterval = 2f;
-    public float spawnRangeX = 2f;
-    public float spawnZOffset = 50f;
+    // ── Lane constants ─────────────────────────────────────────────────────
+    // Matches PlayerController.laneWidth default of 2f.
+    // Set via inspector if laneWidth differs.
+    [Header("Lanes")]
+    public float laneWidth    = 2f;
+    public float spawnZOffset = 50f; // how far ahead of player to spawn
 
-    private float timer;
+    [Header("Obstacle Pool Tags by Country")]
+    [Tooltip("Obstacle pool tags for Egypt / default")]
+    public string[] egyptObstacleTags   = { "Obstacle_Rock", "Obstacle_Pyramid" };
+    [Tooltip("Obstacle pool tags for Morocco")]
+    public string[] moroccoObstacleTags = { "Obstacle_Cart", "Obstacle_Barrel" };
+    [Tooltip("Obstacle pool tags for UAE")]
+    public string[] uaeObstacleTags     = { "Obstacle_Crate", "Obstacle_Camel" };
+
+    [Header("Fallback")]
+    public string fallbackObstacleTag   = "Obstacle_Rock";
+
+    [Header("Spawn Timing")]
+    public float fallbackSpawnInterval  = 2f; // used if DifficultyManager absent
+
+    private Transform playerTransform;
+    private float     spawnTimer;
+    private string    currentCountry = "Egypt";
+
+    // Pool of spawned obstacles still alive (needed to return them to pool)
+    private List<PooledObstacle> liveObstacles = new List<PooledObstacle>();
+
+    // Small struct so we can return obstacle to the right pool tag
+    private struct PooledObstacle
+    {
+        public GameObject obj;
+        public string     tag;
+    }
 
     void Start()
     {
-        timer = spawnInterval;
+        playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
+        spawnTimer      = GetSpawnInterval();
     }
 
     void Update()
     {
-        if (GameManager.Instance != null && GameManager.Instance.isGameOver)
-        {
-            return; // Stop spawning if game is over
-        }
+        if (GameManager.Instance == null || GameManager.Instance.State != GameManager.GameState.Running)
+            return;
 
-        timer -= Time.deltaTime;
-        if (timer <= 0)
+        spawnTimer -= Time.deltaTime;
+        if (spawnTimer <= 0f)
         {
             SpawnObstacle();
-            timer = spawnInterval;
+            spawnTimer = GetSpawnInterval();
+        }
+
+        RecycleOffscreenObstacles();
+    }
+
+    // ── Public API ─────────────────────────────────────────────────────────
+
+    /// <summary>Called by WorldMapManager when the player enters a new country.</summary>
+    public void SetCountry(string country)
+    {
+        currentCountry = country;
+    }
+
+    // ── Spawn ──────────────────────────────────────────────────────────────
+
+    private void SpawnObstacle()
+    {
+        if (ObjectPool.Instance == null || playerTransform == null) return;
+
+        string tag = PickObstacleTag();
+        int lane   = Random.Range(0, 3); // 0, 1, 2
+
+        Vector3 spawnPos = new Vector3(
+            LaneX(lane),
+            0f,
+            playerTransform.position.z + spawnZOffset);
+
+        GameObject obj = ObjectPool.Instance.SpawnFromPool(tag, spawnPos, Quaternion.identity);
+        if (obj != null)
+            liveObstacles.Add(new PooledObstacle { obj = obj, tag = tag });
+    }
+
+    private void RecycleOffscreenObstacles()
+    {
+        if (playerTransform == null) return;
+
+        for (int i = liveObstacles.Count - 1; i >= 0; i--)
+        {
+            PooledObstacle po = liveObstacles[i];
+            if (po.obj == null || !po.obj.activeInHierarchy)
+            {
+                liveObstacles.RemoveAt(i);
+                continue;
+            }
+            // Recycle once obstacle is behind the player
+            if (po.obj.transform.position.z < playerTransform.position.z - 10f)
+            {
+                ObjectPool.Instance.ReturnToPool(po.tag, po.obj);
+                liveObstacles.RemoveAt(i);
+            }
         }
     }
 
-    void SpawnObstacle()
+    // ── Helpers ───────────────────────────────────────────────────────────
+
+    private string PickObstacleTag()
     {
-        int randomObstacleIndex = Random.Range(0, obstaclePrefabs.Length);
-        GameObject obstacleToSpawn = obstaclePrefabs[randomObstacleIndex];
+        string[] tags = GetTagsForCountry(currentCountry);
+        if (tags == null || tags.Length == 0) return fallbackObstacleTag;
+        return tags[Random.Range(0, tags.Length)];
+    }
 
-        // Randomly choose one of three lanes
-        float randomX = Random.Range(-spawnRangeX, spawnRangeX); // Adjust based on lane positions
-        // For a 3-lane system, you might want to snap to specific X positions:
-        // float[] laneXPositions = { -2f, 0f, 2f }; // Example lane X positions
-        // float randomX = laneXPositions[Random.Range(0, laneXPositions.Length)];
+    private string[] GetTagsForCountry(string country)
+    {
+        switch (country)
+        {
+            case "Egypt":
+            case "Jordan":
+                return egyptObstacleTags;
+            case "Morocco":
+                return moroccoObstacleTags;
+            case "UAE":
+                return uaeObstacleTags;
+            default:
+                return egyptObstacleTags; // default to Egypt theme
+        }
+    }
 
-        Vector3 spawnPosition = new Vector3(randomX, 0.5f, transform.position.z + spawnZOffset);
-        Instantiate(obstacleToSpawn, spawnPosition, Quaternion.identity);
+    private float LaneX(int lane) => (lane - 1) * laneWidth;
+
+    private float GetSpawnInterval()
+    {
+        return (DifficultyManager.Instance != null)
+            ? DifficultyManager.Instance.GetCurrentObstacleSpawnInterval()
+            : fallbackSpawnInterval;
     }
 }

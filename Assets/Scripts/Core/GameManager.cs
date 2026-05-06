@@ -1,72 +1,134 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
+/// <summary>
+/// Central game loop controller. Owns state transitions and exposes an event bus
+/// that other systems subscribe to instead of polling IsGameOver every frame.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public int score = 0;
-    public bool isGameOver = false;
+    // ── State ──────────────────────────────────────────────────────────────
+    public enum GameState { Ready, Running, Paused, GameOver }
+
+    public GameState State { get; private set; } = GameState.Ready;
+
+    // Convenience shorthand kept for backward compatibility with older scripts
+    public bool isGameOver => State == GameState.GameOver;
+
+    // ── Events (event bus) ─────────────────────────────────────────────────
+    public static event Action<GameState> OnGameStateChanged;
+    public static event Action<int>       OnScoreChanged;
+    public static event Action            OnGameStarted;
+    public static event Action            OnGameOver;
+    public static event Action            OnGameReset;
+
+    // ── Score ──────────────────────────────────────────────────────────────
+    public int score { get; private set; }
+
+    // ── Run-time tracking ──────────────────────────────────────────────────
+    public float runTime { get; private set; }
 
     void Awake()
     {
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
     {
-        // Start the game in the main menu scene
-        SceneManager.LoadScene("MainMenuScene");
+        // Subscribe to HealthSystem death event
+        HealthSystem.onGameOver += HandleHealthGameOver;
+        SetState(GameState.Ready);
     }
+
+    void OnDestroy()
+    {
+        HealthSystem.onGameOver -= HandleHealthGameOver;
+    }
+
+    void Update()
+    {
+        if (State == GameState.Running)
+            runTime += Time.deltaTime;
+    }
+
+    // ── Public API ─────────────────────────────────────────────────────────
 
     public void StartGame()
     {
         score = 0;
-        isGameOver = false;
+        runTime = 0f;
+        OnScoreChanged?.Invoke(score);
+        SetState(GameState.Running);
+        OnGameStarted?.Invoke();
         SceneManager.LoadScene("GameplayScene");
     }
 
-    public void ContinueGame()
+    public void PauseGame()
     {
-        isGameOver = false;
-        // Logic to continue from where the player left off (e.g., restore health, position)
-        Debug.Log("GameManager: Continuing game after ad.");
+        if (State != GameState.Running) return;
+        Time.timeScale = 0f;
+        SetState(GameState.Paused);
+    }
+
+    public void ResumeGame()
+    {
+        if (State != GameState.Paused) return;
+        Time.timeScale = 1f;
+        SetState(GameState.Running);
     }
 
     public void EndGame()
     {
-        isGameOver = true;
-        Debug.Log("Game Over! Score: " + score);
+        if (State == GameState.GameOver) return;
+        SetState(GameState.GameOver);
+        OnGameOver?.Invoke();
+        Debug.Log($"[GameManager] Game Over — score: {score}, time: {runTime:F1}s");
         SceneManager.LoadScene("GameOverScene");
-    }
-
-    public void AddScore(int amount)
-    {
-        if (!isGameOver)
-        {
-            score += amount;
-            Debug.Log("Score: " + score);
-        }
     }
 
     public void RestartGame()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenuScene");
     }
 
     public void ResetGame()
     {
+        Time.timeScale = 1f;
         score = 0;
-        isGameOver = false;
-        // Additional reset logic for other systems can be added here
-        Debug.Log("GameManager: Game state reset.");
+        runTime = 0f;
+        OnScoreChanged?.Invoke(score);
+        SetState(GameState.Ready);
+        OnGameReset?.Invoke();
+    }
+
+    /// <summary>Adds to the run-time score. Ignored when game is not Running.</summary>
+    public void AddScore(int amount)
+    {
+        if (State != GameState.Running) return;
+        score += amount;
+        OnScoreChanged?.Invoke(score);
+    }
+
+    // ── Internals ──────────────────────────────────────────────────────────
+
+    private void SetState(GameState newState)
+    {
+        State = newState;
+        OnGameStateChanged?.Invoke(newState);
+    }
+
+    private void HandleHealthGameOver()
+    {
+        EndGame();
     }
 }

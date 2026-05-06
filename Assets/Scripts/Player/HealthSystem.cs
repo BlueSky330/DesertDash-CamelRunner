@@ -1,6 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Tracks camel health.
+/// - Starts at 100%.
+/// - Time decay: 1%/min for first 30 min, then 2.5%/min.
+/// - TakeDamage for collision hits.
+/// - Natural recovery via environmental pickups or ads.
+/// - Fires onGameOver when health hits 0.
+/// - IsLowHealth() → true below 25% (PlayerController uses this for slow-down).
+/// </summary>
 public class HealthSystem : MonoBehaviour
 {
     public static HealthSystem Instance { get; private set; }
@@ -9,19 +18,19 @@ public class HealthSystem : MonoBehaviour
     private const float MAX_HEALTH = 100f;
 
     [Header("Health Decay Settings")]
-    public float initialDecayRatePerMinute = 1f; // 1% per minute
-    public float acceleratedDecayRatePerMinute = 2.5f; // 2.5% per minute
-    public float initialDecayDurationMinutes = 30f; // After 30 minutes, decay accelerates
+    public float initialDecayRatePerMinute     = 1f;   // 1%/min for first 30 min
+    public float acceleratedDecayRatePerMinute = 2.5f; // 2.5%/min after
+    public float initialDecayDurationMinutes   = 30f;
 
-    [Header("Natural Recovery Settings")]
-    public float grassRecovery = 10f; // 10% health
-    public float waterRecovery = 15f; // 15% health
-    public float oasisRecovery = 40f; // 40% health
+    [Header("Natural Recovery")]
+    public float grassRecovery  = 10f;
+    public float waterRecovery  = 15f;
+    public float oasisRecovery  = 40f;
 
-    [Header("Ad Recovery Settings")]
-    public float quickAdRecovery = 25f; // 25% health
-    public float standardAdRecovery = 50f; // 50% health
-    public float premiumAdRecovery = 100f; // 100% health
+    [Header("Ad Recovery")]
+    public float quickAdRecovery    = 25f;
+    public float standardAdRecovery = 50f;
+    public float premiumAdRecovery  = 100f;
 
     public delegate void OnHealthChanged(float newHealth);
     public static event OnHealthChanged onHealthChanged;
@@ -29,33 +38,33 @@ public class HealthSystem : MonoBehaviour
     public delegate void OnGameOver();
     public static event OnGameOver onGameOver;
 
-    private float gameTimeElapsed = 0f;
-    private bool isGameOver = false;
+    private float gameTimeElapsed;
+    private bool  isGameOver;
+    private bool  isRunning;
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
     {
-        currentHealth = MAX_HEALTH;
-        onHealthChanged?.Invoke(currentHealth);
-        isGameOver = false;
-        gameTimeElapsed = 0f;
+        GameManager.OnGameStarted += OnGameStarted;
+        GameManager.OnGameReset   += ResetHealth;
+        InitHealth();
+    }
+
+    void OnDestroy()
+    {
+        GameManager.OnGameStarted -= OnGameStarted;
+        GameManager.OnGameReset   -= ResetHealth;
     }
 
     void Update()
     {
-        if (isGameOver) return;
+        if (!isRunning || isGameOver) return;
 
         gameTimeElapsed += Time.deltaTime;
 
@@ -63,72 +72,74 @@ public class HealthSystem : MonoBehaviour
             ? initialDecayRatePerMinute
             : acceleratedDecayRatePerMinute;
 
-        currentHealth -= (decayRate / 60f) * Time.deltaTime; // Convert per minute to per second
-        currentHealth = Mathf.Max(0, currentHealth); // Health cannot go below 0
+        // Convert %/min → %/s
+        currentHealth -= (decayRate / 60f) * Time.deltaTime;
+        currentHealth  = Mathf.Max(0f, currentHealth);
 
         onHealthChanged?.Invoke(currentHealth);
 
-        if (currentHealth <= 0 && !isGameOver)
+        if (currentHealth <= 0f && !isGameOver)
         {
             isGameOver = true;
+            isRunning  = false;
             onGameOver?.Invoke();
-            Debug.Log("Game Over: Health reached 0!");
         }
+    }
 
-        // Visual warning for low health (to be handled by UIManager/PlayerController based on currentHealth value)
-        if (currentHealth <= 25f)
+    // ── Public API ─────────────────────────────────────────────────────────
+
+    /// <summary>Deals direct damage (e.g. obstacle collision).</summary>
+    public void TakeDamage(float amount)
+    {
+        if (isGameOver) return;
+        currentHealth = Mathf.Max(0f, currentHealth - amount);
+        onHealthChanged?.Invoke(currentHealth);
+
+        if (currentHealth <= 0f && !isGameOver)
         {
-            // Trigger visual/audio warning (e.g., UIManager.Instance.ShowLowHealthWarning(true))
+            isGameOver = true;
+            isRunning  = false;
+            onGameOver?.Invoke();
         }
     }
 
     public void RecoverHealth(float amount)
     {
-        currentHealth += amount;
-        currentHealth = Mathf.Min(MAX_HEALTH, currentHealth); // Health cannot exceed MAX_HEALTH
+        currentHealth = Mathf.Min(MAX_HEALTH, currentHealth + amount);
         onHealthChanged?.Invoke(currentHealth);
-        Debug.Log($"Health recovered by {amount}. Current Health: {currentHealth}");
     }
 
     public void ResetHealth()
     {
-        currentHealth = MAX_HEALTH;
-        onHealthChanged?.Invoke(currentHealth);
-        isGameOver = false;
-        gameTimeElapsed = 0f;
-    }
-
-    // Methods for natural recovery (called by collision with environmental objects)
-    public void RecoverFromGrass()
-    {
-        RecoverHealth(grassRecovery);
-    }
-
-    public void RecoverFromWater()
-    {
-        RecoverHealth(waterRecovery);
-    }
-
-    public void RecoverFromOasis()
-    {
-        RecoverHealth(oasisRecovery);
-    }
-
-    // Methods for ad recovery (called by AdManager)
-    public void RecoverFromQuickAd()
-    {
-        RecoverHealth(quickAdRecovery);
-    }
-
-    public void RecoverFromStandardAd()
-    {
-        RecoverHealth(standardAdRecovery);
-    }
-
-    public void RecoverFromPremiumAd()
-    {
-        RecoverHealth(premiumAdRecovery);
+        InitHealth();
     }
 
     public bool IsLowHealth() => currentHealth <= 25f;
+
+    // ── Environmental recovery shortcuts ──────────────────────────────────
+    public void RecoverFromGrass()   => RecoverHealth(grassRecovery);
+    public void RecoverFromWater()   => RecoverHealth(waterRecovery);
+    public void RecoverFromOasis()   => RecoverHealth(oasisRecovery);
+
+    // ── Ad recovery shortcuts ─────────────────────────────────────────────
+    public void RecoverFromQuickAd()    => RecoverHealth(quickAdRecovery);
+    public void RecoverFromStandardAd() => RecoverHealth(standardAdRecovery);
+    public void RecoverFromPremiumAd()  => RecoverHealth(premiumAdRecovery);
+
+    // ── Internals ─────────────────────────────────────────────────────────
+
+    private void InitHealth()
+    {
+        currentHealth   = MAX_HEALTH;
+        gameTimeElapsed = 0f;
+        isGameOver      = false;
+        isRunning       = false;
+        onHealthChanged?.Invoke(currentHealth);
+    }
+
+    private void OnGameStarted()
+    {
+        isRunning  = true;
+        isGameOver = false;
+    }
 }

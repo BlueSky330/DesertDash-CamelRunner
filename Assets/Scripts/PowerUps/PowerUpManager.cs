@@ -1,154 +1,125 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
+using System;
 
+/// <summary>
+/// Manages the four gameplay power-ups:
+///   Magic Carpet  — speed boost + invincibility for duration
+///   Scarab Shell  — absorbs exactly one obstacle collision then expires
+///   Oasis Breeze  — magnet: pulls nearby collectibles toward player
+///   Golden Scarab — 2× coin value for duration
+/// </summary>
 public class PowerUpManager : MonoBehaviour
 {
     public static PowerUpManager Instance { get; private set; }
-
-    // Power-up durations
-    public float magicCarpetDuration = 5f;
-    public float magnetDuration = 7f;
-    public float doubleCoinsDuration = 10f;
-
-    // Power-up states
-    public bool isMagicCarpetActive { get; private set; }
-    public bool isMagnetActive { get; private set; }
-    public bool isDoubleCoinsActive { get; private set; }
-    public int antiThiefShieldCount { get; private set; } = 0;
-
-    public delegate void OnPowerUpActivated(PowerUpType type, float duration);
-    public static event OnPowerUpActivated onPowerUpActivated;
-
-    public delegate void OnPowerUpDeactivated(PowerUpType type);
-    public static event OnPowerUpDeactivated onPowerUpDeactivated;
-
-    public delegate void OnAntiThiefShieldChanged(int count);
-    public static event OnAntiThiefShieldChanged onAntiThiefShieldChanged;
-
-    void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-    }
-
-    public void ActivatePowerUp(PowerUpType type)
-    {
-        switch (type)
-        {
-            case PowerUpType.MagicCarpet:
-                StartCoroutine(MagicCarpetRoutine());
-                break;
-            case PowerUpType.ScarabShell:
-                // Scarab Shell is a one-time use shield, handled by PlayerController on collision
-                // For now, we just indicate it's available.
-                Debug.Log("Scarab Shell acquired. Player is protected from one collision.");
-                break;
-            case PowerUpType.OasisBreeze:
-                StartCoroutine(MagnetRoutine());
-                break;
-            case PowerUpType.GoldenScarab:
-                StartCoroutine(DoubleCoinsRoutine());
-                break;
-            case PowerUpType.AntiThiefShield:
-                AddAntiThiefShield();
-                break;
-        }
-        onPowerUpActivated?.Invoke(type, GetPowerUpDuration(type));
-    }
-
-    private float GetPowerUpDuration(PowerUpType type)
-    {
-        switch (type)
-        {
-            case PowerUpType.MagicCarpet:
-                return magicCarpetDuration;
-            case PowerUpType.OasisBreeze:
-                return magnetDuration;
-            case PowerUpType.GoldenScarab:
-                return doubleCoinsDuration;
-            default:
-                return 0f;
-        }
-    }
-
-    IEnumerator MagicCarpetRoutine()
-    {
-        if (isMagicCarpetActive) yield break; // Prevent multiple activations
-        isMagicCarpetActive = true;
-        Debug.Log("Magic Carpet Activated!");
-        // PlayerController will handle invincibility and speed boost
-        yield return new WaitForSeconds(magicCarpetDuration);
-        isMagicCarpetActive = false;
-        Debug.Log("Magic Carpet Deactivated.");
-        onPowerUpDeactivated?.Invoke(PowerUpType.MagicCarpet);
-    }
-
-    IEnumerator MagnetRoutine()
-    {
-        if (isMagnetActive) yield break;
-        isMagnetActive = true;
-        Debug.Log("Magnet Activated!");
-        // CollectibleSpawner or PlayerController will handle attraction
-        yield return new WaitForSeconds(magnetDuration);
-        isMagnetActive = false;
-        Debug.Log("Magnet Deactivated.");
-        onPowerUpDeactivated?.Invoke(PowerUpType.OasisBreeze);
-    }
-
-    IEnumerator DoubleCoinsRoutine()
-    {
-        if (isDoubleCoinsActive) yield break;
-        isDoubleCoinsActive = true;
-        Debug.Log("Double Coins Activated!");
-        // CollectibleSystem will handle double coin value
-        yield return new WaitForSeconds(doubleCoinsDuration);
-        isDoubleCoinsActive = false;
-        Debug.Log("Double Coins Deactivated.");
-        onPowerUpDeactivated?.Invoke(PowerUpType.GoldenScarab);
-    }
-
-    public void AddAntiThiefShield()
-    {
-        // Cost 20% of current coins
-        int cost = Mathf.FloorToInt(CollectibleSystem.Instance.currentCoins * 0.20f);
-        if (CollectibleSystem.Instance.SpendCoins(cost))
-        {
-            antiThiefShieldCount++;
-            onAntiThiefShieldChanged?.Invoke(antiThiefShieldCount);
-            Debug.Log($"Anti-Thief Shield acquired for {cost} coins. Total: {antiThiefShieldCount}");
-        }
-        else
-        {
-            Debug.Log("Not enough coins to buy Anti-Thief Shield.");
-        }
-    }
-
-    public bool UseAntiThiefShield()
-    {
-        if (antiThiefShieldCount > 0)
-        {
-            antiThiefShieldCount--;
-            onAntiThiefShieldChanged?.Invoke(antiThiefShieldCount);
-            Debug.Log("Anti-Thief Shield used.");
-            return true;
-        }
-        return false;
-    }
 
     public enum PowerUpType
     {
         MagicCarpet,
         ScarabShell,
         OasisBreeze,
-        GoldenScarab,
-        AntiThiefShield
+        GoldenScarab
+    }
+
+    // ── Durations (seconds) ───────────────────────────────────────────────
+    [Header("Power-up Durations")]
+    public float magicCarpetDuration  = 5f;
+    public float oasisBreezeDuration  = 7f;
+    public float goldenScarabDuration = 10f;
+
+    // ── Magic Carpet speed multiplier ─────────────────────────────────────
+    [Header("Magic Carpet")]
+    public float magicCarpetSpeedMultiplier = 1.5f;
+
+    // ── States ────────────────────────────────────────────────────────────
+    public bool isMagicCarpetActive  { get; private set; }
+    public bool isScarabShieldActive { get; private set; }
+    public bool isOasisBreezeActive  { get; private set; }
+    public bool isGoldenScarabActive { get; private set; }
+
+    // ── Events ────────────────────────────────────────────────────────────
+    public static event Action<PowerUpType, float> OnPowerUpActivated;
+    public static event Action<PowerUpType>        OnPowerUpDeactivated;
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    // ── Public API ─────────────────────────────────────────────────────────
+
+    public void ActivatePowerUp(PowerUpType type)
+    {
+        switch (type)
+        {
+            case PowerUpType.MagicCarpet:
+                StartCoroutine(TimedPowerUp(type, magicCarpetDuration,
+                    () => isMagicCarpetActive = true,
+                    () => isMagicCarpetActive = false));
+                break;
+
+            case PowerUpType.ScarabShell:
+                // One-shot shield; no timer — consumed on first collision
+                isScarabShieldActive = true;
+                OnPowerUpActivated?.Invoke(type, 0f);
+                Debug.Log("[PowerUp] Scarab Shell: one-collision shield active.");
+                break;
+
+            case PowerUpType.OasisBreeze:
+                StartCoroutine(TimedPowerUp(type, oasisBreezeDuration,
+                    () => isOasisBreezeActive = true,
+                    () => isOasisBreezeActive = false));
+                break;
+
+            case PowerUpType.GoldenScarab:
+                StartCoroutine(TimedPowerUp(type, goldenScarabDuration,
+                    () => isGoldenScarabActive = true,
+                    () => isGoldenScarabActive = false));
+                break;
+        }
+    }
+
+    /// <summary>Returns true if Scarab Shield can absorb a hit.</summary>
+    public bool HasScarabShield() => isScarabShieldActive;
+
+    /// <summary>Consumes the Scarab Shield (called by PlayerController on collision).</summary>
+    public void ConsumeScarabShield()
+    {
+        if (!isScarabShieldActive) return;
+        isScarabShieldActive = false;
+        OnPowerUpDeactivated?.Invoke(PowerUpType.ScarabShell);
+        Debug.Log("[PowerUp] Scarab Shell consumed.");
+    }
+
+    /// <summary>
+    /// Coin multiplier — CollectibleSystem uses this to double coin rewards.
+    /// Returns 2 when Golden Scarab is active, 1 otherwise.
+    /// </summary>
+    public int CoinMultiplier() => isGoldenScarabActive ? 2 : 1;
+
+    /// <summary>
+    /// Speed multiplier — DifficultyManager/PlayerController apply this on top of base speed.
+    /// </summary>
+    public float SpeedMultiplier() => isMagicCarpetActive ? magicCarpetSpeedMultiplier : 1f;
+
+    // ── Internals ─────────────────────────────────────────────────────────
+
+    private IEnumerator TimedPowerUp(PowerUpType type, float duration,
+        System.Action onActivate, System.Action onDeactivate)
+    {
+        // If already active, restart the timer (stacking not allowed)
+        onDeactivate();
+
+        onActivate();
+        OnPowerUpActivated?.Invoke(type, duration);
+        Debug.Log($"[PowerUp] {type} activated for {duration}s.");
+
+        yield return new WaitForSeconds(duration);
+
+        onDeactivate();
+        OnPowerUpDeactivated?.Invoke(type);
+        Debug.Log($"[PowerUp] {type} expired.");
     }
 }

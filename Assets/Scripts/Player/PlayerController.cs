@@ -1,105 +1,316 @@
 using UnityEngine;
+using System.Collections;
 
+/// <summary>
+/// Controls camel movement: lane changes, jump, slide.
+/// Supports mobile swipe input with keyboard fallback.
+///
+/// Spec:
+///   - 3 lanes at X = -laneWidth, 0, +laneWidth
+///   - Swipe threshold: 30 px
+///   - Lane-switch cooldown: 200 ms
+///   - Jump cooldown: 400 ms
+///   - Slow-down applied when HealthSystem < 25%
+/// </summary>
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
-    public float laneChangeSpeed = 10f;
-    public float jumpForce = 10f;
-    public float slideDuration = 1f;
+    public static PlayerController Instance { get; private set; }
 
-    private CharacterController characterController;
-    private Vector3 moveDirection;
-    private int currentLane = 1; // 0: left, 1: middle, 2: right
-    private float targetLaneX;
-    private bool isJumping = false;
-    private bool isSliding = false;
-    private float slideTimer;
+    // ── Inspector ──────────────────────────────────────────────────────────
+    [Header("Lane Settings")]
+    public float laneWidth      = 2f;   // distance between lane centres
+    public float laneChangeSpeed = 12f; // lateral lerp speed
+
+    [Header("Jump Settings")]
+    public float jumpForce   = 12f;
+    public float gravity     = 22f;
+
+    [Header("Slide Settings")]
+    public float slideDuration = 0.8f;
+
+    [Header("Speed")]
+    public float forwardSpeed = 10f; // driven externally by DifficultyManager
+
+    [Header("Low-health slow")]
+    [Range(0f, 1f)]
+    public float lowHealthSpeedMultiplier = 0.6f; // applied below 25% health
+
+    // ── Cooldowns (ms → s) ─────────────────────────────────────────────────
+    private const float LANE_COOLDOWN = 0.2f;
+    private const float JUMP_COOLDOWN = 0.4f;
+
+    // ── State ──────────────────────────────────────────────────────────────
+    private CharacterController cc;
+    private Animator            anim;
+
+    private int   currentLane   = 1; // 0 left | 1 centre | 2 right
+    private float targetX;
+    private float verticalVelocity;
+    private bool  isJumping;
+    private bool  isSliding;
+
+    private float laneCooldownTimer;
+    private float jumpCooldownTimer;
+
+    // ── Touch tracking ─────────────────────────────────────────────────────
+    private Vector2 touchStart;
+    private bool    trackingTouch;
+    private const float SWIPE_THRESHOLD_PX = 30f;
+
+    // ── Animator hashes ────────────────────────────────────────────────────
+    private static readonly int AnimIsRunning = Animator.StringToHash("IsRunning");
+    private static readonly int AnimJump      = Animator.StringToHash("Jump");
+    private static readonly int AnimSlide     = Animator.StringToHash("Slide");
+    private static readonly int AnimHit       = Animator.StringToHash("Hit");
+
+    // ── Unity lifecycle ───────────────────────────────────────────────────
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+    }
 
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
-        targetLaneX = transform.position.x; // Start in current lane
+        cc   = GetComponent<CharacterController>();
+        anim = GetComponent<Animator>();
+
+        currentLane = 1;
+        targetX     = LaneX(currentLane);
+        Vector3 pos = transform.position;
+        pos.x = targetX;
+        transform.position = pos;
+
+        GameManager.OnGameStarted += OnGameStarted;
+        GameManager.OnGameOver    += OnGameStopped;
+        GameManager.OnGameReset   += OnGameStopped;
+
+        anim.SetBool(AnimIsRunning, false);
+    }
+
+    void OnDestroy()
+    {
+        GameManager.OnGameStarted -= OnGameStarted;
+        GameManager.OnGameOver    -= OnGameStopped;
+        GameManager.OnGameReset   -= OnGameStopped;
     }
 
     void Update()
     {
-        // Handle lane change input
-        if (Input.GetKeyDown(KeyCode.LeftArrow) && currentLane > 0)
+        if (GameManager.Instance == null || GameManager.Instance.State != GameManager.GameState.Running)
+            return;
+
+        laneCooldownTimer -= Time.deltaTime;
+        jumpCooldownTimer -= Time.deltaTime;
+
+        ProcessInput();
+        MoveCharacter();
+    }
+
+    // ── Input ──────────────────────────────────────────────────────────────
+
+    private void ProcessInput()
+    {
+        // Touch input (primary on mobile)
+        ProcessTouchInput();
+
+        // Keyboard fallback for editor / development
+        if (Input.GetKeyDown(KeyCode.LeftArrow))  TryChangeLane(-1);
+        if (Input.GetKeyDown(KeyCode.RightArrow)) TryChangeLane(+1);
+        if (Input.GetKeyDown(KeyCode.UpArrow))    TryJump();
+        if (Input.GetKeyDown(KeyCode.DownArrow))  TrySlide();
+    }
+
+    private void ProcessTouchInput()
+    {
+        if (Input.touchCount == 0) return;
+
+        Touch touch = Input.GetTouch(0);
+
+        switch (touch.phase)
         {
-            currentLane--;
+            case TouchPhase.Began:
+                touchStart    = touch.position;
+                trackingTouch = true;
+                break;
+
+            case TouchPhase.Ended:
+            case TouchPhase.Canceled:
+                if (!trackingTouch) break;
+                trackingTouch = false;
+
+                Vector2 delta = touch.position - touchStart;
+
+                // Only register if displacement exceeds threshold
+                if (delta.magnitude < SWIPE_THRESHOLD_PX) break;
+
+                if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+                {
+                    // Horizontal swipe
+                    TryChangeLane(delta.x > 0 ? +1 : -1);
+                }
+                else
+                {
+                    // Vertical swipe
+                    if (delta.y > 0) TryJump();
+                    else             TrySlide();
+                }
+                break;
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) && currentLane < 2)
+    }
+
+    // ── Actions ────────────────────────────────────────────────────────────
+
+    public void TryChangeLane(int direction)
+    {
+        if (laneCooldownTimer > 0f) return;
+        int target = currentLane + direction;
+        if (target < 0 || target > 2) return;
+
+        currentLane       = target;
+        targetX           = LaneX(currentLane);
+        laneCooldownTimer = LANE_COOLDOWN;
+    }
+
+    public void TryJump()
+    {
+        if (isSliding || isJumping) return;
+        if (jumpCooldownTimer > 0f) return;
+        if (!cc.isGrounded) return;
+
+        isJumping         = true;
+        verticalVelocity  = jumpForce;
+        jumpCooldownTimer = JUMP_COOLDOWN;
+        anim.SetTrigger(AnimJump);
+    }
+
+    public void TrySlide()
+    {
+        if (isJumping || isSliding) return;
+        StartCoroutine(SlideRoutine());
+    }
+
+    // Public aliases used by GameplayTester simulation
+    public void SwipeLeft()  => TryChangeLane(-1);
+    public void SwipeRight() => TryChangeLane(+1);
+    public void Jump()  => TryJump();
+    public void Slide() => TrySlide();
+
+    // ── Movement ───────────────────────────────────────────────────────────
+
+    private void MoveCharacter()
+    {
+        float speedMult = (HealthSystem.Instance != null && HealthSystem.Instance.IsLowHealth())
+            ? lowHealthSpeedMultiplier
+            : 1f;
+
+        // Forward movement — speed driven by DifficultyManager when available
+        float fwd = (DifficultyManager.Instance != null)
+            ? DifficultyManager.Instance.GetCurrentSpeed()
+            : forwardSpeed;
+        fwd *= speedMult;
+
+        // Lateral smoothing
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Lerp(pos.x, targetX, Time.deltaTime * laneChangeSpeed);
+        transform.position = pos;
+
+        // Vertical physics
+        if (cc.isGrounded && verticalVelocity < 0f)
         {
-            currentLane++;
-        }
-
-        // Calculate target X position for the current lane
-        if (currentLane == 0) targetLaneX = -2f; // Example left lane X
-        else if (currentLane == 1) targetLaneX = 0f; // Example middle lane X
-        else if (currentLane == 2) targetLaneX = 2f; // Example right lane X
-
-        // Smoothly move to the target lane
-        Vector3 newPosition = transform.position;
-        newPosition.x = Mathf.Lerp(newPosition.x, targetLaneX, Time.deltaTime * laneChangeSpeed);
-        transform.position = newPosition;
-
-        // Handle jump input
-        if (Input.GetKeyDown(KeyCode.UpArrow) && !isJumping && !isSliding)
-        {
-            isJumping = true;
-            moveDirection.y = jumpForce;
-        }
-
-        // Handle slide input
-        if (Input.GetKeyDown(KeyCode.DownArrow) && !isSliding && !isJumping)
-        {
-            isSliding = true;
-            slideTimer = slideDuration;
-            // Optionally, reduce collider height here
-        }
-
-        if (isSliding)
-        {
-            slideTimer -= Time.deltaTime;
-            if (slideTimer <= 0)
-            {
-                isSliding = false;
-                // Optionally, restore collider height here
-            }
-        }
-
-        // Apply gravity
-        if (characterController.isGrounded)
-        {
-            moveDirection.y = -0.5f; // Small downward force to keep grounded
+            verticalVelocity = -1f; // keep grounded
             if (isJumping) isJumping = false;
         }
         else
         {
-            moveDirection.y -= 20f * Time.deltaTime; // Gravity force
+            verticalVelocity -= gravity * Time.deltaTime;
         }
 
-        // Move the character
-        characterController.Move(moveDirection * Time.deltaTime);
+        Vector3 motion = new Vector3(0f, verticalVelocity, fwd);
+        cc.Move(motion * Time.deltaTime);
     }
 
-    // Placeholder for collision detection
+    // ── Slide coroutine ───────────────────────────────────────────────────
+
+    private IEnumerator SlideRoutine()
+    {
+        isSliding = true;
+        anim.SetTrigger(AnimSlide);
+
+        // Shrink collider centre/height so slide clears low obstacles
+        if (cc != null)
+        {
+            cc.height = 0.9f;
+            cc.center = new Vector3(0f, 0.45f, 0f);
+        }
+
+        yield return new WaitForSeconds(slideDuration);
+
+        // Restore collider
+        if (cc != null)
+        {
+            cc.height = 1.8f;
+            cc.center = new Vector3(0f, 0.9f, 0f);
+        }
+        isSliding = false;
+    }
+
+    // ── Collision ─────────────────────────────────────────────────────────
+
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.gameObject.CompareTag("Obstacle"))
+        if (!hit.gameObject.CompareTag("Obstacle")) return;
+
+        // If Scarab Shell (one-collision shield) is active, absorb and return
+        if (PowerUpManager.Instance != null && PowerUpManager.Instance.HasScarabShield())
         {
-            Debug.Log("Hit obstacle!");
-            // Trigger game over or take damage
+            PowerUpManager.Instance.ConsumeScarabShield();
+            return;
         }
+
+        // If Magic Carpet (invincibility) active, ignore
+        if (PowerUpManager.Instance != null && PowerUpManager.Instance.isMagicCarpetActive)
+            return;
+
+        anim.SetTrigger(AnimHit);
+        if (HealthSystem.Instance != null)
+            HealthSystem.Instance.TakeDamage(25f);
     }
+
+    // ── Reset ─────────────────────────────────────────────────────────────
 
     public void ResetPosition()
     {
-        transform.position = Vector3.zero; // Or a specific starting position
-        currentLane = 1;
-        targetLaneX = 0f;
-        isJumping = false;
-        isSliding = false;
-        moveDirection = Vector3.zero;
-        Debug.Log("PlayerController: Position reset.");
+        StopAllCoroutines();
+        currentLane      = 1;
+        targetX          = LaneX(1);
+        verticalVelocity = 0f;
+        isJumping        = false;
+        isSliding        = false;
+        laneCooldownTimer = 0f;
+        jumpCooldownTimer = 0f;
+
+        // Restore collider defaults
+        if (cc != null) { cc.height = 1.8f; cc.center = new Vector3(0f, 0.9f, 0f); }
+
+        Vector3 pos = transform.position;
+        pos.x = targetX;
+        transform.position = pos;
+
+        anim.SetBool(AnimIsRunning, false);
     }
+
+    // ── Helpers ───────────────────────────────────────────────────────────
+
+    private float LaneX(int lane)
+    {
+        // Lane 0 = -laneWidth, Lane 1 = 0, Lane 2 = +laneWidth
+        return (lane - 1) * laneWidth;
+    }
+
+    private void OnGameStarted() => anim.SetBool(AnimIsRunning, true);
+    private void OnGameStopped() => anim.SetBool(AnimIsRunning, false);
 }
