@@ -5,7 +5,7 @@ PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 25
   productName: Desert Dash: Camel Runner
-  companyName: SkyVision
+  companyName: Sky Vision
   applicationIdentifier:
     Android: com.skyvision.desertdash
     Standalone: com.skyvision.desertdash
@@ -292,7 +292,7 @@ PlayerSettings:
     Standalone: 0
     iPhone: 1
   architecture:
-    Android: 2
+    Android: 3
     Standalone: 1
     iPhone: 1
   buildTargetVRSettings: []
