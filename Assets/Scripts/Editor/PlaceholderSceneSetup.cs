@@ -36,6 +36,7 @@ public static class PlaceholderSceneSetup
         ("Obstacle_Cactus",  "Obstacle_Cactus",  6),
         ("Obstacle_Pillar",  "Obstacle_Pillar",  4),
         ("Obstacle_Pyramid", "Obstacle_Pyramid", 4),
+        ("Obstacle_Ruins",   "Obstacle_Ruins",   4),
 
         // Collectibles
         ("Collectible_Date",       "Collectible_Date",       10),
