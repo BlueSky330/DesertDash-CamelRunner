@@ -36,6 +36,12 @@ public class WorldMapManager : MonoBehaviour
         InitializeCountries();
     }
 
+    void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     void Start()
     {
         LoadUnlockState();
@@ -82,7 +88,11 @@ public class WorldMapManager : MonoBehaviour
     // ── Public API ────────────────────────────────────────────────────────────
 
     public CountryData GetCountryData(string countryName)
-        => allCountries.Find(c => c.countryName == countryName);
+    {
+        if (allCountries.Count == 0)
+            InitializeCountries();
+        return allCountries.Find(c => c.countryName == countryName);
+    }
 
     public bool IsCountryUnlocked(string countryName)
     {

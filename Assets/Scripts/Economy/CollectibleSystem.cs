@@ -44,6 +44,12 @@ public class CollectibleSystem : MonoBehaviour
         CurrentCoins = STARTING_COINS;
     }
 
+    void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     void Start()
     {
         onScoreChanged?.Invoke(currentScore);

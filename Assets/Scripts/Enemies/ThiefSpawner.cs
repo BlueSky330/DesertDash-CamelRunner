@@ -12,7 +12,7 @@ public class ThiefSpawner : MonoBehaviour
     private static readonly Dictionary<ThiefSystem.ThiefType, System.Type> thiefMeshTypes = new()
     {
         { ThiefSystem.ThiefType.DesertBandit, typeof(ProceduralDesertBanditMesh) },
-        { ThiefSystem.ThiefType.Ninja,        typeof(ProceduralNinjaThiefMesh)   },
+        { ThiefSystem.ThiefType.NinjaThief,   typeof(ProceduralNinjaThiefMesh)   },
         { ThiefSystem.ThiefType.Pirate,       typeof(ProceduralPirateMesh)       },
         { ThiefSystem.ThiefType.ShadowThief,  typeof(ProceduralShadowThiefMesh)  },
     };
