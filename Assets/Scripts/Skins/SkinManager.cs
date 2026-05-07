@@ -155,6 +155,6 @@ public class SkinManager : MonoBehaviour
         SaveEquippedSkin(skinName);
         onSkinEquipped?.Invoke(skinName);
         Debug.Log($"[SkinManager] Equipped: {skinName}");
-        // Player model swap hook — connect to PlayerController.ApplySkin(skin.skinPrefab)
+        // SkinSwapManager listens to onSkinEquipped and swaps materials
     }
 }

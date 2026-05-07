@@ -70,7 +70,7 @@ public class ThiefSystem : MonoBehaviour
     {
         // Determine current country (placeholder for WorldMapManager integration)
         // For now, let's assume Egypt for initial testing
-        string currentCountry = "Egypt"; 
+        string currentCountry = "Egypt";
 
         List<ThiefType> availableThieves = GetThievesForCountry(currentCountry);
         if (availableThieves.Count == 0)
@@ -84,9 +84,17 @@ public class ThiefSystem : MonoBehaviour
 
         Debug.Log($"Spawning {spawnedThiefType} at {spawnPosition} in {currentCountry}");
 
-        // In a real game, this would instantiate a thief prefab and set its behavior
-        // For now, we simulate the encounter logic directly.
-        SimulateThiefEncounter(spawnedThiefType, spawnPosition);
+        // Instantiate thief prefab via ThiefSpawner
+        if (ThiefSpawner.Instance != null)
+        {
+            ThiefSpawner.Instance.SpawnThief(spawnedThiefType, spawnPosition);
+        }
+        else
+        {
+            Debug.LogError("[ThiefSystem] ThiefSpawner not found in scene. Cannot spawn thief visually.");
+            // Fall back to simulation for testing
+            SimulateThiefEncounter(spawnedThiefType, spawnPosition);
+        }
     }
 
     private List<ThiefType> GetThievesForCountry(string country)

@@ -1,0 +1,104 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║           KayKit Desert Kit — Quick Import & Integration (40 min)          ║
+║                      Egypt Level Playable Unblock Path                      ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📥 DOWNLOAD (5 min)
+───────────────────
+1. Unity Asset Store: https://assetstore.unity.com/
+2. Search: "KayKit Desert"
+3. Click: KayKit Desert Kit (by Kay Lousberg)
+4. Add to My Assets → Download in Editor
+5. Window > Asset Store > Downloads > Import (accept all defaults)
+6. Wait for import to complete (30-60 sec)
+
+Result: Assets/KayKit_Desert_Course/ contains all models + materials + textures
+
+📋 PREFABS TO CREATE (from KayKit models)
+─────────────────────────────────────────
+Location: Assets/Prefabs/Placeholder/
+
+Drag KayKit model → Scene → Add Box Collider → Right-click → Prefab → Create Prefab
+
+┌─────────────────────────────────────────┐
+│ ROAD CHUNKS                              │
+├─────────────────────────────────────────┤
+│ RoadChunk_Straight.prefab               │ ← KayKit Dune (straight placement)
+│ RoadChunk_Curved.prefab                 │ ← KayKit Dune (curved placement)
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ OBSTACLES                               │
+├─────────────────────────────────────────┤
+│ Obstacle_Rock.prefab                    │ ← KayKit Rock_Large
+│ Obstacle_Cactus.prefab                  │ ← KayKit Cactus_Tall
+│ Obstacle_Pillar.prefab                  │ ← KayKit RuinWall Pillar
+│ Obstacle_Pyramid.prefab                 │ ← KayKit Pyramid_Small
+│ Obstacle_Ruins.prefab                   │ ← KayKit RuinWall Collapsed
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ PROPS (Background Parallax)             │
+├─────────────────────────────────────────┤
+│ Prop_Pyramid.prefab                     │ ← KayKit Pyramid (large)
+│ Prop_Obelisk.prefab                     │ ← KayKit Obelisk_Medium
+│ Prop_SkyPlane.prefab                    │ ← Keep existing or new sky quad
+└─────────────────────────────────────────┘
+
+🎨 RECOLOR TO EGYPT PALETTE (10 min)
+────────────────────────────────────
+For each KayKit material:
+
+Sand Beige      #D4A574  ← Base sand color
+Warm Yellow     #FFC93C  ← Highlights, lane markers
+Gold Accents    #FFD700  ← Decorative edges
+Terracotta      #E2725B  ← Stone, pillar color
+Palm Green      #66BB6A  ← Tree foliage
+Oasis Blue      #0088CC  ← Water, sky background
+
+In Unity Material Inspector:
+  → Set Base Color to target hex
+  → Increase Emission slightly
+  → Apply to prefab
+
+⚙️ SCENE SETUP (2 min)
+──────────────────────
+1. Open Gameplay scene in Unity Editor
+2. Menu: Tools > Camel Runner > Setup Placeholder Scene
+3. Menu: Tools > Camel Runner > Setup Egypt Level Scene
+4. Review console for warnings (should be none)
+
+✅ TEST IN PLAY MODE (5 min)
+────────────────────────────
+Press Play:
+  ✓ Stats panel shows ~60 FPS
+  ✓ Camel stands on sand road
+  ✓ Obstacles spawn (Rock, Cactus, Pillar, Pyramid, Ruins)
+  ✓ Background pyramids/obelisks visible (parallax scrolling)
+  ✓ Collectibles spawn and are pickupable
+  ✓ Game starts when pressing Space
+
+📦 COMMIT TO REPO (2 min)
+─────────────────────────
+git add Assets/Prefabs/Placeholder/*.prefab
+git add Assets/Materials/Egypt/
+git add Assets/KayKit_Desert_Course/  [OPTIONAL: if storing entire kit]
+git add Assets/Models/Egypt/KAYKIT_*.md
+
+git commit -m "M2: KayKit integration — Egypt level playable with real low-poly art
+
+- Imported KayKit Desert Kit (free tier)
+- Created prefabs: road chunks, obstacles, props
+- Recolored to Egypt palette
+- Egypt level 60 FPS, QA-ready
+
+Co-Authored-By: Paperclip <noreply@paperclip.ing>"
+
+git push origin main
+
+🎯 DONE!
+─────────
+Egypt level is now playable with real low-poly art.
+QA can begin playtesting immediately.
+
+📖 For detailed instructions: Assets/Models/Egypt/KAYKIT_IMPORT_WORKFLOW.md
