@@ -88,6 +88,9 @@ public class PlayerController : MonoBehaviour
         GameManager.OnGameOver    += OnGameStopped;
         GameManager.OnGameReset   += OnGameStopped;
 
+        // Subscribe to skin changes
+        SkinManager.onSkinEquipped += OnSkinEquipped;
+
         anim.SetBool(AnimIsRunning, false);
     }
 
@@ -96,6 +99,7 @@ public class PlayerController : MonoBehaviour
         GameManager.OnGameStarted -= OnGameStarted;
         GameManager.OnGameOver    -= OnGameStopped;
         GameManager.OnGameReset   -= OnGameStopped;
+        SkinManager.onSkinEquipped -= OnSkinEquipped;
     }
 
     void Update()
@@ -301,6 +305,58 @@ public class PlayerController : MonoBehaviour
         transform.position = pos;
 
         anim.SetBool(AnimIsRunning, false);
+    }
+
+    // ── Skin Swapping ──────────────────────────────────────────────────────
+
+    private void OnSkinEquipped(string skinName)
+    {
+        ApplySkin(skinName);
+    }
+
+    /// <summary>Apply a skin to the player model by updating renderers with skin materials.</summary>
+    public void ApplySkin(string skinName)
+    {
+        // Get all child renderers and update their materials
+        var renderers = GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
+        {
+            Debug.LogWarning($"[PlayerController] No renderers found on player model for skin '{skinName}'");
+            return;
+        }
+
+        // Try to load skin template from resources
+        string templateName = SanitizeSkinName(skinName);
+        SkinMaterialTemplate template = Resources.Load<SkinMaterialTemplate>($"Skins/SkinTemplate_{templateName}");
+
+        if (template != null)
+        {
+            Material skinMat = template.GetDefaultMaterial();
+            if (skinMat != null)
+            {
+                // Apply material to all renderers
+                foreach (var renderer in renderers)
+                {
+                    if (renderer != null)
+                        renderer.material = skinMat;
+                }
+                Debug.Log($"[PlayerController] Applied skin '{skinName}' with material");
+            }
+            else
+            {
+                Debug.LogWarning($"[PlayerController] No default material found in template for '{skinName}'");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[PlayerController] Skin template not found for '{skinName}'. Run Tools > Camel Runner > Setup Skin Materials");
+        }
+    }
+
+    /// <summary>Sanitize skin name to match template file naming.</summary>
+    private string SanitizeSkinName(string name)
+    {
+        return name.Replace(" ", "_").Replace("(", "").Replace(")", "");
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
