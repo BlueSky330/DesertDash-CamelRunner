@@ -6,7 +6,10 @@ public class CollectibleSystem : MonoBehaviour
     public static CollectibleSystem Instance { get; private set; }
 
     public int currentScore { get; private set; }
-    public int currentCoins { get; private set; }
+    public int CurrentCoins { get; private set; }
+
+    // Keep legacy accessor for any existing callers
+    public int currentCoins => CurrentCoins;
 
     // Collectible point values
     private const int DATE_POINTS = 1;
@@ -16,7 +19,7 @@ public class CollectibleSystem : MonoBehaviour
     private const int MYSTERY_BOX_MIN_POINTS = 15;
     private const int MYSTERY_BOX_MAX_POINTS = 50;
 
-    // Score to coin conversion rate
+    // Score to coin conversion rate (150 pts = 1 coin)
     private const int SCORE_TO_COIN_RATE = 150;
 
     public delegate void OnScoreChanged(int newScore);
@@ -30,39 +33,65 @@ public class CollectibleSystem : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        // Coins loaded by CoinEconomy.Start() via SetCoins(); start at 0 here.
+        currentScore = 0;
+        CurrentCoins = 0;
     }
 
     void Start()
     {
-        currentScore = 0;
-        currentCoins = 500; // Starter bonus
         onScoreChanged?.Invoke(currentScore);
-        onCoinsChanged?.Invoke(currentCoins);
+        onCoinsChanged?.Invoke(CurrentCoins);
     }
+
+    // ── Coin management ───────────────────────────────────────────────────────
+
+    /// <summary>Directly set the coin balance (called by CoinEconomy on load).</summary>
+    public void SetCoins(int amount)
+    {
+        CurrentCoins = Mathf.Max(0, amount);
+        onCoinsChanged?.Invoke(CurrentCoins);
+    }
+
+    public void AddCoins(int amount)
+    {
+        if (amount <= 0) return;
+        CurrentCoins += amount;
+        onCoinsChanged?.Invoke(CurrentCoins);
+        // Notify CoinEconomy so it can persist
+        CoinEconomy.Instance?.SyncFromCollectibleSystem(CurrentCoins);
+        Debug.Log($"[CollectibleSystem] Added {amount} coins. Total: {CurrentCoins}");
+    }
+
+    public bool SpendCoins(int amount)
+    {
+        if (CurrentCoins < amount)
+        {
+            Debug.Log($"[CollectibleSystem] Not enough coins. Have {CurrentCoins}, need {amount}.");
+            return false;
+        }
+        CurrentCoins -= amount;
+        onCoinsChanged?.Invoke(CurrentCoins);
+        CoinEconomy.Instance?.SyncFromCollectibleSystem(CurrentCoins);
+        Debug.Log($"[CollectibleSystem] Spent {amount}. Remaining: {CurrentCoins}");
+        return true;
+    }
+
+    // ── Score management ──────────────────────────────────────────────────────
 
     public void AddCollectible(CollectibleType type)
     {
         int pointsToAdd = 0;
         switch (type)
         {
-            case CollectibleType.Date:
-                pointsToAdd = DATE_POINTS;
-                break;
-            case CollectibleType.SilverCoin:
-                pointsToAdd = SILVER_COIN_POINTS;
-                break;
-            case CollectibleType.Gem:
-                pointsToAdd = GEM_POINTS;
-                break;
-            case CollectibleType.GoldenDate:
-                pointsToAdd = GOLDEN_DATE_POINTS;
-                break;
+            case CollectibleType.Date:        pointsToAdd = DATE_POINTS;        break;
+            case CollectibleType.SilverCoin:  pointsToAdd = SILVER_COIN_POINTS; break;
+            case CollectibleType.Gem:         pointsToAdd = GEM_POINTS;         break;
+            case CollectibleType.GoldenDate:  pointsToAdd = GOLDEN_DATE_POINTS; break;
             case CollectibleType.MysteryBox:
                 pointsToAdd = Random.Range(MYSTERY_BOX_MIN_POINTS, MYSTERY_BOX_MAX_POINTS + 1);
                 break;
@@ -71,49 +100,32 @@ public class CollectibleSystem : MonoBehaviour
         onScoreChanged?.Invoke(currentScore);
     }
 
+    /// <summary>Convert accumulated score to coins at rate 150 pts = 1 coin.</summary>
     public void ConvertScoreToCoins()
     {
         int coinsEarned = currentScore / SCORE_TO_COIN_RATE;
         if (coinsEarned > 0)
         {
+            currentScore %= SCORE_TO_COIN_RATE; // retain remainder
             AddCoins(coinsEarned);
-            currentScore %= SCORE_TO_COIN_RATE; // Keep remainder
             onScoreChanged?.Invoke(currentScore);
-            Debug.Log($"Converted {coinsEarned * SCORE_TO_COIN_RATE} score to {coinsEarned} coins.");
-        }
-        else
-        {
-            Debug.Log("Not enough score to convert to coins.");
+            Debug.Log($"[CollectibleSystem] Converted score → {coinsEarned} coins.");
         }
     }
 
-    public void AddCoins(int amount)
-    {
-        currentCoins += amount;
-        onCoinsChanged?.Invoke(currentCoins);
-        Debug.Log($"Added {amount} coins. Total: {currentCoins}");
-    }
-
-    public bool SpendCoins(int amount)
-    {
-        if (currentCoins >= amount)
-        {
-            currentCoins -= amount;
-            onCoinsChanged?.Invoke(currentCoins);
-            Debug.Log($"Spent {amount} coins. Remaining: {currentCoins}");
-            return true;
-        }
-        Debug.Log($"Not enough coins to spend {amount}. Current: {currentCoins}");
-        return false;
-    }
-
-    public void ResetScoreAndCoins()
+    /// <summary>Reset score only; coins persist across sessions via CoinEconomy.</summary>
+    public void ResetScore()
     {
         currentScore = 0;
-        currentCoins = 500; // Reset to starter bonus
         onScoreChanged?.Invoke(currentScore);
-        onCoinsChanged?.Invoke(currentCoins);
-        Debug.Log("CollectibleSystem: Score and coins reset.");
+    }
+
+    /// <summary>Legacy reset — kept for compatibility with existing callers.</summary>
+    public void ResetScoreAndCoins()
+    {
+        ResetScore();
+        // Do not wipe persisted coins; CoinEconomy is the authority.
+        Debug.Log("[CollectibleSystem] Score reset. Coin balance preserved (managed by CoinEconomy).");
     }
 
     public enum CollectibleType

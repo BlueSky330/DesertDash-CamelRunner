@@ -1,27 +1,50 @@
 {
+  "_comment": "Camel Runner — Ad Configuration. Replace placeholder IDs with production values before release.",
+
   "adMob": {
+    "appId_android": "ca-app-pub-3940256099942544~3347511713",
+    "appId_ios":     "ca-app-pub-3940256099942544~1458002511",
+    "rewardedAdUnitId_android": "ca-app-pub-3940256099942544/5224354917",
+    "rewardedAdUnitId_ios":     "ca-app-pub-3940256099942544/1712485313",
     "maxAdContentRating": "G",
-    "blockedCategories": ["Gambling", "Alcohol", "Dating", "Inappropriate"],
-    "appId": "ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy",
-    "rewardedAdUnitId": "ca-app-pub-xxxxxxxxxxxxxxxx/zzzzzzzzzz"
+    "blockedCategories": ["Gambling", "Alcohol", "Dating", "Adult", "Inappropriate"],
+    "_note_contentFilter": "G rating + category blocklist set in AdMob dashboard → Blocking controls → Sensitive categories. Programmatic maxAdContentRating(G) also applied at SDK init."
   },
+
   "unityAds": {
-    "gameIdAndroid": "1234567",
-    "gameIdIOS": "7654321",
-    "rewardedAdUnitIdAndroid": "Rewarded_Android",
-    "rewardedAdUnitIdIOS": "Rewarded_iOS"
+    "gameId_android": "1234567",
+    "gameId_ios":     "7654321",
+    "rewardedAdUnitId_android": "Rewarded_Android",
+    "rewardedAdUnitId_ios":     "Rewarded_iOS",
+    "_note_contentFilter": "Set content rating to Everyone/Family in Unity Ads dashboard → Project → Ad Quality → Content maturity."
   },
+
+  "ironSource": {
+    "appKey": "YOUR_LEVPLAY_APP_KEY",
+    "mediationWaterfall": [
+      { "network": "ironSource",  "priority": 1, "role": "primary demand" },
+      { "network": "AdMob",       "priority": 2, "role": "demand partner via LevelPlay" },
+      { "network": "UnityAds",    "priority": 3, "role": "demand partner via LevelPlay" }
+    ],
+    "_note_setup": "Configure waterfall in LevelPlay (ironSource) dashboard. AdMob and Unity Ads adapters must be added as demand partners there.",
+    "_note_contentFilter": "Enable Brand Safety in LevelPlay dashboard → Ad Quality → Block lists. Block: Gambling, Alcohol, Dating, Adult."
+  },
+
   "adFrequency": {
-    "minTimeBetweenAdsSeconds": 30,
-    "maxAdsPerHour": 4
+    "minSecondsBetweenRewardedAds": 30,
+    "maxRewardedAdsPerHour": 6,
+    "_note": "Rewarded ads are opt-in only; frequency cap applies to avoid burnout."
   },
-  "rewards": {
-    "quickWatchCoins": 120,
-    "standardWatchCoins": 250,
-    "premiumWatchCoins": 400,
-    "premiumWatchBonusPowerUp": "MagicCarpet",
-    "healthQuickRecovery": 25,
-    "healthStandardRecovery": 50,
-    "healthPremiumRecovery": 100
+
+  "rewardedAdPurposes": {
+    "revive":          { "description": "Continue run after game-over (full health restore + resume)" },
+    "doubleCoins":     { "description": "Double coins earned during the completed run" },
+    "healthRestore":   { "description": "Restore partial health mid-run (standardAdRecovery amount)" },
+    "freeShopReward":  { "description": "Free shop bonus", "coinAmount": 100 }
+  },
+
+  "rewardCompletion": {
+    "policy": "100_percent_only",
+    "_note": "Rewards fire ONLY from the SDK's OnUserEarnedReward / onRewardedVideoAdRewardedEvent callback. Skipped or closed-without-completion ads do not grant rewards."
   }
 }

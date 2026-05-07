@@ -1,72 +1,117 @@
 using UnityEngine;
 
+/// <summary>
+/// Persistent coin wallet. Owns the canonical coin balance stored in PlayerPrefs.
+/// CollectibleSystem tracks in-session score; CoinEconomy owns the durable wallet.
+/// </summary>
 public class CoinEconomy : MonoBehaviour
 {
     public static CoinEconomy Instance { get; private set; }
+
+    private const string COINS_PREF_KEY = "PlayerCoins";
+    private const int STARTING_COINS = 500;
+
+    public int Coins { get; private set; }
+
+    public delegate void OnCoinsChanged(int newAmount);
+    public static event OnCoinsChanged onCoinsChanged;
 
     void Awake()
     {
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        LoadCoins();
     }
 
-    // Generic purchase method for any item
-    public bool TryPurchase(int cost, string itemName)
+    // ── Persistence ──────────────────────────────────────────────────────────
+
+    private void LoadCoins()
     {
-        if (CollectibleSystem.Instance.SpendCoins(cost))
+        Coins = PlayerPrefs.GetInt(COINS_PREF_KEY, STARTING_COINS);
+        // Sync to CollectibleSystem after it has initialized (called from Start)
+    }
+
+    void Start()
+    {
+        // Push persisted wallet into CollectibleSystem so both stay in sync
+        if (CollectibleSystem.Instance != null)
+            CollectibleSystem.Instance.SetCoins(Coins);
+        onCoinsChanged?.Invoke(Coins);
+    }
+
+    private void SaveCoins()
+    {
+        PlayerPrefs.SetInt(COINS_PREF_KEY, Coins);
+        PlayerPrefs.Save();
+    }
+
+    // ── Public API ────────────────────────────────────────────────────────────
+
+    /// <summary>Earn coins (from ad reward, IAP, etc.).</summary>
+    public void EarnCoins(int amount)
+    {
+        if (amount <= 0) return;
+        Coins += amount;
+        CollectibleSystem.Instance.SetCoins(Coins);
+        SaveCoins();
+        onCoinsChanged?.Invoke(Coins);
+        Debug.Log($"[CoinEconomy] Earned {amount}. Wallet: {Coins}");
+    }
+
+    /// <summary>
+    /// Spend coins. Returns true and persists on success; returns false if insufficient.
+    /// </summary>
+    public bool TrySpend(int amount, string reason = "")
+    {
+        if (amount <= 0) return true;
+        if (Coins < amount)
         {
-            Debug.Log($"Successfully purchased {itemName} for {cost} coins.");
-            return true;
-        }
-        else
-        {
-            Debug.Log($"Not enough coins to purchase {itemName}. Cost: {cost}, Current: {CollectibleSystem.Instance.currentCoins}");
-            // UIManager.Instance.ShowNotEnoughCoinsPrompt(); // Placeholder for UI interaction
+            Debug.Log($"[CoinEconomy] Insufficient coins for '{reason}'. Have {Coins}, need {amount}.");
             return false;
         }
+        Coins -= amount;
+        CollectibleSystem.Instance.SetCoins(Coins);
+        SaveCoins();
+        onCoinsChanged?.Invoke(Coins);
+        Debug.Log($"[CoinEconomy] Spent {amount} on '{reason}'. Wallet: {Coins}");
+        return true;
     }
 
-    // Method to handle coin earning from ads (called by AdManager)
-    public void EarnCoinsFromAd(int amount)
+    /// <summary>Generic purchase helper — logs item name on success.</summary>
+    public bool TryPurchase(int cost, string itemName)
     {
-        CollectibleSystem.Instance.AddCoins(amount);
-        Debug.Log($"Earned {amount} coins from ad. Total: {CollectibleSystem.Instance.currentCoins}");
+        bool ok = TrySpend(cost, itemName);
+        if (ok) Debug.Log($"[CoinEconomy] Purchased '{itemName}' for {cost} coins.");
+        return ok;
     }
 
-    // Method to handle score to coin conversion (called by UIManager/CollectibleSystem)
+    /// <summary>Called by AdManager after a rewarded ad completes 100%.</summary>
+    public void EarnCoinsFromAd(int amount) => EarnCoins(amount);
+
+    /// <summary>Flush end-of-run score conversion into wallet.</summary>
     public void ConvertScoreToCoins()
     {
+        int before = Coins;
         CollectibleSystem.Instance.ConvertScoreToCoins();
+        // CollectibleSystem.AddCoins calls SetCoins which updates Coins via sync
+        // Sync back from CollectibleSystem after conversion
+        Coins = CollectibleSystem.Instance.CurrentCoins;
+        SaveCoins();
+        onCoinsChanged?.Invoke(Coins);
+        Debug.Log($"[CoinEconomy] Score conversion: {before} → {Coins} coins.");
     }
 
-    // Placeholder for saving/loading coin data (e.g., using PlayerPrefs or a more robust save system)
-    public void SaveCoinData()
+    /// <summary>Called by CollectibleSystem when its coin value changes externally.</summary>
+    public void SyncFromCollectibleSystem(int newCoins)
     {
-        PlayerPrefs.SetInt("PlayerCoins", CollectibleSystem.Instance.currentCoins);
-        PlayerPrefs.Save();
-        Debug.Log("Coin data saved.");
-    }
-
-    public void LoadCoinData()
-    {
-        if (PlayerPrefs.HasKey("PlayerCoins"))
-        {
-            // This would ideally set the CollectibleSystem.Instance.currentCoins directly
-            // For now, we just log it.
-            int loadedCoins = PlayerPrefs.GetInt("PlayerCoins");
-            Debug.Log($"Loaded {loadedCoins} coins.");
-            // CollectibleSystem.Instance.currentCoins = loadedCoins; // Needs a public setter or a method in CollectibleSystem
-        }
-        else
-        {
-            Debug.Log("No saved coin data found.");
-        }
+        if (Coins == newCoins) return;
+        Coins = newCoins;
+        SaveCoins();
+        onCoinsChanged?.Invoke(Coins);
     }
 }

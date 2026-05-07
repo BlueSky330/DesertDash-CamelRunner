@@ -1,40 +1,57 @@
 using UnityEngine;
 using System;
-// Placeholder for GoogleMobileAds namespace
+// Uncomment when SDKs are installed:
 // using GoogleMobileAds.Api;
-// Placeholder for Unity.Advertisement.IAds namespace
-// using Unity.Advertisement.IAds;
+// using Unity.Services.Core;
+// using Unity.Services.Mediation;
 
+/// <summary>
+/// Direct SDK integration for AdMob (primary) and Unity Ads (fallback).
+/// Each Show* method returns true if an ad was presented, false if not ready.
+///
+/// CRITICAL: Rewards are fired ONLY from the SDK's OnUserEarnedReward / OnAdRewarded
+/// callback — never from the OnAdClosed callback. This enforces the
+/// "reward on 100% completion only" contract.
+///
+/// Setup:
+///   AdMob  — add "com.google.mobile-ads-unity" package; replace test ad unit IDs.
+///   UnityAds — add "com.unity.services.mediation" package; set Game ID in dashboard.
+/// </summary>
 public class AdSDKIntegration : MonoBehaviour
 {
     public static AdSDKIntegration Instance { get; private set; }
 
-    // AdMob Ad Unit IDs (placeholders)
-    public string adMobRewardedAdUnitId = "ca-app-pub-3940256099942544/5224354917"; // Test AdMob ID
+    // ── Ad Unit IDs (test IDs — replace before production) ───────────────────
 
-    // Unity Ads Ad Unit IDs (placeholders)
-    public string unityAdsGameId = "1234567"; // Placeholder
-    public string unityAdsRewardedAdUnitId = "Rewarded_Android"; // Placeholder
+    [Header("AdMob Test IDs (Android)")]
+    public string adMobAppId              = "ca-app-pub-3940256099942544~3347511713";
+    public string adMobRewardedAdUnitId   = "ca-app-pub-3940256099942544/5224354917";
 
-    private bool isAdMobInitialized = false;
-    private bool isUnityAdsInitialized = false;
+    [Header("AdMob Test IDs (iOS)")]
+    public string adMobAppIdIOS           = "ca-app-pub-3940256099942544~1458002511";
+    public string adMobRewardedAdUnitIdIOS = "ca-app-pub-3940256099942544/1712485313";
 
-    // Placeholder for AdMob RewardedAd object
-    // private RewardedAd adMobRewardedAd;
+    [Header("Unity Ads")]
+    public string unityAdsGameIdAndroid   = "1234567";
+    public string unityAdsGameIdIOS       = "7654321";
+    public string unityAdsRewardedUnitId  = "Rewarded_Android";
 
-    public event Action<bool, AdManager.AdPurpose> OnRewardedAdFinished;
+    // ── Internal state ────────────────────────────────────────────────────────
+
+    private bool _adMobInitialized;
+    private bool _unityAdsInitialized;
+    private AdManager.AdPurpose _pendingPurpose;
+
+    // Callback registered by AdManager
+    private Action<bool, AdManager.AdPurpose> _completionCallback;
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
@@ -43,128 +60,134 @@ public class AdSDKIntegration : MonoBehaviour
         InitializeUnityAds();
     }
 
+    // ── Callback registration (called by AdManager) ───────────────────────────
+
+    public void SubscribeCompletionCallback(Action<bool, AdManager.AdPurpose> cb)
+        => _completionCallback += cb;
+
+    public void UnsubscribeCompletionCallback(Action<bool, AdManager.AdPurpose> cb)
+        => _completionCallback -= cb;
+
+    // ── AdMob ─────────────────────────────────────────────────────────────────
+
     private void InitializeAdMob()
     {
-        Debug.Log("Initializing Google Mobile Ads SDK...");
-        // MobileAds.Initialize(initStatus =>
-        // {
-        //     // Set max ad content rating to G
-        //     MobileAds.SetRequestConfiguration(new RequestConfiguration.Builder().SetMaxAdContentRating(MaxAdContentRating.G).build());
-        //     // AdMob also allows blocking categories in the dashboard (Content -> Blocking controls -> Block adult categories)
-        //     // Programmatic blocking of categories is not directly supported via SDK, but through dashboard settings.
+        Debug.Log("[AdSDK] Initializing Google Mobile Ads…");
 
+        // MobileAds.Initialize(status =>
         // {
-        //     isAdMobInitialized = true;
-        //     Debug.Log("AdMob initialization complete.");
-        //     // Ensure content filtering is applied as per ad_config.json
-        //     // This would typically be handled by AdMob dashboard settings.
-
+        //     // Content rating: max G — blocks adult/gambling/dating/alcohol
+        //     var config = new RequestConfiguration.Builder()
+        //         .SetMaxAdContentRating(MaxAdContentRating.G)
+        //         .build();
+        //     MobileAds.SetRequestConfiguration(config);
+        //     _adMobInitialized = true;
+        //     Debug.Log("[AdSDK] AdMob initialized.");
         //     LoadAdMobRewardedAd();
         // });
-        isAdMobInitialized = true; // Simulate initialization
-        Debug.Log("AdMob (simulated) initialization complete.");
+
+        _adMobInitialized = true; // editor simulation
+        Debug.Log("[AdSDK] AdMob (simulated) initialized.");
         LoadAdMobRewardedAd();
     }
 
     private void LoadAdMobRewardedAd()
     {
-        if (!isAdMobInitialized) return;
+        if (!_adMobInitialized) return;
+        Debug.Log("[AdSDK] Loading AdMob rewarded ad…");
 
-        Debug.Log("Loading AdMob rewarded ad...");
-        // if (adMobRewardedAd != null)
+        // string unitId = Application.platform == RuntimePlatform.IPhonePlayer
+        //     ? adMobRewardedAdUnitIdIOS : adMobRewardedAdUnitId;
+        // RewardedAd.Load(unitId, new AdRequest(), (ad, error) =>
         // {
-        //     adMobRewardedAd.Destroy();
-        // }
-        // var adRequest = new AdRequest.Builder().Build();
-        // RewardedAd.Load(adMobRewardedAdUnitId, adRequest, (RewardedAd rewardedAd, AdError error) =>
-        // {
-        //     if (error != null || rewardedAd == null)
-        //     {
-        //         Debug.LogError("Rewarded ad failed to load with error: " + error);
-        //         return;
-        //     }
-        //     Debug.Log("Rewarded ad loaded successfully.");
-        //     adMobRewardedAd = rewardedAd;
-        //     adMobRewardedAd.OnAdFullScreenContentClosed += HandleAdMobRewardedAdClosed;
-        //     adMobRewardedAd.OnAdFullScreenContentFailed += HandleAdMobRewardedAdFailed;
+        //     if (error != null) { Debug.LogError("[AdSDK] AdMob load error: " + error); return; }
+        //     _adMobRewardedAd = ad;
+        //     // Wire reward callback — fires ONLY on 100% completion
+        //     _adMobRewardedAd.OnAdFullScreenContentClosed += () => LoadAdMobRewardedAd();
         // });
-        Debug.Log("AdMob rewarded ad (simulated) loaded successfully.");
+
+        Debug.Log("[AdSDK] AdMob rewarded ad (simulated) ready.");
     }
 
+    /// <returns>True if ad was shown; false if not loaded.</returns>
     public bool ShowAdMobRewardedAd(AdManager.AdPurpose purpose)
     {
-        // if (adMobRewardedAd != null && adMobRewardedAd.CanShowAd())
+        if (!_adMobInitialized)
+        {
+            Debug.LogWarning("[AdSDK] AdMob not initialized.");
+            return false;
+        }
+
+        _pendingPurpose = purpose;
+        Debug.Log($"[AdSDK] Showing AdMob rewarded ad for: {purpose}");
+
+        // if (_adMobRewardedAd != null && _adMobRewardedAd.CanShowAd())
         // {
-        //     adMobRewardedAd.Show((RewardItem reward) =>
+        //     _adMobRewardedAd.Show(reward =>
         //     {
-        //         Debug.Log($"AdMob rewarded ad granted reward: {reward.Type} {reward.Amount}");
-        //         OnRewardedAdFinished?.Invoke(true, purpose);
+        //         // This closure fires ONLY when the user earns the reward (100% watched)
+        //         Debug.Log("[AdSDK] AdMob reward earned.");
+        //         _completionCallback?.Invoke(true, _pendingPurpose);
+        //         LoadAdMobRewardedAd(); // pre-load next
         //     });
         //     return true;
         // }
-        Debug.LogWarning("AdMob rewarded ad not ready or failed to show (simulated).");
-        OnRewardedAdFinished?.Invoke(false, purpose); // Simulate failure
+
+        // Editor/test simulation — invoke callback as if user watched 100%
+#if UNITY_EDITOR
+        Debug.Log("[AdSDK] EDITOR: Simulating AdMob 100% completion.");
+        _completionCallback?.Invoke(true, purpose);
+        return true;
+#else
+        Debug.LogWarning("[AdSDK] AdMob rewarded ad not ready.");
         return false;
+#endif
     }
 
-    // private void HandleAdMobRewardedAdClosed()
-    // {
-    //     Debug.Log("AdMob rewarded ad closed.");
-    //     LoadAdMobRewardedAd(); // Pre-load next ad
-    // }
-
-    // private void HandleAdMobRewardedAdFailed(AdError error)
-    // {
-    //     Debug.LogError("AdMob rewarded ad failed to show: " + error);
-    //     LoadAdMobRewardedAd(); // Pre-load next ad
-    // }
+    // ── Unity Ads ─────────────────────────────────────────────────────────────
 
     private void InitializeUnityAds()
     {
-        Debug.Log("Initializing Unity Ads SDK...");
-        // Advertisement.Initialize(unityAdsGameId, false, this);
-        // Unity Ads content filtering is typically managed through the Unity Dashboard.
-        // Ensure content rating is set to "Everyone" or "Family" in Unity Ads settings.
-
-        isUnityAdsInitialized = true; // Simulate initialization
-        Debug.Log("Unity Ads (simulated) initialization complete.");
+        Debug.Log("[AdSDK] Initializing Unity Ads…");
+        // string gameId = Application.platform == RuntimePlatform.IPhonePlayer
+        //     ? unityAdsGameIdIOS : unityAdsGameIdAndroid;
+        // Advertisement.Initialize(gameId, testMode: false, this);
+        _unityAdsInitialized = true;
+        Debug.Log("[AdSDK] Unity Ads (simulated) initialized.");
     }
 
+    /// <returns>True if ad was shown; false if not ready.</returns>
     public bool ShowUnityAdsRewardedAd(AdManager.AdPurpose purpose)
     {
-        // if (isUnityAdsInitialized && Advertisement.IsReady(unityAdsRewardedAdUnitId))
+        if (!_unityAdsInitialized)
+        {
+            Debug.LogWarning("[AdSDK] Unity Ads not initialized.");
+            return false;
+        }
+
+        _pendingPurpose = purpose;
+
+        // if (Advertisement.IsReady(unityAdsRewardedUnitId))
         // {
-        //     var options = new ShowOptions { resultCallback = (ShowResult result) => HandleUnityAdsRewardedAdResult(result, purpose) };
-        //     Advertisement.Show(unityAdsRewardedAdUnitId, options);
+        //     Advertisement.Show(unityAdsRewardedUnitId, new ShowOptions
+        //     {
+        //         resultCallback = result =>
+        //         {
+        //             // ShowResult.Finished = user watched 100% (SDK guarantee)
+        //             bool completed = result == ShowResult.Finished;
+        //             _completionCallback?.Invoke(completed, _pendingPurpose);
+        //         }
+        //     });
         //     return true;
         // }
-        Debug.LogWarning("Unity Ads rewarded ad not ready or failed to show (simulated).");
-        OnRewardedAdFinished?.Invoke(false, purpose); // Simulate failure
+
+#if UNITY_EDITOR
+        Debug.Log("[AdSDK] EDITOR: Simulating Unity Ads 100% completion.");
+        _completionCallback?.Invoke(true, purpose);
+        return true;
+#else
+        Debug.LogWarning("[AdSDK] Unity Ads not ready.");
         return false;
+#endif
     }
-
-    // private void HandleUnityAdsRewardedAdResult(ShowResult result, AdManager.AdPurpose purpose)
-    // {
-    //     switch (result)
-    //     {
-    //         case ShowResult.Finished:
-    //             Debug.Log("Unity Ads rewarded ad finished.");
-    //             OnRewardedAdFinished?.Invoke(true, purpose);
-    //             break;
-    //         case ShowResult.Skipped:
-    //             Debug.LogWarning("Unity Ads rewarded ad skipped.");
-    //             OnRewardedAdFinished?.Invoke(false, purpose);
-    //             break;
-    //         case ShowResult.Failed:
-    //             Debug.LogError("Unity Ads rewarded ad failed.");
-    //             OnRewardedAdFinished?.Invoke(false, purpose);
-    //             break;
-    //     }
-    // }
-
-    // Implement IUnityAdsInitializationListener and IUnityAdsLoadListener if using Unity Ads
-    // public void OnInitializationComplete() { Debug.Log("Unity Ads Initialization Complete."); isUnityAdsInitialized = true; }
-    // public void OnInitializationFailed(UnityAdsInitializationError error, string message) { Debug.LogError($"Unity Ads Initialization Failed: {error} - {message}"); }
-    // public void OnUnityAdsAdLoaded(string placementId) { Debug.Log($"Unity Ads Ad Loaded: {placementId}"); }
-    // public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message) { Debug.LogError($"Unity Ads Failed to Load: {placementId} - {error} - {message}"); }
 }
