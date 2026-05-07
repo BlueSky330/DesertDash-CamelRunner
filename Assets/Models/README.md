@@ -66,7 +66,7 @@ Assets/Models/
    - Verify import in Unity
 
 ### Reference Materials
-- Concept art: `Assets/Textures/ConceptArt/camel_camel_concept.png`
+- Concept art: `Assets/Textures/ConceptArt/camel_concept.png`
 - Design doc: `docs/M3_Production/M3_PRODUCTION_DESIGN.md` (Section 2: Camel Default Model Spec)
 - Generation prompt: `docs/M3_Production/Camel_Default_Generation_Prompt.md`
 - Style reference: Crossy Road / Subway Surfers (low-poly, exaggerated proportions, vibrant colors)

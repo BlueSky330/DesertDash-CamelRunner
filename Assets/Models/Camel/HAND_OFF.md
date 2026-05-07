@@ -119,7 +119,7 @@ Before Phase 2 (animations, May 22), your work must satisfy ALL:
 
 ## Reference Materials
 
-**Concept Art**: `Assets/Textures/ConceptArt/camel_camel_concept.png`  
+**Concept Art**: `Assets/Textures/ConceptArt/camel_concept.png`  
 **Design Spec**: `docs/M3_Production/M3_PRODUCTION_DESIGN.md` (Section 2)  
 **Color Palette**: 
 - Sandy tan body: RGB (210, 180, 140)

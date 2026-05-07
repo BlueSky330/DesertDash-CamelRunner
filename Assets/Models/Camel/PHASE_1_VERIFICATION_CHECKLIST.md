@@ -128,7 +128,7 @@ Complete ALL of the above before proceeding to Phase 2.
 ### Final Verification
 - [ ] **Tri Count Recorded**: _____ tris (must be <1,200)
 - [ ] **No Blockers**: All checks passed, no outstanding issues
-- [ ] **Reference Matches**: Model visually matches `Assets/Textures/ConceptArt/camel_camel_concept.png`
+- [ ] **Reference Matches**: Model visually matches `Assets/Textures/ConceptArt/camel_concept.png`
 - [ ] **Timeline On Track**: Completed by May 21, 2026
 
 ### Hand-Off Ready

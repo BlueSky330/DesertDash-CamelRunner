@@ -116,7 +116,7 @@ See `PHASE_1_EXECUTION.md` for full checklist.
 **Questions?**
 - Full details: See `PHASE_1_EXECUTION.md`
 - Design spec: See `docs/M3_Production/M3_PRODUCTION_DESIGN.md`
-- Concept art: See `Assets/Textures/ConceptArt/camel_camel_concept.png`
+- Concept art: See `Assets/Textures/ConceptArt/camel_concept.png`
 
 ---
 
