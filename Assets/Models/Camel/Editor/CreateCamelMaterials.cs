@@ -44,20 +44,18 @@ public class CreateCamelMaterials
         Material mat = new Material(Shader.Find(SHADER_NAME));
         mat.name = "Camel_Pharaoh";
 
-        // Main body - tan/sand
-        mat.SetColor("_Color", HexToColor("#C4A574"));
+        // Main body - tan/sand (spec: #D4A574)
+        mat.SetColor("_Color", HexToColor("#D4A574"));
         mat.SetFloat("_Metallic", 0.0f);
         mat.SetFloat("_Glossiness", 0.5f);
 
         SaveMaterial(mat, "Camel_Pharaoh");
 
-        // Notes: Additional materials for sub-meshes:
-        // - Camel_Pharaoh_Gold (for collar, bands, headdress stripes gold parts)
-        // - Camel_Pharaoh_GoldGem (for sapphire collar center)
-        // - Camel_Pharaoh_Blue (for headdress blue stripes)
-
+        // Gold Nemes headdress, ornate collar, golden anklets
         CreateSubMaterial("Camel_Pharaoh_Gold", HexToColor("#FFD700"), 0.8f, 0.7f);
-        CreateSubMaterial("Camel_Pharaoh_GoldGem", HexToColor("#0F52BA"), 1.0f, 0.9f);
+        // Sapphire gem in collar center (spec: #0047AB)
+        CreateSubMaterial("Camel_Pharaoh_GoldGem", HexToColor("#0047AB"), 1.0f, 0.9f);
+        // Headdress blue stripes
         CreateSubMaterial("Camel_Pharaoh_Blue", HexToColor("#4169E1"), 0.8f, 0.7f);
     }
 
@@ -66,18 +64,16 @@ public class CreateCamelMaterials
         Material mat = new Material(Shader.Find(SHADER_NAME));
         mat.name = "Camel_Racing";
 
-        // Main body - tan/sand
-        mat.SetColor("_Color", HexToColor("#C4A574"));
+        // Main body - tan/sand (spec: #D4A574)
+        mat.SetColor("_Color", HexToColor("#D4A574"));
         mat.SetFloat("_Metallic", 0.0f);
         mat.SetFloat("_Glossiness", 0.5f);
 
         SaveMaterial(mat, "Camel_Racing");
 
-        // Notes: Additional materials for sub-meshes:
-        // - Camel_Racing_Black (for goggles, harness)
-        // - Camel_Racing_Yellow (for visor, stripes)
-
-        CreateSubMaterial("Camel_Racing_Black", HexToColor("#1a1a1a"), 0.2f, 0.4f);
+        // Racing goggles and harness (spec: #000000 black)
+        CreateSubMaterial("Camel_Racing_Black", HexToColor("#000000"), 0.2f, 0.4f);
+        // Racing visor and chevron stripe bands (spec: #FFD700 yellow)
         CreateSubMaterial("Camel_Racing_Yellow", HexToColor("#FFD700"), 0.6f, 0.7f);
     }
 
