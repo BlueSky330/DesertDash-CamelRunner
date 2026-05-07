@@ -2,26 +2,25 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// Spawns thief character prefabs based on the ThiefType and spawn position.
-/// Works in tandem with ThiefSystem to instantiate visual representations of thieves.
-///
-/// Prefab references are set via inspector, allowing artists to swap models without code changes.
+/// Spawns thief characters at runtime via procedural mesh components.
+/// No prefab assets are required — each thief type maps to its ProceduralXxxMesh script
+/// which builds the mesh in Awake(), keeping the pipeline fully headless-safe.
 /// </summary>
 public class ThiefSpawner : MonoBehaviour
 {
-    [System.Serializable]
-    public class ThiefPrefabEntry
+    // Maps each ThiefType to its procedural mesh component. AddComponent builds the mesh on Awake.
+    private static readonly Dictionary<ThiefSystem.ThiefType, System.Type> thiefMeshTypes = new()
     {
-        public ThiefSystem.ThiefType thiefType;
-        public GameObject prefab;
-    }
-
-    [SerializeField] private List<ThiefPrefabEntry> thiefPrefabs = new List<ThiefPrefabEntry>();
+        { ThiefSystem.ThiefType.DesertBandit, typeof(ProceduralDesertBanditMesh) },
+        { ThiefSystem.ThiefType.Ninja,        typeof(ProceduralNinjaThiefMesh)   },
+        { ThiefSystem.ThiefType.Pirate,       typeof(ProceduralPirateMesh)       },
+        { ThiefSystem.ThiefType.ShadowThief,  typeof(ProceduralShadowThiefMesh)  },
+    };
 
     [Header("Spawn Settings")]
-    [SerializeField] private float aheadDistance = 15f;     // Z distance ahead of player
-    [SerializeField] private float behindDistance = -10f;   // Z distance behind player
-    [SerializeField] private float sideOffsetX = 5f;        // X offset for side spawn
+    [SerializeField] private float aheadDistance = 15f;
+    [SerializeField] private float behindDistance = -10f;
+    [SerializeField] private float sideOffsetX = 5f;
 
     public static ThiefSpawner Instance { get; private set; }
 
@@ -41,34 +40,35 @@ public class ThiefSpawner : MonoBehaviour
     /// </summary>
     public void SpawnThief(ThiefSystem.ThiefType thiefType, ThiefSystem.ThiefSpawnPosition spawnPosition)
     {
-        GameObject prefab = GetThiefPrefab(thiefType);
-        if (prefab == null)
-        {
-            Debug.LogError($"[ThiefSpawner] No prefab found for {thiefType}");
-            return;
-        }
-
         Vector3 spawnPos = CalculateSpawnPosition(spawnPosition);
-        Quaternion spawnRot = Quaternion.identity;
-
-        // Instantiate thief at calculated position
-        GameObject thiefGO = Instantiate(prefab, spawnPos, spawnRot);
+        GameObject thiefGO = BuildThief(thiefType, spawnPos, Quaternion.identity);
         thiefGO.name = $"Thief_{thiefType}_{Time.frameCount}";
-
         Debug.Log($"[ThiefSpawner] Spawned {thiefType} at {spawnPosition} ({spawnPos})");
     }
 
     /// <summary>
-    /// Get the prefab for a specific thief type.
+    /// Instantiate a thief GameObject entirely at runtime — no prefab required.
     /// </summary>
-    private GameObject GetThiefPrefab(ThiefSystem.ThiefType thiefType)
+    private GameObject BuildThief(ThiefSystem.ThiefType type, Vector3 position, Quaternion rotation)
     {
-        foreach (var entry in thiefPrefabs)
-        {
-            if (entry.thiefType == thiefType)
-                return entry.prefab;
-        }
-        return null;
+        var go = new GameObject(type.ToString());
+        go.transform.SetPositionAndRotation(position, rotation);
+
+        // Procedural mesh component builds the visual mesh on its own Awake()
+        go.AddComponent(thiefMeshTypes[type]);
+
+        var col = go.AddComponent<CapsuleCollider>();
+        col.isTrigger = true;
+        col.radius = 0.35f;
+        col.height = 1.8f;
+
+        var rb = go.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
+
+        go.AddComponent<Animator>();
+        go.tag = "Enemy";
+
+        return go;
     }
 
     /// <summary>
@@ -94,28 +94,6 @@ public class ThiefSpawner : MonoBehaviour
 
             default:
                 return playerPos;
-        }
-    }
-
-    /// <summary>
-    /// Editor helper: validate that all thief types have prefab assignments.
-    /// </summary>
-    public void ValidatePrefabAssignments()
-    {
-        var allTypes = System.Enum.GetValues(typeof(ThiefSystem.ThiefType));
-        foreach (ThiefSystem.ThiefType type in allTypes)
-        {
-            bool found = false;
-            foreach (var entry in thiefPrefabs)
-            {
-                if (entry.thiefType == type && entry.prefab != null)
-                {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                Debug.LogWarning($"[ThiefSpawner] No prefab assigned for {type}");
         }
     }
 }
