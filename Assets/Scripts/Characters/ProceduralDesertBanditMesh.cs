@@ -2,17 +2,17 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// Procedurally generates a low-poly Desert Bandit character mesh using the Unity Mesh API.
+/// Procedurally generates a low-poly DesertBandit character mesh using the Unity Mesh API.
 /// Follows the pattern established by ProceduralNinjaThiefMesh (AIG-187) and ProceduralCamelMesh (AIG-173).
+/// Implements AIG-197.
 ///
-/// Produces a hooded robe-wearing humanoid silhouette (~1.60 units tall):
-///   Head (hooded), torso (wide robe), bandaged arms, coin pouch, sandaled feet — skinned to a 10-bone skeleton.
+/// Produces a stocky hooded-robe humanoid silhouette (~1.35 units tall):
+///   Hooded robe body, face wraps, cream sash, coin bag (belt), dagger scabbard (back).
 ///
-/// Color specification (per AIG-165 DesertBandit Design Spec):
-///   Hooded robe       #D4A574  tan / light brown  — SubMesh 0
-///   Accents / belt    #8B6F47  dark brown         — SubMesh 1
-///   Coin pouch        #FFD700  gold coins         — SubMesh 2
-///   Bandaged hands    #F5F5DC  off-white          — SubMesh 3
+/// Color specification (per AIG-197):
+///   Sandy tan robe   #C8A474  — SubMesh 0
+///   Dark brown wraps #3D2010  — SubMesh 1  (face wraps + scabbard)
+///   Cream sash       #E8D5A0  — SubMesh 2
 ///
 /// Usage:
 ///   Attach to a GameObject; mesh builds automatically on Awake (play mode) or
@@ -22,18 +22,27 @@ using System.Collections.Generic;
 ///   Feet at Y=0, character faces +Z (forward). Units are Unity metres.
 ///
 /// Geometry budget:
-///   13 body boxes (robe/torso/legs) × 12 tris = 156
-///   4 bandage wraps (hands/forearms)   × 12   =  48
-///   2 coin pouch boxes (waist)         × 12   =  24
-///   2 sandals (feet)                   × 12   =  24
-///   Total                                    ≈ 252 tris  (well within the <1200 target)
+///   1 robe body × 12 tris    =  12
+///   1 hood      × 12 tris    =  12
+///   1 head      × 12 tris    =  12
+///   1 face wrap × 12 tris    =  12
+///   2 arms      × 12 tris    =  24
+///   2 leg boots × 12 tris    =  24
+///   1 sash      × 12 tris    =  12
+///   1 coin bag  × 12 tris    =  12
+///   1 scabbard  × 12 tris    =  12
+///   Total                    ≈ 132 tris  (well within the &lt;1 500 target)
 ///
-/// Skeleton (10 bones, AIG-187 spec):
-///   Root → Pelvis → Spine → Chest → Neck → Head
+/// Skeleton (9 bones):
+///   Root → Pelvis → Spine → Chest → Head
 ///                              └─ L_Arm
 ///                              └─ R_Arm
 ///          └─ L_Leg
 ///          └─ R_Leg
+///
+/// Child slots (created in Build):
+///   weaponSlot — attach point on back for dagger
+///   bagSlot    — attach point on belt for coin bag
 /// </summary>
 [DisallowMultipleComponent]
 [ExecuteAlways]
@@ -41,22 +50,19 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
 {
     // ── Color constants ────────────────────────────────────────────────────────
 
-    /// <summary>#D4A574 — hooded robe tan/light brown.</summary>
-    public static readonly Color ColorRobe     = new Color(0.831f, 0.647f, 0.455f, 1f);  // #D4A574
-    /// <summary>#8B6F47 — dark brown belt/accents.</summary>
-    public static readonly Color ColorBrown    = new Color(0.545f, 0.435f, 0.278f, 1f);  // #8B6F47
-    /// <summary>#FFD700 — gold coin pouch.</summary>
-    public static readonly Color ColorGold     = new Color(1f,     0.843f, 0f,     1f);  // #FFD700
-    /// <summary>#F5F5DC — off-white bandaged hands.</summary>
-    public static readonly Color ColorBandage  = new Color(0.961f, 0.961f, 0.863f, 1f);  // #F5F5DC
+    /// <summary>#C8A474 — sandy tan robe.</summary>
+    public static readonly Color ColorRobe  = new Color(0.784f, 0.643f, 0.455f, 1f);
+    /// <summary>#3D2010 — dark brown face wraps and scabbard.</summary>
+    public static readonly Color ColorWraps = new Color(0.239f, 0.125f, 0.063f, 1f);
+    /// <summary>#E8D5A0 — cream sash.</summary>
+    public static readonly Color ColorSash  = new Color(0.910f, 0.835f, 0.627f, 1f);
 
     // ── SubMesh indices ────────────────────────────────────────────────────────
 
-    private const int SM_ROBE    = 0;
-    private const int SM_BROWN   = 1;
-    private const int SM_GOLD    = 2;
-    private const int SM_BANDAGE = 3;
-    private const int SM_COUNT   = 4;
+    private const int SM_ROBE  = 0;
+    private const int SM_WRAPS = 1;
+    private const int SM_SASH  = 2;
+    private const int SM_COUNT = 3;
 
     // ── Bone indices ───────────────────────────────────────────────────────────
 
@@ -69,18 +75,21 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
     private const int BONE_R_ARM  = 6;
     private const int BONE_L_LEG  = 7;
     private const int BONE_R_LEG  = 8;
-    private const int BONE_NECK   = 9;
-    private const int BONE_COUNT  = 10;
+    private const int BONE_COUNT  = 9;
 
     // ── Inspector fields ───────────────────────────────────────────────────────
 
     [Header("Material Overrides (null = created procedurally)")]
     public Material matRobe;
-    public Material matBrown;
-    public Material matGold;
-    public Material matBandage;
+    public Material matWraps;
+    public Material matSash;
 
-    // Bone transforms populated by BuildSkeleton(); exposed for external animation rigs.
+    /// <summary>Transform where a weapon (curved dagger) can be attached. On back.</summary>
+    [HideInInspector] public Transform weaponSlot;
+    /// <summary>Transform where a coin bag can be attached. On belt.</summary>
+    [HideInInspector] public Transform bagSlot;
+
+    /// <summary>Bone transforms populated by BuildSkeleton(); exposed for external animation rigs.</summary>
     [HideInInspector] public Transform[] Bones;
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -101,8 +110,9 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
     // ──────────────────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Generate (or regenerate) the DesertBandit mesh, 10-bone skeleton, and materials.
+    /// Generate (or regenerate) the DesertBandit mesh, skeleton, materials, and child slots.
     /// Safe to call from Editor scripts, inspector buttons, and at runtime.
+    /// No per-frame allocations; all allocations happen once inside this method.
     /// </summary>
     public void Build()
     {
@@ -113,6 +123,8 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
         smr.bones           = Bones;
         smr.rootBone        = Bones[BONE_ROOT];
         smr.sharedMaterials = BuildMaterials();
+
+        BuildChildSlots();
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -121,27 +133,26 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
 
     private Transform[] BuildSkeleton()
     {
-        // Bone positions defined in T-pose world space (feet at Y=0, facing +Z).
-        // Parent index -1 means the bone's parent is the mesh root transform.
+        // Bone positions in T-pose world space (feet at Y=0, facing +Z).
+        // Stocky proportions: short legs, wide robe torso.
         //
         // Hierarchy:
-        //   Root(0) → Pelvis(1) → Spine(2) → Chest(3) → Neck(9) → Head(4)
-        //                                           └─ L_Arm(5)
-        //                                           └─ R_Arm(6)
+        //   Root(0) → Pelvis(1) → Spine(2) → Chest(3) → Head(4)
+        //                                          └─ L_Arm(5)
+        //                                          └─ R_Arm(6)
         //              └─ L_Leg(7)
         //              └─ R_Leg(8)
         var boneData = new (string name, Vector3 pos, int parent)[]
         {
             /* 0 ROOT   */ ("Root",   new Vector3( 0.00f, 0.00f, 0f), -1),
-            /* 1 PELVIS */ ("Pelvis", new Vector3( 0.00f, 0.60f, 0f),  0),
-            /* 2 SPINE  */ ("Spine",  new Vector3( 0.00f, 0.82f, 0f),  1),
-            /* 3 CHEST  */ ("Chest",  new Vector3( 0.00f, 1.04f, 0f),  2),
-            /* 4 HEAD   */ ("Head",   new Vector3( 0.00f, 1.40f, 0f),  9),  // child of Neck
-            /* 5 L_ARM  */ ("L_Arm",  new Vector3(-0.28f, 1.08f, 0f),  3),
-            /* 6 R_ARM  */ ("R_Arm",  new Vector3( 0.28f, 1.08f, 0f),  3),
-            /* 7 L_LEG  */ ("L_Leg",  new Vector3(-0.09f, 0.60f, 0f),  1),
-            /* 8 R_LEG  */ ("R_Leg",  new Vector3( 0.09f, 0.60f, 0f),  1),
-            /* 9 NECK   */ ("Neck",   new Vector3( 0.00f, 1.22f, 0f),  3),
+            /* 1 PELVIS */ ("Pelvis", new Vector3( 0.00f, 0.25f, 0f),  0),
+            /* 2 SPINE  */ ("Spine",  new Vector3( 0.00f, 0.50f, 0f),  1),
+            /* 3 CHEST  */ ("Chest",  new Vector3( 0.00f, 0.75f, 0f),  2),
+            /* 4 HEAD   */ ("Head",   new Vector3( 0.00f, 1.10f, 0f),  3),
+            /* 5 L_ARM  */ ("L_Arm",  new Vector3(-0.30f, 0.75f, 0f),  3),
+            /* 6 R_ARM  */ ("R_Arm",  new Vector3( 0.30f, 0.75f, 0f),  3),
+            /* 7 L_LEG  */ ("L_Leg",  new Vector3(-0.13f, 0.25f, 0f),  1),
+            /* 8 R_LEG  */ ("R_Leg",  new Vector3( 0.13f, 0.25f, 0f),  1),
         };
 
         // Remove previously generated bone children to allow safe re-build.
@@ -175,6 +186,31 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
     }
 
     // ──────────────────────────────────────────────────────────────────────────
+    // Child slot construction
+    // ──────────────────────────────────────────────────────────────────────────
+
+    private void BuildChildSlots()
+    {
+        // weaponSlot: on back, at scabbard top — attach point for curved dagger.
+        weaponSlot = GetOrCreateSlot("weaponSlot", new Vector3(0.12f, 0.88f, -0.18f));
+        // bagSlot: on right hip, at coin bag position.
+        bagSlot    = GetOrCreateSlot("bagSlot",    new Vector3(0.22f, 0.52f, 0.06f));
+    }
+
+    private Transform GetOrCreateSlot(string slotName, Vector3 localPos)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            var child = transform.GetChild(i);
+            if (child.name == slotName) return child;
+        }
+        var go = new GameObject(slotName);
+        go.transform.SetParent(transform, worldPositionStays: false);
+        go.transform.localPosition = localPos;
+        return go.transform;
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
     // Mesh generation
     // ──────────────────────────────────────────────────────────────────────────
 
@@ -187,7 +223,7 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
 
         for (int i = 0; i < SM_COUNT; i++) tris[i] = new List<int>();
 
-        // Local helper — adds a box (all 24 verts weighted 100% to boneIdx) into submesh sm.
+        // Local helper — adds a flat-shaded box (24 verts, 12 tris) into submesh sm.
         void Box(Vector3 c, Vector3 size, int boneIdx, int sm, Quaternion? rot = null)
         {
             AppendBox(verts, normals, tris[sm], weights,
@@ -195,62 +231,44 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
                       size, boneIdx);
         }
 
-        // Local helper — adds a flat polygon disk facing +Z into submesh sm.
-        void Disk(Vector3 c, float radius, int segs, int boneIdx, int sm)
-        {
-            AppendDisk(verts, normals, tris[sm], weights, c, radius, segs, boneIdx);
-        }
+        // ── Robe body / torso (spec: ~0.45×0.85×0.3) ─────────────────────────
+        // Wide flowing robe from Y≈0.175 to Y≈1.025; centre at Y=0.60.
+        Box(new Vector3(0f, 0.60f, 0f), new Vector3(0.45f, 0.85f, 0.30f), BONE_SPINE, SM_ROBE);
 
-        // ── Lower torso / hips (Y: 0.60 → 0.90) ─────────────────────────────
-        // Wider robe base at hips.
-        Box(new Vector3(0f, 0.75f, 0f), new Vector3(0.32f, 0.30f, 0.20f), BONE_PELVIS, SM_ROBE);
+        // ── Head (spec: ~0.22×0.25×0.22 under hood) ──────────────────────────
+        Box(new Vector3(0f, 1.225f, 0f), new Vector3(0.22f, 0.25f, 0.22f), BONE_HEAD, SM_ROBE);
 
-        // ── Upper torso / chest (Y: 0.90 → 1.18) ────────────────────────────
-        // Wide flowing robe, fuller silhouette than ninja.
-        Box(new Vector3(0f, 1.04f, 0f), new Vector3(0.40f, 0.28f, 0.22f), BONE_CHEST, SM_ROBE);
+        // ── Hood — flat-shaded trapezoid box extending over head ──────────────
+        // Slightly wider/deeper than head, angled slightly forward to form hood brow.
+        Box(new Vector3(0f, 1.34f, -0.01f), new Vector3(0.28f, 0.13f, 0.27f), BONE_HEAD, SM_ROBE,
+            Quaternion.Euler(-5f, 0f, 0f));
 
-        // ── Head with hood (Y: 1.28 → 1.56) ─────────────────────────────────
-        // Hooded head, slightly larger to accommodate hood shape.
-        Box(new Vector3(0f, 1.42f, 0f), new Vector3(0.32f, 0.32f, 0.26f), BONE_HEAD, SM_ROBE);
+        // ── Face wraps — dark brown strip across lower front of head ──────────
+        // Sits proud of head front face (head front Z ≈ 0.11), covering lower 55%.
+        Box(new Vector3(0f, 1.19f, 0.12f), new Vector3(0.20f, 0.12f, 0.02f), BONE_HEAD, SM_WRAPS);
 
-        // ── Left arm — upper part (in robe color) ────────────────────────────
-        Box(new Vector3(-0.27f, 1.04f, 0f), new Vector3(0.11f, 0.26f, 0.11f), BONE_L_ARM, SM_ROBE);
+        // ── Left arm (stubby, emerges from robe sides) ────────────────────────
+        Box(new Vector3(-0.305f, 0.68f, 0f), new Vector3(0.13f, 0.28f, 0.13f), BONE_L_ARM, SM_ROBE);
 
-        // ── Left arm — bandaged forearm/hand (off-white wraps) ──────────────
-        Box(new Vector3(-0.27f, 0.75f, 0f), new Vector3(0.10f, 0.28f, 0.10f), BONE_L_ARM, SM_BANDAGE);
+        // ── Right arm ────────────────────────────────────────────────────────
+        Box(new Vector3( 0.305f, 0.68f, 0f), new Vector3(0.13f, 0.28f, 0.13f), BONE_R_ARM, SM_ROBE);
 
-        // ── Right arm — upper part (in robe color) ───────────────────────────
-        Box(new Vector3( 0.27f, 1.04f, 0f), new Vector3(0.11f, 0.26f, 0.11f), BONE_R_ARM, SM_ROBE);
+        // ── Left leg/boot (stubby, visible below robe hem) ───────────────────
+        Box(new Vector3(-0.13f, 0.09f, 0f), new Vector3(0.14f, 0.18f, 0.16f), BONE_L_LEG, SM_ROBE);
 
-        // ── Right arm — bandaged forearm/hand (off-white wraps) ─────────────
-        Box(new Vector3( 0.27f, 0.75f, 0f), new Vector3(0.10f, 0.28f, 0.10f), BONE_R_ARM, SM_BANDAGE);
+        // ── Right leg/boot ────────────────────────────────────────────────────
+        Box(new Vector3( 0.13f, 0.09f, 0f), new Vector3(0.14f, 0.18f, 0.16f), BONE_R_LEG, SM_ROBE);
 
-        // ── Left leg — thigh (robe) ──────────────────────────────────────────
-        Box(new Vector3(-0.09f, 0.45f, 0f),     new Vector3(0.13f, 0.30f, 0.13f), BONE_L_LEG, SM_ROBE);
+        // ── Cream sash — horizontal band across mid-torso front ───────────────
+        // Sits proud of robe front face (robe front Z ≈ 0.15); sash at Z ≈ 0.162.
+        Box(new Vector3(0f, 0.62f, 0.161f), new Vector3(0.44f, 0.08f, 0.02f), BONE_SPINE, SM_SASH);
 
-        // ── Left leg — shin (robe) ───────────────────────────────────────────
-        Box(new Vector3(-0.09f, 0.19f, 0f),     new Vector3(0.11f, 0.24f, 0.11f), BONE_L_LEG, SM_ROBE);
+        // ── Coin bag — small box hanging from left side of belt ───────────────
+        Box(new Vector3(-0.245f, 0.47f, 0.05f), new Vector3(0.08f, 0.10f, 0.07f), BONE_PELVIS, SM_ROBE);
 
-        // ── Left leg — sandal (dark brown) ───────────────────────────────────
-        Box(new Vector3(-0.09f, 0.05f, 0.04f),  new Vector3(0.12f, 0.08f, 0.22f), BONE_L_LEG, SM_BROWN);
-
-        // ── Right leg — thigh (robe) ─────────────────────────────────────────
-        Box(new Vector3( 0.09f, 0.45f, 0f),    new Vector3(0.13f, 0.30f, 0.13f), BONE_R_LEG, SM_ROBE);
-
-        // ── Right leg — shin (robe) ──────────────────────────────────────────
-        Box(new Vector3( 0.09f, 0.19f, 0f),    new Vector3(0.11f, 0.24f, 0.11f), BONE_R_LEG, SM_ROBE);
-
-        // ── Right leg — sandal (dark brown) ───────────────────────────────────
-        Box(new Vector3( 0.09f, 0.05f, 0.04f), new Vector3(0.12f, 0.08f, 0.22f), BONE_R_LEG, SM_BROWN);
-
-        // ── Waist belt / cord accent (dark brown) ──────────────────────────────
-        Box(new Vector3(0f, 0.905f, 0f),    new Vector3(0.36f, 0.08f, 0.22f), BONE_PELVIS, SM_BROWN);
-
-        // ── Coin pouch — left side of waist (gold) ────────────────────────────
-        Box(new Vector3(-0.15f, 0.80f, 0.08f), new Vector3(0.10f, 0.14f, 0.08f), BONE_PELVIS, SM_GOLD);
-
-        // ── Coin pouch — right side of waist (gold) ───────────────────────────
-        Box(new Vector3( 0.15f, 0.80f, 0.08f), new Vector3(0.10f, 0.14f, 0.08f), BONE_PELVIS, SM_GOLD);
+        // ── Dagger scabbard — thin box on back, angled like a sheathed blade ──
+        Box(new Vector3(0.11f, 0.65f, -0.168f), new Vector3(0.05f, 0.30f, 0.04f), BONE_CHEST, SM_WRAPS,
+            Quaternion.Euler(12f, 0f, 0f));
 
         // ── Assemble mesh ─────────────────────────────────────────────────────
         var mesh = new Mesh { name = "ProceduralDesertBandit" };
@@ -263,8 +281,7 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
         // Skin weights: 100% to a single bone per vertex group (hard-painted).
         mesh.boneWeights = weights.ToArray();
 
-        // Bind poses: each bone's inverse world transform, combined with the mesh root's
-        // local→world matrix. Required so Unity deforms vertices correctly at runtime.
+        // Bind poses: each bone's inverse world matrix relative to root.
         var bindPoses = new Matrix4x4[BONE_COUNT];
         for (int i = 0; i < BONE_COUNT; i++)
             bindPoses[i] = bones[i].worldToLocalMatrix * transform.localToWorldMatrix;
@@ -334,57 +351,19 @@ public class ProceduralDesertBanditMesh : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Appends a filled polygon disk (fan of <paramref name="segments"/> triangles) facing +Z.
-    /// All vertices receive a 100% BoneWeight to <paramref name="boneIdx"/>.
-    /// The disk lies in the XY plane at <paramref name="centre"/>; normal = Vector3.forward.
-    /// </summary>
-    private static void AppendDisk(
-        List<Vector3> verts, List<Vector3> normals, List<int> tris, List<BoneWeight> weights,
-        Vector3 centre, float radius, int segments, int boneIdx)
-    {
-        int baseVert  = verts.Count;
-        BoneWeight bw = MakeBoneWeight(boneIdx);
-
-        // Centre vertex.
-        verts.Add(centre);
-        normals.Add(Vector3.forward);
-        weights.Add(bw);
-
-        // Ring vertices going CCW (increasing angle) → normal points +Z.
-        for (int i = 0; i < segments; i++)
-        {
-            float angle = (i / (float)segments) * Mathf.PI * 2f;
-            verts.Add(centre + new Vector3(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius, 0f));
-            normals.Add(Vector3.forward);
-            weights.Add(bw);
-        }
-
-        // Fan triangles: (centre, ring[i], ring[i+1]) — CCW from +Z → face visible from front.
-        for (int i = 0; i < segments; i++)
-        {
-            int curr = baseVert + 1 + i;
-            int next = baseVert + 1 + (i + 1) % segments;
-            tris.Add(baseVert); // centre
-            tris.Add(curr);
-            tris.Add(next);
-        }
-    }
-
     // ──────────────────────────────────────────────────────────────────────────
     // Materials
     // ──────────────────────────────────────────────────────────────────────────
 
     private Material[] BuildMaterials()
     {
-        if (matRobe     == null) matRobe     = CreateMat(ColorRobe,     0f,   0f);    // matte tan robe
-        if (matBrown    == null) matBrown    = CreateMat(ColorBrown,    0f,   0f);    // matte dark brown accents
-        if (matGold     == null) matGold     = CreateMat(ColorGold,     0.6f, 0.5f);  // metallic gold coins
-        if (matBandage  == null) matBandage  = CreateMat(ColorBandage,  0f,   0f);    // matte off-white bandages
-        return new[] { matRobe, matBrown, matGold, matBandage };
+        if (matRobe  == null) matRobe  = CreateMat(ColorRobe,  0f, 0.10f); // matte cloth
+        if (matWraps == null) matWraps = CreateMat(ColorWraps, 0f, 0.05f); // very matte
+        if (matSash  == null) matSash  = CreateMat(ColorSash,  0f, 0.15f); // slight sheen
+        return new[] { matRobe, matWraps, matSash };
     }
 
-    /// <summary>Creates a Lit/Standard material with the given albedo, metallic and smoothness.</summary>
+    /// <summary>Creates a URP Lit (or Standard fallback) material with the given albedo, metallic and smoothness.</summary>
     public static Material CreateMat(Color albedo, float metallic, float smoothness)
     {
         Shader shader = Shader.Find("Universal Render Pipeline/Lit")
