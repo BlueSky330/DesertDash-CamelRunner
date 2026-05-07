@@ -4,14 +4,14 @@ This document provides detailed prompts for generating visual assets using AI im
 
 ## 1. Characters
 
-### 1.1. Kamil the Camel (Main Character)
+### 1.1. Camel the Camel (Main Character)
 
 *   **Prompt**: "Stylized, low-poly 3D model of a charming, slightly goofy camel, cartoonish, vibrant desert colors, running pose, front view, side view, back view, top-down view, Unity asset, game asset, clean background, high detail, concept art"
 *   **Variations**: Standing idle, jumping, sliding, startled/collision pose.
 
 ### 1.2. Camel Skins
 
-*   **Pharaoh Kamil**: "Stylized, low-poly 3D model of a charming camel, wearing an ancient Egyptian pharaoh headdress and golden adornments, cartoonish, vibrant desert colors, running pose, Unity asset, game asset, clean background, high detail, concept art"
+*   **Pharaoh Camel**: "Stylized, low-poly 3D model of a charming camel, wearing an ancient Egyptian pharaoh headdress and golden adornments, cartoonish, vibrant desert colors, running pose, Unity asset, game asset, clean background, high detail, concept art"
 *   **Racing Camel**: "Stylized, low-poly 3D model of a sleek, athletic camel, wearing modern racing gear (goggles, small saddle), aerodynamic design, cartoonish, vibrant colors, running pose, Unity asset, game asset, clean background, high detail, concept art"
 *   **Mummy Camel**: "Stylized, low-poly 3D model of a camel wrapped in ancient, slightly tattered bandages, glowing eyes, cartoonish, muted desert colors, running pose, Unity asset, game asset, clean background, high detail, concept art"
 *   **Golden Camel**: "Stylized, low-poly 3D model of a majestic camel, entirely golden and shimmering, ornate patterns, cartoonish, vibrant desert colors, running pose, Unity asset, game asset, clean background, high detail, concept art"

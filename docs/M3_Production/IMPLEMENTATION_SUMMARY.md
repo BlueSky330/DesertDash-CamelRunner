@@ -1,7 +1,7 @@
 # M3 Production: Implementation Summary (2026-05-07)
 
 **Issue**: AIG-9 — M3: Characters & Animations  
-**Phase**: Phase 1 (Kamil Default Model + Rig) — IN EXECUTION  
+**Phase**: Phase 1 (Camel Default Model + Rig) — IN EXECUTION  
 **Status**: 🟢 Implementation Started (No Blockers)
 
 ---
@@ -12,7 +12,7 @@
 
 **Concrete Artifacts Created** (ready to execute in Blender):
 
-1. **generate_kamil_base_mesh.py** (220 lines)
+1. **generate_camel_base_mesh.py** (220 lines)
    - Executable Python script for Blender
    - Generates low-poly camel mesh procedurally
    - Output: ~120 vertices, ~200 faces (~400 tris base)
@@ -21,14 +21,14 @@
    - Sandy tan material applied
    - **Execution**: Run in Blender > Scripting workspace
 
-2. **setup_kamil_rig.py** (280 lines)
+2. **setup_camel_rig.py** (280 lines)
    - Executable Python script for Blender
    - Creates 13-bone skeleton structure
    - Adds vertex groups for weight painting
    - Creates blendshapes for 3 expressions (Happy, Startled, Determined)
    - Sets up 4 materials (Body, Saddle, Bridle, Eyes)
    - Links armature modifier to mesh
-   - **Execution**: Run in Blender (with Kamil_Default mesh selected)
+   - **Execution**: Run in Blender (with Camel_Default mesh selected)
 
 3. **PHASE_1_EXECUTION.md** (Complete step-by-step guide)
    - 8-step Blender workflow (generation → export)
@@ -56,7 +56,7 @@
    - Reference materials index
    - Technical specifications
 
-6. **Kamil_Default_Generation_Prompt.md**
+6. **Camel_Default_Generation_Prompt.md**
    - AI generation brief (for Leonardo.AI/Meshy AI)
    - Color palette, proportions, visual description
    - Post-generation cleanup checklist
@@ -70,7 +70,7 @@
 | `5411985` | Add Phase 1 executable Blender scripts + execution guide | **Implementation** |
 | `839dcf9` | Add M3 production status summary | Documentation |
 | `f1c19f9` | Add M3 character assets production README | Documentation |
-| `ad0bf99` | Add M3 production design & Kamil generation prompt | Documentation |
+| `ad0bf99` | Add M3 production design & Camel generation prompt | Documentation |
 
 **Total**: 4 commits, 1000+ lines of code/docs, 3 git commits with implementation artifacts.
 
@@ -97,23 +97,23 @@
 1. **Open Blender**
    ```
    File > Open Project
-   Assets/Models/Kamil/
+   Assets/Models/Camel/
    ```
 
 2. **Generate base mesh** (5 minutes)
    ```
    Scripting workspace
-   Open "generate_kamil_base_mesh.py"
+   Open "generate_camel_base_mesh.py"
    Run script (▶ or Alt+P)
-   Output: Kamil_Default mesh in viewport
+   Output: Camel_Default mesh in viewport
    ```
 
 3. **Setup rig** (5 minutes)
    ```
-   (With Kamil_Default selected)
-   Open "setup_kamil_rig.py"
+   (With Camel_Default selected)
+   Open "setup_camel_rig.py"
    Run script
-   Output: Kamil_Armature with bones, materials, vertex groups
+   Output: Camel_Armature with bones, materials, vertex groups
    ```
 
 4. **Enter Sculpt Mode & Refine** (2-3 days)
@@ -131,12 +131,12 @@
    ```
    File > Export > FBX
    Settings: FBX 2020, Include Mesh/Armature/Shape Keys
-   Output: Assets/Models/Kamil/Kamil_Default.fbx
+   Output: Assets/Models/Camel/Camel_Default.fbx
    ```
 
 7. **Verify in Unity** (30 minutes)
    ```
-   Drag Kamil_Default.fbx into scene
+   Drag Camel_Default.fbx into scene
    Test rig in Inspector (rotate bones)
    Verify tri count < 1,200
    Check no clipping
@@ -150,11 +150,11 @@
 
 ```
 Assets/Models/
-├── Kamil/                                    [PHASE 1 - IN EXECUTION]
-│   ├── generate_kamil_base_mesh.py          [▶ RUN THIS FIRST]
-│   ├── setup_kamil_rig.py                   [▶ RUN THIS SECOND]
+├── Camel/                                    [PHASE 1 - IN EXECUTION]
+│   ├── generate_camel_base_mesh.py          [▶ RUN THIS FIRST]
+│   ├── setup_camel_rig.py                   [▶ RUN THIS SECOND]
 │   ├── PHASE_1_EXECUTION.md                 [READ THIS FOR STEPS]
-│   └── Kamil_Default.fbx                    [OUTPUT - to be created]
+│   └── Camel_Default.fbx                    [OUTPUT - to be created]
 │
 ├── Thieves/                                  [PHASE 3 - Pending]
 │   └── [Thief models to be created]
@@ -163,7 +163,7 @@ Assets/Models/
 
 docs/M3_Production/
 ├── M3_PRODUCTION_DESIGN.md                  [Full 4-week spec]
-├── Kamil_Default_Generation_Prompt.md       [AI generation brief]
+├── Camel_Default_Generation_Prompt.md       [AI generation brief]
 ├── CURRENT_STATUS.md                        [Executive summary]
 └── IMPLEMENTATION_SUMMARY.md                [This file]
 ```
@@ -173,7 +173,7 @@ docs/M3_Production/
 ## Blockers & Dependencies
 
 **Current Phase 1 Blockers**: NONE  
-**Critical Path**: Kamil Default must complete before Phase 2 animations  
+**Critical Path**: Camel Default must complete before Phase 2 animations  
 **Timeline Risk**: None (4-week timeline has 1-week buffer per phase)
 
 ---
@@ -182,7 +182,7 @@ docs/M3_Production/
 
 Phase 2 (Animations, May 22-25) cannot start until:
 
-- [ ] Kamil_Default.fbx exported successfully
+- [ ] Camel_Default.fbx exported successfully
 - [ ] Rig imports cleanly into Unity (no errors)
 - [ ] All bones deform mesh smoothly (no sharp creases)
 - [ ] Blendshapes work (3 expressions testable)
@@ -211,7 +211,7 @@ This is the transition from "planning" to "production implementation".
 ## Timeline Status
 
 ```
-Week 1 (May 15-21):  Phase 1 - Kamil Default + Rig
+Week 1 (May 15-21):  Phase 1 - Camel Default + Rig
                      [🟡 IN PROGRESS - Scripts ready, awaiting Blender execution]
 
 Week 2 (May 22-25):  Phase 2 - All 7 Animations

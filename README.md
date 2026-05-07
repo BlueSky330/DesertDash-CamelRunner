@@ -1,6 +1,6 @@
 # Desert Dash: Camel Runner
 
-An adventurous 2.5D endless runner game where players guide Kamil the Camel on a thrilling World Tour across 10 iconic countries. Dodge unique obstacles, collect valuable items, and unlock new destinations, all within a stylized low-poly 3D environment. The game emphasizes quick reflexes, simple controls, and a rewarding player-driven monetization loop.
+An adventurous 2.5D endless runner game where players guide Camel the Camel on a thrilling World Tour across 10 iconic countries. Dodge unique obstacles, collect valuable items, and unlock new destinations, all within a stylized low-poly 3D environment. The game emphasizes quick reflexes, simple controls, and a rewarding player-driven monetization loop.
 
 ## Project Status
 
@@ -33,7 +33,7 @@ All phases of development, from initial game design to app store preparation and
 *   **Placeholder Scenes**: Markdown files representing `MainMenuScene`, `GameplayScene`, and `GameOverScene` are created. Actual Unity scene files will be created and configured within the Unity Editor.
 *   **Updated GDD**: The Game Design Document (`GDD.md`) has been significantly updated to reflect the 2.5D game format, World Tour system, detailed gameplay flow, and the refined offline/online "Player-Driven Rewarded Ads" monetization strategy.
 *   **AI Asset Specifications**: Detailed prompts for visual assets (`visual_asset_prompts.md`) and audio assets (`audio_asset_prompts.md`) have been created.
-*   **Regenerated Concept Art**: All camel character concepts (Kamil, Pharaoh, Racing, Mummy, Golden) have been regenerated in a consistent low-poly 3D style, matching the provided reference images.
+*   **Regenerated Concept Art**: All camel character concepts (Camel, Pharaoh, Racing, Mummy, Golden) have been regenerated in a consistent low-poly 3D style, matching the provided reference images.
 *   **Gameplay System Scripts (Phase 3)**:
     *   `CollectibleSystem.cs`: Manages collectibles, score, and score-to-coin conversion.
     *   `PowerUpManager.cs`: Handles various power-ups including the Anti-Thief Shield.

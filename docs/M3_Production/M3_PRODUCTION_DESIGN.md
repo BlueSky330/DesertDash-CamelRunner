@@ -16,14 +16,14 @@
 
 | Phase | Duration | Deliverable | Status |
 |-------|----------|-------------|--------|
-| **Phase 1: Kamil Default + Rig** | May 15-21 (1 week) | Default model, skeleton, test rig | 🟡 Starting |
+| **Phase 1: Camel Default + Rig** | May 15-21 (1 week) | Default model, skeleton, test rig | 🟡 Starting |
 | **Phase 2: Animations** | May 22-25 (4 days) | All 7 animations on shared rig | ⬜ Pending |
 | **Phase 3: Skins + Thieves** | May 26-Jun 4 (10 days) | 4 skins, 4 thief characters | ⬜ Pending |
 | **Phase 4: QA & Export** | Jun 5-11 (1 week) | Performance testing, final FBX exports | ⬜ Pending |
 
 ---
 
-## 2. Kamil Default Model Spec
+## 2. Camel Default Model Spec
 
 ### Visual Description
 - **Base**: Low-poly camel, sandy tan/brown, cartoonish proportions (Crossy Road style)
@@ -60,7 +60,7 @@
 ## 3. Animation Specification
 
 ### Shared Rig Requirement
-- All animations use **single Kamil skeleton** (no per-skin rig variations)
+- All animations use **single Camel skeleton** (no per-skin rig variations)
 - Each skin is material/mesh swap, NOT rig swap
 - Rig must handle all 7 animations without clipping on any skin
 
@@ -86,9 +86,9 @@
 
 ## 4. Skins Specification
 
-All skins use the **same skeleton and rig** as Kamil Default. Differences are mesh/material only.
+All skins use the **same skeleton and rig** as Camel Default. Differences are mesh/material only.
 
-### Skin 1: Pharaoh Kamil
+### Skin 1: Pharaoh Camel
 - **Gear**: Gold Nemes headdress (striped cloth), ornate gold collar, blue sapphire gem on chest, golden anklets
 - **Color Shift**: Golds dominate; body remains tan with gold accents
 - **Material**: Add shiny/metallic properties to gold elements
@@ -113,7 +113,7 @@ All skins use the **same skeleton and rig** as Kamil Default. Differences are me
 - **Mesh Changes**: Engraved patterns ~200 tris, gems ~150 tris, tassels ~100 tris
 
 ### Skin Generation Process
-1. Duplicate Kamil Default mesh in Blender
+1. Duplicate Camel Default mesh in Blender
 2. Add/modify mesh elements (headdress, harness, bandages, gems)
 3. Update materials/colors in Unity (same skeleton, swapped prefabs)
 4. Verify rig deformation on all animations (no clipping)
@@ -123,38 +123,38 @@ All skins use the **same skeleton and rig** as Kamil Default. Differences are me
 
 ## 5. Thief Characters Specification
 
-Four unique character models, separate from Kamil rig. Each has its own rig (simplified, 8-10 bones).
+Four unique character models, separate from Camel rig. Each has its own rig (simplified, 8-10 bones).
 
 ### Thief 1: Desert Bandit
 - **Silhouette**: Hooded humanoid, sandy robes, face covered, coin bag slung across chest
 - **Colors**: Sandy tan, dark browns, red accent rope
-- **Size**: ~60% Kamil scale
+- **Size**: ~60% Camel scale
 - **Tris Budget**: <1,500
 - **Animations Needed**: Idle walk, run, lunge/chase, hit reaction
 
 ### Thief 2: Ninja Thief
 - **Silhouette**: Sleek black outfit, mask covering face, throwing stars visible (hand/belt)
 - **Colors**: Matte black, dark grey, metallic silver stars
-- **Size**: ~55% Kamil scale
+- **Size**: ~55% Camel scale
 - **Tris Budget**: <1,500
 - **Animations Needed**: Idle, run, dash/pursuit, throw animation
 
 ### Thief 3: Pirate
 - **Silhouette**: Classic pirate hat, eye patch, tattered coat, cutlass visible
 - **Colors**: Navy blue, brown leather, gold buckles
-- **Size**: ~65% Kamil scale
+- **Size**: ~65% Camel scale
 - **Tris Budget**: <1,600
 - **Animations Needed**: Idle, run, sword swing, hit reaction
 
 ### Thief 4: Shadow Thief
 - **Silhouette**: Ghostly, semi-transparent, elongated limbs, glowing eyes (yellow/white)
 - **Colors**: Dark grey/purple translucent, bright glowing eyes
-- **Size**: ~60% Kamil scale
+- **Size**: ~60% Camel scale
 - **Tris Budget**: <1,500
 - **Animations Needed**: Idle float, glide/run, lunge, disappear/fade
 
 ### Thief Rigging
-- Each thief has a **unique skeleton** (not shared with Kamil)
+- Each thief has a **unique skeleton** (not shared with Camel)
 - Simplified rigs: ~8-10 bones (pelvis, spine, chest, head, 2 arms, 2 legs)
 - Baked animations (no IK)
 
@@ -167,17 +167,17 @@ Four unique character models, separate from Kamil rig. Each has its own rig (sim
 - **Animation**: Embedded in FBX (animations baked, no references)
 - **Rig**: Include armature/skeleton, NO IK handles
 - **Naming Convention**:
-  - Kamil: `Kamil_Default.fbx`, `Kamil_Pharaoh.fbx`, etc.
+  - Camel: `Camel_Default.fbx`, `Camel_Pharaoh.fbx`, etc.
   - Thieves: `Thief_Bandit.fbx`, `Thief_Ninja.fbx`, etc.
 - **Folder Structure**:
   ```
   Assets/Models/
-  ├── Kamil/
-  │   ├── Kamil_Default.fbx
-  │   ├── Kamil_Pharaoh.fbx
-  │   ├── Kamil_Racing.fbx
-  │   ├── Kamil_Mummy.fbx
-  │   └── Kamil_Golden.fbx
+  ├── Camel/
+  │   ├── Camel_Default.fbx
+  │   ├── Camel_Pharaoh.fbx
+  │   ├── Camel_Racing.fbx
+  │   ├── Camel_Mummy.fbx
+  │   └── Camel_Golden.fbx
   └── Thieves/
       ├── Thief_Bandit.fbx
       ├── Thief_Ninja.fbx
@@ -186,7 +186,7 @@ Four unique character models, separate from Kamil rig. Each has its own rig (sim
   ```
 
 ### Unity Import Settings
-- **Rig Type**: Humanoid (for Kamil), Generic (for Thieves)
+- **Rig Type**: Humanoid (for Camel), Generic (for Thieves)
 - **Animation Type**: All animations embedded, no external anim controller
 - **Materials**: Auto-generate in import or provide custom materials
 - **Optimization**: Enable mesh compression, read/write disabled
@@ -195,7 +195,7 @@ Four unique character models, separate from Kamil rig. Each has its own rig (sim
 
 ## 7. Quality Checklist
 
-### Kamil Default (Before Skins)
+### Camel Default (Before Skins)
 - [ ] Model geometry under 1,200 tris
 - [ ] Rig deforms smoothly (test with a simple run pose)
 - [ ] Expressions (happy/startled/determined) render correctly
@@ -246,8 +246,8 @@ Four unique character models, separate from Kamil rig. Each has its own rig (sim
 ## 9. Blockers & Dependencies
 
 ### Dependencies
-- **Kamil Default** must complete before Animations can be finalized (rig structure is fixed)
-- **Kamil + Animations** must complete before Skins validation (skins test on animated rig)
+- **Camel Default** must complete before Animations can be finalized (rig structure is fixed)
+- **Camel + Animations** must complete before Skins validation (skins test on animated rig)
 - **No external blockers** (art is independent of coding)
 
 ### Known Risks
@@ -256,13 +256,13 @@ Four unique character models, separate from Kamil rig. Each has its own rig (sim
 - **Risk 2**: Shared rig may clip on some skins during certain animations
   - **Mitigation**: Weight paint adjustments, mesh optimization per skin
 - **Risk 3**: Animation rigging takes longer than estimated
-  - **Mitigation**: Use simplified rigs on thieves; prioritize Kamil animations first
+  - **Mitigation**: Use simplified rigs on thieves; prioritize Camel animations first
 
 ---
 
 ## 10. Next Steps
 
-1. **[IN PROGRESS]** Generate Kamil Default base mesh (Leonardo.AI/Meshy AI)
+1. **[IN PROGRESS]** Generate Camel Default base mesh (Leonardo.AI/Meshy AI)
 2. **[PENDING]** Manual cleanup, rigging, material setup
 3. **[PENDING]** Test rig with placeholder run animation
 4. **[PENDING]** Generate all 7 animations
@@ -275,4 +275,4 @@ Four unique character models, separate from Kamil rig. Each has its own rig (sim
 
 **Document Status**: Active Production  
 **Last Updated**: 2026-05-07  
-**Next Review**: After Kamil Default + Rig Completion (Est. 2026-05-21)
+**Next Review**: After Camel Default + Rig Completion (Est. 2026-05-21)

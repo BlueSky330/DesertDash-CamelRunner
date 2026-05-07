@@ -9,7 +9,7 @@
 ## Summary
 
 ✅ **Design Phase Complete** → All planning, specifications, and prompts documented.  
-🟡 **Phase 1 In Progress** → Kamil Default model generation ready to start.
+🟡 **Phase 1 In Progress** → Camel Default model generation ready to start.
 
 ---
 
@@ -18,13 +18,13 @@
 ### Documentation Created
 1. **M3_PRODUCTION_DESIGN.md** (358 lines)
    - Complete 4-week production timeline with phase breakdown
-   - Detailed specifications for all 9 characters (Kamil + 4 skins + 4 thieves)
+   - Detailed specifications for all 9 characters (Camel + 4 skins + 4 thieves)
    - Animation specifications (7 animations, looping requirements, blend safety)
    - Technical specs (tri budgets, rig requirements, export standards)
    - Quality checklist with acceptance criteria
    - Risk assessment and blockers
 
-2. **Kamil_Default_Generation_Prompt.md**
+2. **Camel_Default_Generation_Prompt.md**
    - AI-ready generation prompt for Leonardo.AI / Meshy AI
    - Visual description, color palette, proportion references
    - Post-generation cleanup checklist
@@ -38,18 +38,18 @@
 
 ### Git Commits
 - `f1c19f9`: Add M3 character assets production README
-- `ad0bf99`: Add M3 production design and Kamil generation prompt
+- `ad0bf99`: Add M3 production design and Camel generation prompt
 
 ---
 
 ## Phase Timeline
 
-### Phase 1: Kamil Default + Rig (May 15-21)
+### Phase 1: Camel Default + Rig (May 15-21)
 **Status**: 🟡 Ready for Generation  
 **Critical Path**: YES (gates all other phases)
 
 **Next Immediate Step**:
-1. Generate base Kamil mesh using Leonardo.AI/Meshy AI with provided prompt
+1. Generate base Camel mesh using Leonardo.AI/Meshy AI with provided prompt
 2. Target: Low-poly model, <1,200 tris, recognizable silhouette
 3. Manual cleanup: retopology, UV layout, geometry optimization
 4. Rigging: Create 15-20 bone skeleton + blendshapes (3 expressions)
@@ -60,8 +60,8 @@
 ---
 
 ### Phase 2: All 7 Animations (May 22-25)
-**Status**: ⬜ Pending Kamil Default completion  
-**Dependency**: Phase 1 (Kamil rig must be finalized)
+**Status**: ⬜ Pending Camel Default completion  
+**Dependency**: Phase 1 (Camel rig must be finalized)
 
 **Animations**:
 - Run cycle (loopable, 0.6s)
@@ -77,8 +77,8 @@
 **Status**: ⬜ Pending Phase 2 animations  
 **Deliverables**: 4 skins + 4 thief characters
 
-**Kamil Skins**:
-- Pharaoh Kamil (gold/blue, ornate)
+**Camel Skins**:
+- Pharaoh Camel (gold/blue, ornate)
 - Racing Camel (neon yellow/black, sleek)
 - Mummy Camel (bandaged, glowing eyes)
 - Golden Camel (fully gold, geometric patterns, gems)
@@ -107,18 +107,18 @@ All tested against Phase 2 animations (no clipping).
 ## Key Decisions Made
 
 1. **Sequential Pipeline (Option A)**
-   - Kamil default → animations → skins → thieves
+   - Camel default → animations → skins → thieves
    - Validates rig early, prevents cascading rework
    - vs. parallel (higher risk of clipping/rework)
 
 2. **Shared Rig Strategy**
-   - All Kamil skins use same skeleton
+   - All Camel skins use same skeleton
    - Mesh/material swaps only (no per-skin rigs)
    - Ensures animation compatibility
 
 3. **Tri Budget**
-   - Kamil base: <1,200 tris
-   - Kamil + accessories: <2,000 tris
+   - Camel base: <1,200 tris
+   - Camel + accessories: <2,000 tris
    - Thieves: <1,500 tris each
    - Margins for performance on mid-range devices
 
@@ -129,11 +129,11 @@ All tested against Phase 2 animations (no clipping).
 ```
 docs/M3_Production/
 ├── M3_PRODUCTION_DESIGN.md              ← Full spec (read this)
-├── Kamil_Default_Generation_Prompt.md   ← AI generation brief
+├── Camel_Default_Generation_Prompt.md   ← AI generation brief
 └── CURRENT_STATUS.md                    ← This file
 
 Assets/Models/
-├── Kamil/
+├── Camel/
 │   └── [Models to be generated]
 ├── Thieves/
 │   └── [Models to be generated]
@@ -145,15 +145,15 @@ Assets/Models/
 ## What Happens Next
 
 **Immediate (Next Heartbeat)**:
-1. Generate Kamil base mesh (Leonardo.AI or Meshy AI)
+1. Generate Camel base mesh (Leonardo.AI or Meshy AI)
 2. Import into Blender for cleanup and rigging
 3. Create rigged FBX export for animation testing
 
 **The system should**:
-- Use the provided `Kamil_Default_Generation_Prompt.md`
+- Use the provided `Camel_Default_Generation_Prompt.md`
 - Target <1,200 triangles after cleanup
 - Ensure topology is animation-ready
-- Deliver as FBX to Assets/Models/Kamil/
+- Deliver as FBX to Assets/Models/Camel/
 
 ---
 

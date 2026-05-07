@@ -120,9 +120,9 @@ public class EconomyBalanceTester : MonoBehaviour
         }
 
         // Simulate buying skins
-        if (CollectibleSystem.Instance.currentCoins >= 1000 && SkinManager.Instance.GetSkin("Pharaoh Kamil") != null && !SkinManager.Instance.GetSkin("Pharaoh Kamil").isUnlocked && Random.value < 0.01f)
+        if (CollectibleSystem.Instance.currentCoins >= 1000 && SkinManager.Instance.GetSkin("Pharaoh Camel") != null && !SkinManager.Instance.GetSkin("Pharaoh Camel").isUnlocked && Random.value < 0.01f)
         {
-            if (SkinManager.Instance.TryUnlockSkin("Pharaoh Kamil"))
+            if (SkinManager.Instance.TryUnlockSkin("Pharaoh Camel"))
             {
                 skinsPurchased++;
                 totalCoinsSpent += 1000;

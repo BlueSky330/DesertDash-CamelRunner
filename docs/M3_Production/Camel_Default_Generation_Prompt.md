@@ -1,7 +1,7 @@
-# Kamil Default Model — AI Generation Prompt
+# Camel Default Model — AI Generation Prompt
 
 ## Generation Target
-**Model**: Kamil the Camel (Default Skin)  
+**Model**: Camel the Camel (Default Skin)  
 **Tools**: Leonardo.AI or Meshy AI  
 **Output Format**: Low-poly 3D model (OBJ/FBX ready for manual cleanup)
 

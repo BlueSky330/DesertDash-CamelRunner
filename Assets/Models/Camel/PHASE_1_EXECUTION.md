@@ -1,7 +1,7 @@
-# Phase 1 Execution: Kamil Default Model + Rig
+# Phase 1 Execution: Camel Default Model + Rig
 
 **Timeline**: May 15-21, 2026  
-**Target**: Production-ready rigged low-poly Kamil model (<1200 tris)  
+**Target**: Production-ready rigged low-poly Camel model (<1200 tris)  
 **Status**: 🟡 In Progress - Ready for Blender Production
 
 ---
@@ -9,14 +9,14 @@
 ## Execution Steps (Blender Workflow)
 
 ### Step 1: Generate Base Geometry
-Run `generate_kamil_base_mesh.py` in Blender to create low-poly camel mesh.
+Run `generate_camel_base_mesh.py` in Blender to create low-poly camel mesh.
 
 **How**:
 ```
 Blender > Scripting workspace
-1. Open "generate_kamil_base_mesh.py"
+1. Open "generate_camel_base_mesh.py"
 2. Run script (▶ button or Alt+P)
-3. Output: "Kamil_Default" mesh object in scene
+3. Output: "Camel_Default" mesh object in scene
 ```
 
 **What it creates**:
@@ -28,7 +28,7 @@ Blender > Scripting workspace
 
 **Expected output**:
 ```
-✓ Kamil base mesh created!
+✓ Camel base mesh created!
   - Vertices: ~120
   - Faces: ~200
   - Approximate tris: ~400
@@ -37,14 +37,14 @@ Blender > Scripting workspace
 ---
 
 ### Step 2: Setup Rigging Structure
-Run `setup_kamil_rig.py` to create skeleton and weight paint groups.
+Run `setup_camel_rig.py` to create skeleton and weight paint groups.
 
 **How**:
 ```
-Blender > Scripting workspace (with Kamil_Default mesh selected)
-1. Open "setup_kamil_rig.py"
+Blender > Scripting workspace (with Camel_Default mesh selected)
+1. Open "setup_camel_rig.py"
 2. Run script
-3. Output: "Kamil_Armature" with bone structure
+3. Output: "Camel_Armature" with bone structure
 ```
 
 **What it creates**:
@@ -116,7 +116,7 @@ Define how bones deform the mesh.
 Setup expression shapes for Happy, Startled, Determined.
 
 **In Shape Key Editor**:
-1. Select Kamil_Default mesh
+1. Select Camel_Default mesh
 2. Add new shape keys: "Happy", "Startled", "Determined"
 3. For each:
    - Enter Edit Mode with shape key selected
@@ -142,7 +142,7 @@ Export as production-ready FBX with rig and blendshapes.
   ✓ Armature
   ✓ Shape Keys (for blendshapes)
   OFF Animations (none yet)
-- File path: Assets/Models/Kamil/Kamil_Default.fbx
+- File path: Assets/Models/Camel/Camel_Default.fbx
 ```
 
 **Verify export**:
@@ -156,7 +156,7 @@ Export as production-ready FBX with rig and blendshapes.
 ### Step 8: Unity Import & Verification
 Import FBX into Unity and verify it works.
 
-**Unity Import Settings** (Assets/Models/Kamil/Kamil_Default.fbx):
+**Unity Import Settings** (Assets/Models/Camel/Camel_Default.fbx):
 ```
 Model Tab:
 - Rig: Humanoid
@@ -169,7 +169,7 @@ Materials Tab:
 ```
 
 **Test in scene**:
-1. Drag Kamil_Default prefab into scene
+1. Drag Camel_Default prefab into scene
 2. Rotate armature bones in inspector (Pose Mode)
 3. Test blendshapes in inspector
 4. Verify no clipping, smooth deformation
@@ -209,12 +209,12 @@ Before moving to Phase 2 (Animations), verify:
 ## Files in This Phase
 
 ```
-Assets/Models/Kamil/
-├── generate_kamil_base_mesh.py        ← Run this FIRST
-├── setup_kamil_rig.py                 ← Run this SECOND
+Assets/Models/Camel/
+├── generate_camel_base_mesh.py        ← Run this FIRST
+├── setup_camel_rig.py                 ← Run this SECOND
 ├── PHASE_1_EXECUTION.md               ← This guide
-├── Kamil_Default.fbx                  ← Final output
-└── Kamil_Default.blender              ← (Optional) Save .blend file
+├── Camel_Default.fbx                  ← Final output
+└── Camel_Default.blender              ← (Optional) Save .blend file
 ```
 
 ---
@@ -231,9 +231,9 @@ Assets/Models/Kamil/
 
 ## Next Phase (May 22-25)
 
-Once Kamil_Default.fbx is production-ready:
+Once Camel_Default.fbx is production-ready:
 1. Create all 7 animations (run, jump, slide, etc.)
-2. Test each on Kamil rig
+2. Test each on Camel rig
 3. Ensure smooth blending between animations
 4. Proceed to Phase 3 (Skins)
 

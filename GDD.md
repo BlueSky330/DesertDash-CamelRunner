@@ -9,7 +9,7 @@
 
 ## 2. Story/Theme
 
-The game features Kamil the Camel, a charming and adventurous explorer, embarking on a grand world tour. His journey takes him through iconic landmarks and diverse landscapes across 10 different countries. The goal is to navigate challenging environments, collect valuable items, and unlock new destinations, all while enjoying a lighthearted, fast-paced, and visually appealing adventure.
+The game features Camel the Camel, a charming and adventurous explorer, embarking on a grand world tour. His journey takes him through iconic landmarks and diverse landscapes across 10 different countries. The goal is to navigate challenging environments, collect valuable items, and unlock new destinations, all while enjoying a lighthearted, fast-paced, and visually appealing adventure.
 
 ## 3. Core Gameplay Mechanics
 
@@ -50,16 +50,16 @@ The game is structured around a "World Tour" system, featuring 10 distinct count
 *   **Difficulty Curve**: The running speed and obstacle density gradually increase within each country's level.
 
 ### Mini-Map:
-*   A small world map will be displayed in the corner of the screen during gameplay, zoomed into the current country. This mini-map will show Kamil's progress through the country, providing a sense of journey and accomplishment.
+*   A small world map will be displayed in the corner of the screen during gameplay, zoomed into the current country. This mini-map will show Camel's progress through the country, providing a sense of journey and accomplishment.
 
 ### Future Updates:
 *   The World Tour system is designed for expandability, allowing for the addition of more countries and themes in future game updates to maintain player engagement.
 
 ## 5. Characters
 
-*   **Main Character**: Kamil the Camel (default skin).
+*   **Main Character**: Camel the Camel (default skin).
 *   **Unlockable Skins/Characters**:
-    *   "Pharaoh Kamil" (wearing a headdress).
+    *   "Pharaoh Camel" (wearing a headdress).
     *   "Racing Camel" (sleek, wearing racing gear).
     *   "Mummy Camel" (wrapped in bandages).
     *   "Golden Camel" (premium skin).
@@ -249,12 +249,12 @@ winter-themed skin might reduce health decay in cold environments).
 
 ## 13. Camel Health System
 
-Kamil's health is a critical gameplay mechanic that adds a layer of survival and strategic resource management. Health starts at 100% and decreases over time, influenced by environmental factors and player actions.
+Camel's health is a critical gameplay mechanic that adds a layer of survival and strategic resource management. Health starts at 100% and decreases over time, influenced by environmental factors and player actions.
 
 ### Health Decay Equation:
 *   **Initial Decay**: For the first 30 minutes of continuous gameplay, health decays slowly at a rate of 1% per minute. This provides a sense of safety and allows players to get into a rhythm.
 *   **Accelerated Decay**: After 30 minutes, the health decay rate increases to 2.5% per minute, creating a sense of urgency and encouraging players to seek health recovery options.
-*   **Low Health Indicator**: When health drops below 25%, Kamil will visibly slow down, and the screen edges will turn red, signaling critical health.
+*   **Low Health Indicator**: When health drops below 25%, Camel will visibly slow down, and the screen edges will turn red, signaling critical health.
 
 ### Health Recovery - Natural (In-Game):
 Players can recover health by interacting with specific environmental elements:
@@ -279,7 +279,7 @@ Players can choose to watch rewarded ads to instantly restore health:
 
 ## 14. Health Hits 0% = Game Over & Ad Incentive
 
-When Kamil's health reaches 0%, the game ends with Kamil collapsing. At this point, players are presented with a critical choice, designed to maximize ad engagement:
+When Camel's health reaches 0%, the game ends with Camel collapsing. At this point, players are presented with a critical choice, designed to maximize ad engagement:
 
 *   **Option A: Restart from Last Milestone**: Players can choose to restart their run from the last achieved milestone. This option is free but means losing all progress made since that milestone.
 *   **Option B: Continue with Full Health (Rewarded Ad)**: Players can watch the longest rewarded ad (60 seconds) to continue their run from the exact spot they collapsed, with 100% health restored. This is the strongest ad incentive, as it allows players to preserve their progress and avoid frustration.

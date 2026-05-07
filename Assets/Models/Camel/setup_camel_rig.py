@@ -1,11 +1,11 @@
 """
-Kamil Default Model - Blender Rigging Setup Script
+Camel Default Model - Blender Rigging Setup Script
 Author: Artist1
-Purpose: Create skeleton structure and weight painting setup for Kamil camel
+Purpose: Create skeleton structure and weight painting setup for Camel camel
 Target: Low-poly rigged model, <1200 tris, ready for animation
 
 Usage in Blender:
-1. Create/import Kamil base mesh
+1. Create/import Camel base mesh
 2. Run this script in Blender Python console
 3. Script will create armature, set bone structure, and create weight paint groups
 """
@@ -13,7 +13,7 @@ Usage in Blender:
 import bpy
 import mathutils
 
-class KamilRigSetup:
+class CamelRigSetup:
     def __init__(self):
         self.armature = None
         self.armature_obj = None
@@ -21,7 +21,7 @@ class KamilRigSetup:
     def create_armature(self):
         """Create armature object and add it to scene."""
         bpy.ops.object.armature_add(
-            name="Kamil_Armature",
+            name="Camel_Armature",
             location=(0, 0, 0)
         )
         self.armature_obj = bpy.context.active_object
@@ -29,7 +29,7 @@ class KamilRigSetup:
         self.armature.display_type = 'STICK'
 
     def add_bones(self):
-        """Add bone structure for Kamil rig."""
+        """Add bone structure for Camel rig."""
         bpy.context.view_layer.objects.active = self.armature_obj
         bpy.ops.object.mode_set(mode='EDIT')
 
@@ -84,15 +84,15 @@ class KamilRigSetup:
 
     def add_blendshapes(self):
         """Create shape keys for facial expressions."""
-        # This assumes Kamil mesh is already in scene
+        # This assumes Camel mesh is already in scene
         mesh_obj = None
         for obj in bpy.context.scene.objects:
-            if obj.type == 'MESH' and obj.name.startswith('Kamil'):
+            if obj.type == 'MESH' and obj.name.startswith('Camel'):
                 mesh_obj = obj
                 break
 
         if not mesh_obj:
-            print("⚠ Kamil mesh not found - skip blendshapes")
+            print("⚠ Camel mesh not found - skip blendshapes")
             return
 
         bpy.context.view_layer.objects.active = mesh_obj
@@ -110,10 +110,10 @@ class KamilRigSetup:
             print(f"✓ Added blendshape: {expr}")
 
     def setup_materials(self):
-        """Create material slots for Kamil."""
+        """Create material slots for Camel."""
         mesh_obj = None
         for obj in bpy.context.scene.objects:
-            if obj.type == 'MESH' and obj.name.startswith('Kamil'):
+            if obj.type == 'MESH' and obj.name.startswith('Camel'):
                 mesh_obj = obj
                 break
 
@@ -122,19 +122,19 @@ class KamilRigSetup:
 
         # Create materials
         materials_config = {
-            "Kamil_Body": {
+            "Camel_Body": {
                 "use_nodes": True,
                 "base_color": (0.82, 0.71, 0.55, 1.0),  # Sandy tan
             },
-            "Kamil_Saddle": {
+            "Camel_Saddle": {
                 "use_nodes": True,
                 "base_color": (0.8, 0.2, 0.2, 1.0),  # Red accent
             },
-            "Kamil_Bridle": {
+            "Camel_Bridle": {
                 "use_nodes": True,
                 "base_color": (0.78, 0.20, 0.20, 1.0),  # Dark red
             },
-            "Kamil_Eyes": {
+            "Camel_Eyes": {
                 "use_nodes": True,
                 "base_color": (0.1, 0.1, 0.1, 1.0),  # Black
             },
@@ -151,7 +151,7 @@ class KamilRigSetup:
         """Create vertex groups for weight painting."""
         mesh_obj = None
         for obj in bpy.context.scene.objects:
-            if obj.type == 'MESH' and obj.name.startswith('Kamil'):
+            if obj.type == 'MESH' and obj.name.startswith('Camel'):
                 mesh_obj = obj
                 break
 
@@ -174,7 +174,7 @@ class KamilRigSetup:
         """Add armature modifier to mesh."""
         mesh_obj = None
         for obj in bpy.context.scene.objects:
-            if obj.type == 'MESH' and obj.name.startswith('Kamil'):
+            if obj.type == 'MESH' and obj.name.startswith('Camel'):
                 mesh_obj = obj
                 break
 
@@ -188,7 +188,7 @@ class KamilRigSetup:
 
     def run(self):
         """Execute full rig setup."""
-        print("\n=== Starting Kamil Rig Setup ===")
+        print("\n=== Starting Camel Rig Setup ===")
         self.create_armature()
         self.add_bones()
         self.add_vertex_groups()
@@ -197,12 +197,12 @@ class KamilRigSetup:
         self.setup_materials()
         print("=== Rig Setup Complete ===\n")
         print("Next steps:")
-        print("1. Import/create Kamil base mesh")
+        print("1. Import/create Camel base mesh")
         print("2. Weight paint each vertex group")
         print("3. Test rig with simple animations")
         print("4. Fine-tune bone positions if needed")
 
 # Run setup
 if __name__ == "__main__":
-    setup = KamilRigSetup()
+    setup = CamelRigSetup()
     setup.run()

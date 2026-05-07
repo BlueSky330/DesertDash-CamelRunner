@@ -1,5 +1,5 @@
 """
-Kamil Default Model - Low-Poly Base Mesh Generator
+Camel Default Model - Low-Poly Base Mesh Generator
 Author: Artist1
 Purpose: Generate low-poly camel base mesh in Blender (<1200 tris)
 
@@ -13,19 +13,19 @@ Usage:
 1. Open Blender
 2. Open Python console (Shift+F4)
 3. Run this script
-4. Or: import generate_kamil_base_mesh; generate_kamil_base_mesh.create_kamil()
+4. Or: import generate_camel_base_mesh; generate_camel_base_mesh.create_camel()
 """
 
 import bpy
 import bmesh
 from mathutils import Vector
 
-def create_kamil_mesh():
-    """Create Kamil base mesh with low-poly geometry."""
+def create_camel_mesh():
+    """Create Camel base mesh with low-poly geometry."""
 
     # Create mesh and object
-    mesh = bpy.data.meshes.new("Kamil_Base")
-    obj = bpy.data.objects.new("Kamil_Default", mesh)
+    mesh = bpy.data.meshes.new("Camel_Base")
+    obj = bpy.data.objects.new("Camel_Default", mesh)
     bpy.context.collection.objects.link(obj)
     bpy.context.view_layer.objects.active = obj
     obj.select_set(True)
@@ -171,21 +171,21 @@ def create_kamil_mesh():
     bpy.ops.object.shade_smooth()
 
     # Add material slots
-    mat_body = bpy.data.materials.new("Kamil_Body")
+    mat_body = bpy.data.materials.new("Camel_Body")
     mat_body.use_nodes = True
     mat_body.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (0.82, 0.71, 0.55, 1.0)
     mesh.materials.append(mat_body)
 
-    print(f"\n✓ Kamil base mesh created!")
+    print(f"\n✓ Camel base mesh created!")
     print(f"  - Vertices: {len(mesh.vertices)}")
     print(f"  - Faces: {len(mesh.polygons)}")
     print(f"  - Approximate tris: {len(mesh.polygons) * 2}")
     print(f"\nNext steps:")
     print(f"  1. Fine-tune geometry in sculpt mode")
-    print(f"  2. Run setup_kamil_rig.py to create skeleton")
+    print(f"  2. Run setup_camel_rig.py to create skeleton")
     print(f"  3. Weight paint for animations")
     return obj
 
 # Run
 if __name__ == "__main__":
-    create_kamil_mesh()
+    create_camel_mesh()

@@ -58,12 +58,12 @@ public class SkinManager : MonoBehaviour
     {
         availableSkins.Add(new CamelSkin
         {
-            skinName = "Kamil (Base)", cost = 0, isUnlocked = true,
+            skinName = "Camel (Base)", cost = 0, isUnlocked = true,
             weatherProtectionMultiplier = 1f, thiefResistanceMultiplier = 1f
         });
         availableSkins.Add(new CamelSkin
         {
-            skinName = "Pharaoh Kamil", cost = 1000, isUnlocked = false,
+            skinName = "Pharaoh Camel", cost = 1000, isUnlocked = false,
             weatherProtectionMultiplier = 0.9f, thiefResistanceMultiplier = 0.9f,
             iapStoreProductId = "com.aigamefactory.camelrunner.skin_pharaoh"
         });

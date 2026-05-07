@@ -2,7 +2,7 @@
 
 ## Overview
 
-"Desert Dash: Camel Runner" is a fully automated, AI-generated 2.5D endless runner game designed for mobile platforms (Android and iOS). The game features Kamil the Camel on a World Tour across 10 iconic countries, dodging obstacles, collecting treasures, and unlocking new destinations. The project was built using a comprehensive AI-driven pipeline, from initial market research and game design to asset generation, coding, and QA testing.
+"Desert Dash: Camel Runner" is a fully automated, AI-generated 2.5D endless runner game designed for mobile platforms (Android and iOS). The game features Camel the Camel on a World Tour across 10 iconic countries, dodging obstacles, collecting treasures, and unlocking new destinations. The project was built using a comprehensive AI-driven pipeline, from initial market research and game design to asset generation, coding, and QA testing.
 
 The core monetization strategy revolves around a "Player-Driven Rewarded Ads" model, ensuring a non-intrusive experience where players voluntarily watch ads to earn in-game currency, which can be spent on skins, power-ups, and unlocking new countries.
 

@@ -7,21 +7,21 @@ Desert Dash: Camel Runner
 Camel World Tour: Run, Dash, Explore!
 
 ## Promotional Text (170 characters max)
-Embark on an epic 2.5D desert adventure! Guide Kamil the Camel through stunning low-poly landscapes, dodge obstacles, collect treasures, and unlock new countries. No forced ads!
+Embark on an epic 2.5D desert adventure! Guide Camel the Camel through stunning low-poly landscapes, dodge obstacles, collect treasures, and unlock new countries. No forced ads!
 
 ## Full Description (4000 characters max)
 
-**Desert Dash: Camel Runner** invites you on an exhilarating 2.5D endless runner journey across the globe! Guide Kamil the Camel through stunning low-poly landscapes, from the ancient pyramids of Egypt to the bustling streets of New York. Dodge unique obstacles, collect valuable treasures, and unlock new countries in this vibrant, action-packed mobile game.
+**Desert Dash: Camel Runner** invites you on an exhilarating 2.5D endless runner journey across the globe! Guide Camel the Camel through stunning low-poly landscapes, from the ancient pyramids of Egypt to the bustling streets of New York. Dodge unique obstacles, collect valuable treasures, and unlock new countries in this vibrant, action-packed mobile game.
 
 **Key Features:**
 
 *   **World Tour Adventure**: Explore 10 iconic countries, each with unique environments, landmarks, and challenges. Start in Egypt and unlock new destinations like Jordan, India, China, Italy, Peru, France, UAE, Brazil, and USA!
 *   **Dynamic 2.5D Gameplay**: Experience classic endless runner mechanics with a modern 3D low-poly twist. Swipe to change lanes, jump over obstacles, and slide under hazards.
-*   **Charming Camel Characters**: Play as Kamil, a cool adult camel with goggles and a backpack, or unlock unique skins like Pharaoh Kamil, Racing Camel, Mummy Camel, and the majestic Golden Camel, each offering functional benefits!
+*   **Charming Camel Characters**: Play as Camel, a cool adult camel with goggles and a backpack, or unlock unique skins like Pharaoh Camel, Racing Camel, Mummy Camel, and the majestic Golden Camel, each offering functional benefits!
 *   **Player-Driven Monetization**: NO forced ads! Watch rewarded ads voluntarily to earn coins and extend your playtime. Earn coins by collecting in-game items and converting your score.
 *   **Engaging Coin Economy**: Collect dates, silver coins, gems, and mystery boxes. Use your earnings to unlock new countries, purchase powerful skins, and activate game-changing power-ups.
 *   **Thieves & Pirates**: Beware of cunning thieves and pirates who will try to steal your hard-earned coins! Use anti-thief shields or outsmart them with quick reflexes.
-*   **Health System**: Manage Kamil's health through natural recovery items (grass, water, oases) or instant ad-based boosts. Don't let health hit zero, or it's game over!
+*   **Health System**: Manage Camel's health through natural recovery items (grass, water, oases) or instant ad-based boosts. Don't let health hit zero, or it's game over!
 *   **Milestone Progression**: Save your progress at checkpoints within each country, allowing for strategic restarts or ad-fueled continues.
 *   **Offline Play**: Enjoy the game even without an internet connection! Spend your saved coins and continue your adventure. Go online when you need to earn more coins.
 *   **Stunning Low-Poly Art Style**: Immerse yourself in a colorful, sun-drenched world with charming low-poly 3D graphics and smooth animations.

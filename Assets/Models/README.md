@@ -10,12 +10,12 @@
 
 ```
 Assets/Models/
-├── Kamil/                    # Kamil the Camel (main character)
-│   ├── Kamil_Default.fbx    # Base model (IN PROGRESS)
-│   ├── Kamil_Pharaoh.fbx    # Skin (pending)
-│   ├── Kamil_Racing.fbx     # Skin (pending)
-│   ├── Kamil_Mummy.fbx      # Skin (pending)
-│   └── Kamil_Golden.fbx     # Skin (pending)
+├── Camel/                    # Camel the Camel (main character)
+│   ├── Camel_Default.fbx    # Base model (IN PROGRESS)
+│   ├── Camel_Pharaoh.fbx    # Skin (pending)
+│   ├── Camel_Racing.fbx     # Skin (pending)
+│   ├── Camel_Mummy.fbx      # Skin (pending)
+│   └── Camel_Golden.fbx     # Skin (pending)
 └── Thieves/                  # Antagonist characters
     ├── Thief_Bandit.fbx     # Desert Bandit (pending)
     ├── Thief_Ninja.fbx      # Ninja Thief (pending)
@@ -25,11 +25,11 @@ Assets/Models/
 
 ---
 
-## Phase 1: Kamil Default (In Progress)
+## Phase 1: Camel Default (In Progress)
 
 ### Status
 - [x] Design specification complete (M3_PRODUCTION_DESIGN.md)
-- [x] Generation prompt prepared (Kamil_Default_Generation_Prompt.md)
+- [x] Generation prompt prepared (Camel_Default_Generation_Prompt.md)
 - [ ] AI generation (Leonardo.AI / Meshy AI)
 - [ ] Manual cleanup & retopology
 - [ ] Rigging & weight painting
@@ -39,7 +39,7 @@ Assets/Models/
 - [ ] FBX export & Unity import verification
 
 ### What's Next
-1. **Generate mesh** using prompt from `docs/M3_Production/Kamil_Default_Generation_Prompt.md`
+1. **Generate mesh** using prompt from `docs/M3_Production/Camel_Default_Generation_Prompt.md`
    - Tools: Leonardo.AI, Meshy AI, or Blender procedural modeling
    - Target: Recognize camel silhouette, goggles, saddle, bridle visible
    
@@ -66,16 +66,16 @@ Assets/Models/
    - Verify import in Unity
 
 ### Reference Materials
-- Concept art: `Assets/Textures/ConceptArt/kamil_camel_concept.png`
-- Design doc: `docs/M3_Production/M3_PRODUCTION_DESIGN.md` (Section 2: Kamil Default Model Spec)
-- Generation prompt: `docs/M3_Production/Kamil_Default_Generation_Prompt.md`
+- Concept art: `Assets/Textures/ConceptArt/camel_camel_concept.png`
+- Design doc: `docs/M3_Production/M3_PRODUCTION_DESIGN.md` (Section 2: Camel Default Model Spec)
+- Generation prompt: `docs/M3_Production/Camel_Default_Generation_Prompt.md`
 - Style reference: Crossy Road / Subway Surfers (low-poly, exaggerated proportions, vibrant colors)
 
 ---
 
 ## Acceptance Criteria
 
-### Kamil Default Acceptance
+### Camel Default Acceptance
 - [ ] Model matches description (goggles on forehead, Moroccan saddle, red bridle, happy expression)
 - [ ] Polygon count verified <1,200 tris
 - [ ] Geometry is animation-ready (clean topology, proper deformation)
@@ -86,7 +86,7 @@ Assets/Models/
 
 ### All Skins Acceptance (After Phase 1 → Phase 3)
 - [ ] All 4 skins created and visually distinct
-- [ ] Each skin uses same Kamil skeleton (no rig variations)
+- [ ] Each skin uses same Camel skeleton (no rig variations)
 - [ ] All skins stay under 2,000 tris with accessories
 - [ ] No clipping during any animation
 
@@ -101,20 +101,20 @@ Assets/Models/
 ## Technical Specifications
 
 ### Performance Budget
-- **Kamil Base**: <1,200 tris
-- **Kamil + Accessories (Skins)**: <2,000 tris
+- **Camel Base**: <1,200 tris
+- **Camel + Accessories (Skins)**: <2,000 tris
 - **Thieves**: <1,500 tris each
 
 ### Export Format
 - **File Type**: FBX 2020
 - **Include**: Mesh geometry, skeleton, materials (references)
 - **Exclude**: IK handles, constraints, external anim references
-- **Naming**: `Character_Variant.fbx` (e.g., `Kamil_Pharaoh.fbx`)
+- **Naming**: `Character_Variant.fbx` (e.g., `Camel_Pharaoh.fbx`)
 
 ### Unity Import Settings
 ```
 FBX Import:
-  - Rig Type: Humanoid (Kamil), Generic (Thieves)
+  - Rig Type: Humanoid (Camel), Generic (Thieves)
   - Animation Type: Enabled (animations embedded in FBX)
   - Materials: Auto-generate or custom
   - Normals: Import Normals
@@ -127,7 +127,7 @@ FBX Import:
 
 | Date | Phase | Deliverable | Status |
 |------|-------|-------------|--------|
-| **May 15-21** | Phase 1 | Kamil Default + Rig | 🟡 In Progress |
+| **May 15-21** | Phase 1 | Camel Default + Rig | 🟡 In Progress |
 | **May 22-25** | Phase 2 | All 7 Animations | ⬜ Pending |
 | **May 26-Jun 4** | Phase 3 | 4 Skins + 4 Thieves | ⬜ Pending |
 | **Jun 5-11** | Phase 4 | QA & Final Export | ⬜ Pending |
@@ -136,7 +136,7 @@ FBX Import:
 
 ## Git Commit History
 
-- `ad0bf99` (2026-05-07): Add M3 production design & Kamil generation prompt
+- `ad0bf99` (2026-05-07): Add M3 production design & Camel generation prompt
 
 ---
 
@@ -150,4 +150,4 @@ If you encounter issues:
 ---
 
 **Last Updated**: 2026-05-07  
-**Next Update**: After Kamil Default model completion (Est. 2026-05-21)
+**Next Update**: After Camel Default model completion (Est. 2026-05-21)
