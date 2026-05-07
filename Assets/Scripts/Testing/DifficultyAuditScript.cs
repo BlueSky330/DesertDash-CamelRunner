@@ -208,30 +208,42 @@ public class DifficultyAuditScript : MonoBehaviour
 
     private int GetObstacleSpawnCount()
     {
-        // TODO: Query ObstacleSpawner or LevelGenerator for total obstacles spawned
-        // Placeholder: return 0
-        return 0;
+        if (ObstacleSpawner.Instance == null)
+        {
+            Debug.LogWarning("[DifficultyAuditScript] ObstacleSpawner.Instance is null — returning 0 for SpawnCount.");
+            return 0;
+        }
+        return ObstacleSpawner.Instance.SpawnCount;
     }
 
     private float GetObstacleSpawnRate()
     {
-        // TODO: Calculate from recent obstacle spawns (obstacles per minute)
-        // Placeholder: return 5.0f
-        return 5.0f;
+        if (ObstacleSpawner.Instance == null)
+        {
+            Debug.LogWarning("[DifficultyAuditScript] ObstacleSpawner.Instance is null — returning 0 for CurrentSpawnRate.");
+            return 0f;
+        }
+        return ObstacleSpawner.Instance.CurrentSpawnRate;
     }
 
     private int GetPowerUpCount()
     {
-        // TODO: Query PowerUpManager for total power-ups spawned
-        // Placeholder: return 0
-        return 0;
+        if (PowerUpManager.Instance == null)
+        {
+            Debug.LogWarning("[DifficultyAuditScript] PowerUpManager.Instance is null — returning 0 for TotalSpawned.");
+            return 0;
+        }
+        return PowerUpManager.Instance.TotalSpawned;
     }
 
     private int GetThiefEncounterCount()
     {
-        // TODO: Query ThiefSystem for thief encounters
-        // Placeholder: return 0
-        return 0;
+        if (ThiefSystem.Instance == null)
+        {
+            Debug.LogWarning("[DifficultyAuditScript] ThiefSystem.Instance is null — returning 0 for EncounterCount.");
+            return 0;
+        }
+        return ThiefSystem.Instance.EncounterCount;
     }
 
     private float GetAverageFPS()

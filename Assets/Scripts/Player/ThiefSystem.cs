@@ -5,6 +5,10 @@ public class ThiefSystem : MonoBehaviour
 {
     public static ThiefSystem Instance { get; private set; }
 
+    // ── Audit counter (read by DifficultyAuditScript) ─────────────────────
+    /// <summary>Total thief spawn events since game start.</summary>
+    public int EncounterCount { get; private set; }
+
     [Header("Thief Spawn Settings")]
     public float minThiefSpawnInterval = 15f;
     public float maxThiefSpawnInterval = 30f;
@@ -68,6 +72,8 @@ public class ThiefSystem : MonoBehaviour
 
     private void SpawnRandomThief()
     {
+        EncounterCount++;
+
         // Determine current country (placeholder for WorldMapManager integration)
         // For now, let's assume Egypt for initial testing
         string currentCountry = "Egypt";

@@ -11,6 +11,15 @@ using System.Collections.Generic;
 /// </summary>
 public class ObstacleSpawner : MonoBehaviour
 {
+    public static ObstacleSpawner Instance { get; private set; }
+
+    // ── Audit counters (read by DifficultyAuditScript) ────────────────────
+    /// <summary>Total obstacles spawned since game start.</summary>
+    public int SpawnCount { get; private set; }
+
+    /// <summary>Current spawn rate in obstacles per minute, derived from DifficultyManager interval.</summary>
+    public float CurrentSpawnRate => 60f / Mathf.Max(0.01f, GetSpawnInterval());
+
     // ── Lane constants ─────────────────────────────────────────────────────
     // Matches PlayerController.laneWidth default of 2f.
     // Set via inspector if laneWidth differs.
@@ -44,6 +53,12 @@ public class ObstacleSpawner : MonoBehaviour
     {
         public GameObject obj;
         public string     tag;
+    }
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
     }
 
     void Start()
@@ -91,7 +106,10 @@ public class ObstacleSpawner : MonoBehaviour
 
         GameObject obj = ObjectPool.Instance.SpawnFromPool(tag, spawnPos, Quaternion.identity);
         if (obj != null)
+        {
             liveObstacles.Add(new PooledObstacle { obj = obj, tag = tag });
+            SpawnCount++;
+        }
     }
 
     private void RecycleOffscreenObstacles()

@@ -31,6 +31,10 @@ public class PowerUpManager : MonoBehaviour
     [Header("Magic Carpet")]
     public float magicCarpetSpeedMultiplier = 1.5f;
 
+    // ── Audit counter (read by DifficultyAuditScript) ─────────────────────
+    /// <summary>Total power-ups activated since game start.</summary>
+    public int TotalSpawned { get; private set; }
+
     // ── States ────────────────────────────────────────────────────────────
     public bool isMagicCarpetActive  { get; private set; }
     public bool isScarabShieldActive { get; private set; }
@@ -52,6 +56,7 @@ public class PowerUpManager : MonoBehaviour
 
     public void ActivatePowerUp(PowerUpType type)
     {
+        TotalSpawned++;
         switch (type)
         {
             case PowerUpType.MagicCarpet:
