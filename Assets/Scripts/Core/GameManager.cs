@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
         OnScoreChanged?.Invoke(score);
         SetState(GameState.Running);
         OnGameStarted?.Invoke();
+        GameAudioEvents.OnChangeBGM?.Invoke("Egypt");
         SceneManager.LoadScene("GameplayScene");
     }
 
@@ -98,6 +99,7 @@ public class GameManager : MonoBehaviour
         if (State == GameState.GameOver) return;
         SetState(GameState.GameOver);
         OnGameOver?.Invoke();
+        GameAudioEvents.OnPlayGameOver?.Invoke();
         Debug.Log($"[GameManager] Game Over — score: {score}, time: {runTime:F1}s");
         SceneManager.LoadScene("GameOver");
     }

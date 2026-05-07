@@ -73,6 +73,20 @@ public class UIManager : MonoBehaviour
         // AdManager.onAdFailed += OnAdFailed; // Example
         // WorldMapManager.onCurrentCountryChanged += UpdateMiniMapDisplay; // Example
 
+        // Wire click audio to all navigation buttons
+        WireButtonAudio(playButton);
+        WireButtonAudio(shopButton);
+        WireButtonAudio(charactersButton);
+        WireButtonAudio(settingsButton);
+        WireButtonAudio(quickAdButton);
+        WireButtonAudio(standardAdButton);
+        WireButtonAudio(premiumAdButton);
+        WireButtonAudio(shopSkinsButton);
+        WireButtonAudio(shopPowerUpsButton);
+        WireButtonAudio(shopCoinPacksButton);
+        WireButtonAudio(restartMilestoneButton);
+        WireButtonAudio(continueAdButton);
+
         // Initial UI state
         ShowMainMenu();
         UpdateScoreDisplay(CollectibleSystem.Instance.currentScore);
@@ -213,5 +227,12 @@ public class UIManager : MonoBehaviour
     {
         // Update miniMapImage based on countryName and progress
         Debug.Log($"Updating mini-map for {countryName} with progress {progress}");
+    }
+
+    /// <summary>Null-safe: adds a click-audio listener to a button if it is assigned.</summary>
+    private static void WireButtonAudio(Button btn)
+    {
+        if (btn != null)
+            btn.onClick.AddListener(() => GameAudioEvents.OnPlayUIClick?.Invoke());
     }
 }

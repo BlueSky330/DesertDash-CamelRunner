@@ -96,12 +96,25 @@ public class CollectibleSystem : MonoBehaviour
         int pointsToAdd = 0;
         switch (type)
         {
-            case CollectibleType.Date:        pointsToAdd = DATE_POINTS;        break;
-            case CollectibleType.SilverCoin:  pointsToAdd = SILVER_COIN_POINTS; break;
-            case CollectibleType.Gem:         pointsToAdd = GEM_POINTS;         break;
-            case CollectibleType.GoldenDate:  pointsToAdd = GOLDEN_DATE_POINTS; break;
+            case CollectibleType.Date:
+                pointsToAdd = DATE_POINTS;
+                GameAudioEvents.OnPlayCollectDates?.Invoke();
+                break;
+            case CollectibleType.SilverCoin:
+                pointsToAdd = SILVER_COIN_POINTS;
+                GameAudioEvents.OnPlayCollectCoins?.Invoke();
+                break;
+            case CollectibleType.Gem:
+                pointsToAdd = GEM_POINTS;
+                GameAudioEvents.OnPlayCollectGems?.Invoke();
+                break;
+            case CollectibleType.GoldenDate:
+                pointsToAdd = GOLDEN_DATE_POINTS;
+                GameAudioEvents.OnPlayCollectDates?.Invoke();
+                break;
             case CollectibleType.MysteryBox:
                 pointsToAdd = Random.Range(MYSTERY_BOX_MIN_POINTS, MYSTERY_BOX_MAX_POINTS + 1);
+                GameAudioEvents.OnPlayCollectGems?.Invoke();
                 break;
         }
         currentScore += pointsToAdd;

@@ -191,6 +191,7 @@ public class PlayerController : MonoBehaviour
         verticalVelocity  = jumpForce;
         jumpCooldownTimer = JUMP_COOLDOWN;
         anim.SetTrigger(AnimJump);
+        GameAudioEvents.OnPlayJump?.Invoke();
     }
 
     public void TrySlide()
@@ -245,6 +246,7 @@ public class PlayerController : MonoBehaviour
     {
         isSliding = true;
         anim.SetTrigger(AnimSlide);
+        GameAudioEvents.OnPlaySlide?.Invoke();
 
         // Shrink collider centre/height so slide clears low obstacles
         if (cc != null)
@@ -290,6 +292,8 @@ public class PlayerController : MonoBehaviour
 
         if (HealthSystem.Instance != null)
             HealthSystem.Instance.TakeDamage(25f);
+
+        GameAudioEvents.OnPlayCollision?.Invoke();
     }
 
     // ── Reset ─────────────────────────────────────────────────────────────

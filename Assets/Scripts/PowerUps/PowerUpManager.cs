@@ -57,6 +57,7 @@ public class PowerUpManager : MonoBehaviour
     public void ActivatePowerUp(PowerUpType type)
     {
         TotalSpawned++;
+        GameAudioEvents.OnPlayPowerUp?.Invoke();
         switch (type)
         {
             case PowerUpType.MagicCarpet:
