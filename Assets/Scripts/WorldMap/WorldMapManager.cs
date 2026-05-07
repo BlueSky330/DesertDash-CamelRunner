@@ -32,11 +32,12 @@ public class WorldMapManager : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        // Initialize in Awake so data is available before Start() and in EditMode tests
+        InitializeCountries();
     }
 
     void Start()
     {
-        InitializeCountries();
         LoadUnlockState();
 
         string saved = PlayerPrefs.GetString(PREF_CURRENT_COUNTRY, "Egypt");

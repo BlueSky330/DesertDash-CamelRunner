@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
         SetState(GameState.GameOver);
         OnGameOver?.Invoke();
         Debug.Log($"[GameManager] Game Over — score: {score}, time: {runTime:F1}s");
-        SceneManager.LoadScene("GameOverScene");
+        SceneManager.LoadScene("GameOver");
     }
 
     public void RestartGame()

@@ -114,7 +114,7 @@ public class HealthSystem : MonoBehaviour
         InitHealth();
     }
 
-    public bool IsLowHealth() => currentHealth <= 25f;
+    public bool IsLowHealth() => currentHealth < 25f;
 
     // ── Environmental recovery shortcuts ──────────────────────────────────
     public void RecoverFromGrass()   => RecoverHealth(grassRecovery);

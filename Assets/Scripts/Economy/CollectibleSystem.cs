@@ -28,6 +28,9 @@ public class CollectibleSystem : MonoBehaviour
     public delegate void OnCoinsChanged(int newCoins);
     public static event OnCoinsChanged onCoinsChanged;
 
+    // Starting coin bonus for new players
+    private const int STARTING_COINS = 500;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -37,9 +40,8 @@ public class CollectibleSystem : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        // Coins loaded by CoinEconomy.Start() via SetCoins(); start at 0 here.
         currentScore = 0;
-        CurrentCoins = 0;
+        CurrentCoins = STARTING_COINS;
     }
 
     void Start()
@@ -120,12 +122,13 @@ public class CollectibleSystem : MonoBehaviour
         onScoreChanged?.Invoke(currentScore);
     }
 
-    /// <summary>Legacy reset — kept for compatibility with existing callers.</summary>
+    /// <summary>Legacy reset — restores score to 0 and coins to starting bonus.</summary>
     public void ResetScoreAndCoins()
     {
         ResetScore();
-        // Do not wipe persisted coins; CoinEconomy is the authority.
-        Debug.Log("[CollectibleSystem] Score reset. Coin balance preserved (managed by CoinEconomy).");
+        CurrentCoins = STARTING_COINS;
+        onCoinsChanged?.Invoke(CurrentCoins);
+        Debug.Log($"[CollectibleSystem] Score and coins reset to defaults (coins: {STARTING_COINS}).");
     }
 
     public enum CollectibleType
