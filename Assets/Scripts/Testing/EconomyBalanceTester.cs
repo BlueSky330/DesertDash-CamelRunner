@@ -95,13 +95,13 @@ public class EconomyBalanceTester : MonoBehaviour
         // Simulate player choosing to watch ads if coins are low or for a bonus
         if (CollectibleSystem.Instance.currentCoins < 1000 && Random.value < 0.05f) // If coins low, 5% chance to watch ad
         {
-            AdManager.Instance.ShowRewardedAd(AdManager.AdPurpose.StandardCoinReward);
+            AdManager.Instance.ShowRewardedAd(AdManager.AdPurpose.DoubleCoins);
             adsWatched++;
             totalCoinsEarned += 250; // Assuming standard ad gives 250 coins
         }
         else if (Random.value < 0.01f) // Small chance to watch premium ad for power-up
         {
-            AdManager.Instance.ShowRewardedAd(AdManager.AdPurpose.PremiumCoinReward);
+            AdManager.Instance.ShowRewardedAd(AdManager.AdPurpose.FreeShopReward);
             adsWatched++;
             totalCoinsEarned += 400; // Assuming premium ad gives 400 coins
         }

@@ -89,6 +89,22 @@ public class PowerUpManager : MonoBehaviour
     /// <summary>Returns true if Scarab Shield can absorb a hit.</summary>
     public bool HasScarabShield() => isScarabShieldActive;
 
+    /// <summary>Grants an anti-thief shield (activates Scarab Shield).</summary>
+    public void AddAntiThiefShield()
+    {
+        isScarabShieldActive = true;
+        OnPowerUpActivated?.Invoke(PowerUpType.ScarabShell, 0f);
+        Debug.Log("[PowerUp] Anti-Thief Shield granted.");
+    }
+
+    /// <summary>Uses an anti-thief shield if one is active. Returns true if a shield absorbed the thief attack.</summary>
+    public bool UseAntiThiefShield()
+    {
+        if (!isScarabShieldActive) return false;
+        ConsumeScarabShield();
+        return true;
+    }
+
     /// <summary>Consumes the Scarab Shield (called by PlayerController on collision).</summary>
     public void ConsumeScarabShield()
     {

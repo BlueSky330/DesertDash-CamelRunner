@@ -36,8 +36,7 @@ public class SkinRenderer : MonoBehaviour
 
     void OnDestroy()
     {
-        if (SkinManager.onSkinEquipped != null)
-            SkinManager.onSkinEquipped -= OnSkinEquipped;
+        SkinManager.onSkinEquipped -= OnSkinEquipped;
     }
 
     /// <summary>Event handler: apply material when skin is equipped.</summary>

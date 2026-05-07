@@ -168,8 +168,7 @@ public class CamelAnimatorControllerSetup
             stateMachine.RemoveState(state.state);
         }
 
-        // Clear all transitions
-        stateMachine.ClearStateMachineTransitions(null);
+        // Transitions are removed automatically when states are removed
     }
 
     [MenuItem("Tools/Camel Runner/Validate Camel Animator Controller")]

@@ -170,8 +170,9 @@ public class ThiefModelValidator : MonoBehaviour
         int totalTris = 0;
 
         // Count triangles in all meshes
-        Mesh[] meshes = model.GetComponentsInChildren<SkinnedMeshRenderer>()
-            .ConvertAll(m => m.sharedMesh).ToArray();
+        Mesh[] meshes = System.Array.ConvertAll(
+            model.GetComponentsInChildren<SkinnedMeshRenderer>(),
+            m => m.sharedMesh);
 
         foreach (Mesh mesh in meshes)
         {

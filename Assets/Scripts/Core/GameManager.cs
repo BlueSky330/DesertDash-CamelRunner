@@ -86,6 +86,13 @@ public class GameManager : MonoBehaviour
         SetState(GameState.Running);
     }
 
+    /// <summary>Continues game after an ad reward (e.g. revive). Resumes from GameOver state.</summary>
+    public void ContinueGame()
+    {
+        Time.timeScale = 1f;
+        SetState(GameState.Running);
+    }
+
     public void EndGame()
     {
         if (State == GameState.GameOver) return;

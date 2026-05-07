@@ -21,8 +21,8 @@ public class AdTester : MonoBehaviour
         report.AppendLine("--- Ad Test Report ---");
 
         // Subscribe to AdManager events for reward verification
-        AdManager.onAdRewardGranted += OnAdRewardGranted;
-        AdManager.onAdFailed += OnAdFailed;
+        AdManager.OnAdRewardGranted += OnAdRewardGranted;
+        AdManager.OnAdFailed += OnAdFailed;
 
         StartCoroutine(RunAdTests());
     }
@@ -30,40 +30,40 @@ public class AdTester : MonoBehaviour
     void OnDestroy()
     {
         // Unsubscribe from events
-        AdManager.onAdRewardGranted -= OnAdRewardGranted;
-        AdManager.onAdFailed -= OnAdFailed;
+        AdManager.OnAdRewardGranted -= OnAdRewardGranted;
+        AdManager.OnAdFailed -= OnAdFailed;
     }
 
     private IEnumerator RunAdTests()
     {
         // Test 1: Simulate Quick Watch ad completion
         report.AppendLine("\n--- Test 1: Quick Watch Ad Completion ---");
-        SimulateAdShow(AdManager.AdPurpose.QuickCoinReward, true);
+        SimulateAdShow(AdManager.AdPurpose.DoubleCoins, true);
         yield return new WaitForSeconds(testDelayBetweenAds);
 
         // Test 2: Simulate Standard Watch ad completion
         report.AppendLine("\n--- Test 2: Standard Watch Ad Completion ---");
-        SimulateAdShow(AdManager.AdPurpose.StandardCoinReward, true);
+        SimulateAdShow(AdManager.AdPurpose.DoubleCoins, true);
         yield return new WaitForSeconds(testDelayBetweenAds);
 
         // Test 3: Simulate Premium Watch ad completion
         report.AppendLine("\n--- Test 3: Premium Watch Ad Completion ---");
-        SimulateAdShow(AdManager.AdPurpose.PremiumCoinReward, true);
+        SimulateAdShow(AdManager.AdPurpose.FreeShopReward, true);
         yield return new WaitForSeconds(testDelayBetweenAds);
 
         // Test 4: Simulate Quick Watch ad skip (no reward)
         report.AppendLine("\n--- Test 4: Quick Watch Ad Skip ---");
-        SimulateAdShow(AdManager.AdPurpose.QuickCoinReward, false); // Simulate skip/fail
+        SimulateAdShow(AdManager.AdPurpose.DoubleCoins, false); // Simulate skip/fail
         yield return new WaitForSeconds(testDelayBetweenAds);
 
         // Test 5: Simulate Health Restoration ad completion
         report.AppendLine("\n--- Test 5: Health Restoration Ad Completion ---");
-        SimulateAdShow(AdManager.AdPurpose.HealthPremium, true);
+        SimulateAdShow(AdManager.AdPurpose.HealthRestore, true);
         yield return new WaitForSeconds(testDelayBetweenAds);
 
         // Test 6: Simulate Game Over Continue ad completion
         report.AppendLine("\n--- Test 6: Game Over Continue Ad Completion ---");
-        SimulateAdShow(AdManager.AdPurpose.GameOverContinue, true);
+        SimulateAdShow(AdManager.AdPurpose.Revive, true);
         yield return new WaitForSeconds(testDelayBetweenAds);
 
         GenerateReport();
@@ -91,16 +91,16 @@ public class AdTester : MonoBehaviour
         }
     }
 
-    private void OnAdRewardGranted(AdManager.AdRewardType rewardType, float amount)
+    private void OnAdRewardGranted(AdManager.AdPurpose purpose, AdManager.AdRewardType rewardType, float amount)
     {
-        report.AppendLine($"  [SUCCESS] Ad Reward Granted: Type={rewardType}, Amount={amount}");
-        Debug.Log($"AdTester: Reward Granted - Type: {rewardType}, Amount: {amount}");
+        report.AppendLine($"  [SUCCESS] Ad Reward Granted: Purpose={purpose}, Type={rewardType}, Amount={amount}");
+        Debug.Log($"AdTester: Reward Granted - Purpose: {purpose}, Type: {rewardType}, Amount: {amount}");
     }
 
-    private void OnAdFailed(string message)
+    private void OnAdFailed(AdManager.AdPurpose purpose, string message)
     {
-        report.AppendLine($"  [FAILURE] Ad Failed: {message}");
-        Debug.LogWarning($"AdTester: Ad Failed - {message}");
+        report.AppendLine($"  [FAILURE] Ad Failed ({purpose}): {message}");
+        Debug.LogWarning($"AdTester: Ad Failed ({purpose}) - {message}");
     }
 
     private void GenerateReport()

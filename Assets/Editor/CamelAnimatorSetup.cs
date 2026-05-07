@@ -175,29 +175,23 @@ public class CamelAnimatorSetup
         AnimatorStateMachine rootSM = controller.layers[0].stateMachine;
         int stateCount = rootSM.states.Length;
 
-        string report = $"""
-        ╔═══════════════════════════════════════╗
-        ║  Camel Animator Verification Report   ║
-        ╚═══════════════════════════════════════╝
-
-        Parameters:
-          ✓ IsRunning (bool):  {(hasIsRunning ? "✓ Present" : "❌ Missing")}
-          ✓ Jump (trigger):    {(hasJump ? "✓ Present" : "❌ Missing")}
-          ✓ Slide (trigger):   {(hasSlide ? "✓ Present" : "❌ Missing")}
-          ✓ Hit (trigger):     {(hasHit ? "✓ Present" : "❌ Missing")}
-
-        States: {stateCount} total
-          Expected: Idle, Run, Jump, Slide, Hit
-
-        Transitions:
-          ✓ Idle ↔ Run (IsRunning bool)
-          ✓ Jump/Slide/Hit triggered from any state
-          ✓ Jump/Slide/Hit return based on IsRunning value
-
-        Blend Tree (Run state):
-          ✓ 1D blend tree for speed variation (0-2)
-          ⚠ Animation clips pending import (AIG-36)
-        """;
+        string report = "╔═══════════════════════════════════════╗\n" +
+            "║  Camel Animator Verification Report   ║\n" +
+            "╚═══════════════════════════════════════╝\n\n" +
+            "Parameters:\n" +
+            $"  IsRunning (bool):  {(hasIsRunning ? "Present" : "Missing")}\n" +
+            $"  Jump (trigger):    {(hasJump ? "Present" : "Missing")}\n" +
+            $"  Slide (trigger):   {(hasSlide ? "Present" : "Missing")}\n" +
+            $"  Hit (trigger):     {(hasHit ? "Present" : "Missing")}\n\n" +
+            $"States: {stateCount} total\n" +
+            "  Expected: Idle, Run, Jump, Slide, Hit\n\n" +
+            "Transitions:\n" +
+            "  Idle <-> Run (IsRunning bool)\n" +
+            "  Jump/Slide/Hit triggered from any state\n" +
+            "  Jump/Slide/Hit return based on IsRunning value\n\n" +
+            "Blend Tree (Run state):\n" +
+            "  1D blend tree for speed variation (0-2)\n" +
+            "  Animation clips pending import (AIG-36)";
 
         Debug.Log(report);
 
