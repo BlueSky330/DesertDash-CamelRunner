@@ -68,6 +68,9 @@ public class ThiefSpawner : MonoBehaviour
         go.AddComponent<Animator>();
         go.tag = "Enemy";
 
+        // Tri-budget guard: logs PASS/FAIL at spawn time (mesh built in AddComponent above)
+        CharacterBudgetVerifier.Verify(go, type.ToString());
+
         return go;
     }
 

@@ -42,8 +42,9 @@ public class PlayerController : MonoBehaviour
     private const float JUMP_COOLDOWN = 0.4f;
 
     // ── State ──────────────────────────────────────────────────────────────
-    private CharacterController cc;
-    private Animator            anim;
+    private CharacterController       cc;
+    private Animator                  anim;
+    private CamelAnimationController  _camelAnim;
 
     private int   currentLane   = 1; // 0 left | 1 centre | 2 right
     private float targetX;
@@ -75,8 +76,9 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        cc   = GetComponent<CharacterController>();
-        anim = GetComponent<Animator>();
+        cc        = GetComponent<CharacterController>();
+        anim      = GetComponent<Animator>();
+        _camelAnim = GetComponentInChildren<CamelAnimationController>();
 
         currentLane = 1;
         targetX     = LaneX(currentLane);
@@ -279,7 +281,13 @@ public class PlayerController : MonoBehaviour
         if (PowerUpManager.Instance != null && PowerUpManager.Instance.isMagicCarpetActive)
             return;
 
-        anim.SetTrigger(AnimHit);
+        // Route through CamelAnimationController when present so hit-flash fires.
+        // CamelAnimationController.OnHit() sets the Animator trigger internally.
+        if (_camelAnim != null)
+            _camelAnim.OnHit();
+        else
+            anim.SetTrigger(AnimHit);
+
         if (HealthSystem.Instance != null)
             HealthSystem.Instance.TakeDamage(25f);
     }
