@@ -45,7 +45,7 @@ MonoBehaviour:
   m_GameObject: {fileID: -7906385301949264996}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0000000000000000000000000000000, type: 3}
+  m_Script: {fileID: 11500000, guid: efeecf2113174e089c9dac0ee1eba3da, type: 3}
   m_Name:
   m_EditorClassIdentifier:
   saddleBlanketSlot: {fileID: -7906385301949264988}

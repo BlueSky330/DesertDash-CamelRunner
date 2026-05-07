@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11500000
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData:
+  assetBundleName:
+  assetBundleVariant:
+  scriptClass: ProceduralDesertBanditMesh
+  guid: 3f469dad898a4dd6869b6d73b68d71ce
+  timeCreated: 0
+  licenseType: Free
