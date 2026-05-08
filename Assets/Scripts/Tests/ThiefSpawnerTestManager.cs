@@ -190,7 +190,7 @@ public class ThiefSpawnerTestManager : MonoBehaviour
     {
         if (spawnedThieves.Count == 0)
         {
-            ThiefSpawner.Instance.SpawnThief(ThiefSystem.ThiefType.Ninja,
+            ThiefSpawner.Instance.SpawnThief(ThiefSystem.ThiefType.NinjaThief,
                                              ThiefSystem.ThiefSpawnPosition.Ahead);
             yield return new WaitForSeconds(0.5f);
         }
