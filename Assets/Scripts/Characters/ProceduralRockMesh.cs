@@ -148,14 +148,16 @@ public class ProceduralRockMesh : MonoBehaviour
     {
         var verts   = new List<Vector3>();
         var normals = new List<Vector3>();
+        var uvs     = new List<Vector2>();
         var tris    = new List<int>();
 
         foreach (var (centre, size, rot) in parts)
-            AppendBox(verts, normals, tris, Matrix4x4.TRS(centre, rot, Vector3.one), size);
+            AppendBox(verts, normals, uvs, tris, Matrix4x4.TRS(centre, rot, Vector3.one), size);
 
         var mesh = new Mesh { name = "ProceduralRock" };
         mesh.SetVertices(verts);
         mesh.SetNormals(normals);
+        mesh.SetUVs(0, uvs);
         mesh.SetTriangles(tris, 0);
         mesh.RecalculateBounds();
         return mesh;
@@ -166,6 +168,11 @@ public class ProceduralRockMesh : MonoBehaviour
         Shader shader = Shader.Find("Universal Render Pipeline/Lit")
                      ?? Shader.Find("Standard");
         var mat = new Material(shader) { color = RockColor };
+
+        // Apply rock texture from Resources if available
+        Texture2D tex = Resources.Load<Texture2D>("Egypt/rock_obstacle");
+        if (tex != null) mat.mainTexture = tex;
+
         if (mat.HasProperty("_Smoothness")) mat.SetFloat("_Smoothness", 0f);
         if (mat.HasProperty("_Glossiness")) mat.SetFloat("_Glossiness", 0f);
         if (mat.HasProperty("_Metallic"))   mat.SetFloat("_Metallic",   0f);
@@ -173,8 +180,8 @@ public class ProceduralRockMesh : MonoBehaviour
     }
 
     private static void AppendBox(
-        List<Vector3> verts, List<Vector3> normals, List<int> tris,
-        Matrix4x4 mtx, Vector3 size)
+        List<Vector3> verts, List<Vector3> normals, List<Vector2> uvs,
+        List<int> tris, Matrix4x4 mtx, Vector3 size)
     {
         float hx = size.x * 0.5f, hy = size.y * 0.5f, hz = size.z * 0.5f;
 
@@ -186,17 +193,18 @@ public class ProceduralRockMesh : MonoBehaviour
             new Vector3( hx,  hy,  hz), new Vector3(-hx,  hy,  hz),
         };
 
-        var faces = new (Vector3 n, int a, int b, int c2, int d)[]
+        var faces = new (Vector3 n, int a, int b, int c2, int d,
+                         Vector2 uvA, Vector2 uvB, Vector2 uvC2, Vector2 uvD)[]
         {
-            (Vector3.up,      3, 7, 6, 2),
-            (Vector3.down,    0, 1, 5, 4),
-            (Vector3.forward, 4, 5, 6, 7),
-            (Vector3.back,    1, 0, 3, 2),
-            (Vector3.right,   5, 1, 2, 6),
-            (Vector3.left,    0, 4, 7, 3),
+            (Vector3.up,      3, 7, 6, 2,  new Vector2(0,0), new Vector2(0,1), new Vector2(1,1), new Vector2(1,0)),
+            (Vector3.down,    0, 1, 5, 4,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
+            (Vector3.forward, 4, 5, 6, 7,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
+            (Vector3.back,    1, 0, 3, 2,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
+            (Vector3.right,   5, 1, 2, 6,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
+            (Vector3.left,    0, 4, 7, 3,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
         };
 
-        foreach (var (n, a, b, c2, d) in faces)
+        foreach (var (n, a, b, c2, d, uvA, uvB, uvC2, uvD) in faces)
         {
             int faceBase = verts.Count;
             Vector3 wn = mtx.MultiplyVector(n).normalized;
@@ -205,6 +213,7 @@ public class ProceduralRockMesh : MonoBehaviour
             verts.Add(mtx.MultiplyPoint3x4(c[c2]));
             verts.Add(mtx.MultiplyPoint3x4(c[d]));
             normals.Add(wn); normals.Add(wn); normals.Add(wn); normals.Add(wn);
+            uvs.Add(uvA); uvs.Add(uvB); uvs.Add(uvC2); uvs.Add(uvD);
             tris.Add(faceBase);     tris.Add(faceBase + 1); tris.Add(faceBase + 2);
             tris.Add(faceBase);     tris.Add(faceBase + 2); tris.Add(faceBase + 3);
         }

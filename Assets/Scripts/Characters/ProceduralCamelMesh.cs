@@ -160,37 +160,37 @@ public class ProceduralCamelMesh : MonoBehaviour
     {
         var allVerts   = new List<Vector3>();
         var allNormals = new List<Vector3>();
+        var allUVs     = new List<Vector2>();
         var allTris    = new List<int>();
 
         foreach (var (centre, size, rot) in parts)
         {
             Matrix4x4 mtx = Matrix4x4.TRS(centre, rot, Vector3.one);
-            AppendBox(allVerts, allNormals, allTris, mtx, size);
+            AppendBox(allVerts, allNormals, allUVs, allTris, mtx, size);
         }
 
         var mesh = new Mesh { name = "ProceduralCamel" };
         mesh.SetVertices(allVerts);
         mesh.SetNormals(allNormals);
+        mesh.SetUVs(0, allUVs);
         mesh.SetTriangles(allTris, 0);
         mesh.RecalculateBounds();
         return mesh;
     }
 
     /// <summary>
-    /// Append 24 flat-shaded vertices (4 per face × 6 faces) for one box into
-    /// the running vertex/normal/triangle lists.
-    /// All corners are transformed by <paramref name="mtx"/> into world (or parent) space.
+    /// Append 24 flat-shaded vertices (4 per face × 6 faces) for one box.
+    /// UV coordinates use planar projection per face for texture support.
     /// Winding: counter-clockwise when viewed from outside each face (Unity default).
     /// </summary>
     private static void AppendBox(
-        List<Vector3> verts, List<Vector3> normals, List<int> tris,
-        Matrix4x4 mtx, Vector3 size)
+        List<Vector3> verts, List<Vector3> normals, List<Vector2> uvs,
+        List<int> tris, Matrix4x4 mtx, Vector3 size)
     {
         float hx = size.x * 0.5f;
         float hy = size.y * 0.5f;
         float hz = size.z * 0.5f;
 
-        // 8 local-space corners (indexed for readability below)
         var c = new Vector3[]
         {
             new Vector3(-hx, -hy, -hz), // 0 left-bottom-back
@@ -203,22 +203,21 @@ public class ProceduralCamelMesh : MonoBehaviour
             new Vector3(-hx,  hy,  hz), // 7 left-top-front
         };
 
-        // Each face: (outward normal, 4 corner indices wound CCW from outside)
-        var faces = new (Vector3 n, int a, int b, int c2, int d)[]
+        // Each face: normal, 4 corner indices wound CCW from outside, UV corners
+        var faces = new (Vector3 n, int a, int b, int c2, int d,
+                         Vector2 uvA, Vector2 uvB, Vector2 uvC2, Vector2 uvD)[]
         {
-            (Vector3.up,      3, 7, 6, 2), // +Y top
-            (Vector3.down,    0, 1, 5, 4), // -Y bottom
-            (Vector3.forward, 4, 5, 6, 7), // +Z front
-            (Vector3.back,    1, 0, 3, 2), // -Z back
-            (Vector3.right,   5, 1, 2, 6), // +X right
-            (Vector3.left,    0, 4, 7, 3), // -X left
+            (Vector3.up,      3, 7, 6, 2,  new Vector2(0,0), new Vector2(0,1), new Vector2(1,1), new Vector2(1,0)),
+            (Vector3.down,    0, 1, 5, 4,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
+            (Vector3.forward, 4, 5, 6, 7,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
+            (Vector3.back,    1, 0, 3, 2,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
+            (Vector3.right,   5, 1, 2, 6,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
+            (Vector3.left,    0, 4, 7, 3,  new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1)),
         };
 
-        foreach (var (n, a, b, c2, d) in faces)
+        foreach (var (n, a, b, c2, d, uvA, uvB, uvC2, uvD) in faces)
         {
             int faceBase = verts.Count;
-
-            // Transform normal by rotation only (no scale, no translation)
             Vector3 wn = mtx.MultiplyVector(n).normalized;
 
             verts.Add(mtx.MultiplyPoint3x4(c[a]));
@@ -227,8 +226,8 @@ public class ProceduralCamelMesh : MonoBehaviour
             verts.Add(mtx.MultiplyPoint3x4(c[d]));
 
             normals.Add(wn); normals.Add(wn); normals.Add(wn); normals.Add(wn);
+            uvs.Add(uvA); uvs.Add(uvB); uvs.Add(uvC2); uvs.Add(uvD);
 
-            // Two triangles from the quad (CCW: 0→1→2 and 0→2→3)
             tris.Add(faceBase);     tris.Add(faceBase + 1); tris.Add(faceBase + 2);
             tris.Add(faceBase);     tris.Add(faceBase + 2); tris.Add(faceBase + 3);
         }
@@ -248,7 +247,11 @@ public class ProceduralCamelMesh : MonoBehaviour
                      ?? Shader.Find("Standard");
 
         var mat = new Material(shader) { color = CamelBaseColor };
-        // Zero roughness/glossiness for a flat matte finish
+
+        // Apply camel texture from Resources if available
+        Texture2D tex = Resources.Load<Texture2D>("Egypt/camel_idle");
+        if (tex != null) mat.mainTexture = tex;
+
         if (mat.HasProperty("_Smoothness")) mat.SetFloat("_Smoothness", 0f);
         if (mat.HasProperty("_Glossiness")) mat.SetFloat("_Glossiness", 0f);
         if (mat.HasProperty("_Metallic"))   mat.SetFloat("_Metallic",   0f);

@@ -202,9 +202,8 @@ public static class PlaceholderAssetBuilder
 
     private static void BuildObstacles()
     {
-        // Rock: grey cube
-        BuildObstacle("Obstacle_Rock",   PrimitiveType.Cube,     new Color(0.55f, 0.52f, 0.50f),
-            new Vector3(0.9f, 0.9f, 0.9f), new Vector3(0f, 0.45f, 0f));
+        // Rock: use ProceduralRockMesh for detailed hieroglyph geometry
+        BuildRock();
 
         // Cactus: green cylinder
         BuildObstacle("Obstacle_Cactus", PrimitiveType.Cylinder, new Color(0.13f, 0.55f, 0.13f),
@@ -222,31 +221,35 @@ public static class PlaceholderAssetBuilder
         BuildRuins();
     }
 
+    private static void BuildRock()
+    {
+        var root = new GameObject("Obstacle_Rock");
+
+        var rockMesh = root.AddComponent<ProceduralRockMesh>();
+        rockMesh.Build();
+
+        var box = root.AddComponent<BoxCollider>();
+        box.center = new Vector3(0f, 1.0f, 0f);
+        box.size   = new Vector3(2.0f, 1.8f, 1.8f);
+
+        root.tag = "Obstacle";
+
+        SavePrefab(root, "Obstacle_Rock");
+        Object.DestroyImmediate(root);
+    }
+
     private static void BuildRuins()
     {
         var root = new GameObject("Obstacle_Ruins");
 
-        var ruinMat = MakeMat("RuinStone", new Color(0.72f, 0.62f, 0.46f));
+        // Use ProceduralRuinsObstacle for proper Egyptian ruins geometry
+        var ruinsMesh = root.AddComponent<ProceduralRuinsObstacle>();
+        ruinsMesh.Build();
 
-        // Lower slab — wider, sits on the ground
-        var lower = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        lower.name = "LowerSlab";
-        SetMat(lower, ruinMat);
-        // Keep collider on lower slab only — it IS the hit shape
-        lower.transform.SetParent(root.transform);
-        lower.transform.localPosition    = new Vector3(0f, 0.25f, 0f);
-        lower.transform.localScale       = new Vector3(1.1f, 0.5f, 0.7f);
-        lower.transform.localEulerAngles = new Vector3(0f, 5f, 0f); // slight twist
-
-        // Upper slab — narrower, offset, angled as if partially collapsed
-        var upper = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        upper.name = "UpperSlab";
-        SetMat(upper, ruinMat);
-        DestroyCollider(upper); // only one collider needed
-        upper.transform.SetParent(root.transform);
-        upper.transform.localPosition    = new Vector3(0.15f, 0.75f, -0.1f);
-        upper.transform.localScale       = new Vector3(0.75f, 0.45f, 0.55f);
-        upper.transform.localEulerAngles = new Vector3(8f, -12f, 6f); // looks like it's toppling
+        // Box collider sized to the ruins bounding volume
+        var box = root.AddComponent<BoxCollider>();
+        box.center = new Vector3(0f, 1.2f, 0f);
+        box.size   = new Vector3(1.2f, 2.4f, 1.2f);
 
         root.tag = "Obstacle";
 
