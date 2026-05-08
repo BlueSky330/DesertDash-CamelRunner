@@ -141,12 +141,17 @@ public class CollectibleSystem : MonoBehaviour
         onScoreChanged?.Invoke(currentScore);
     }
 
-    /// <summary>Legacy reset — restores score to 0 and coins to starting bonus.</summary>
+    /// <summary>
+    /// Full factory reset: score → 0, coins → STARTING_COINS, wallet persisted via CoinEconomy.
+    /// Use only for new-game / test setup. Between-run resets use ResetScore() only.
+    /// </summary>
     public void ResetScoreAndCoins()
     {
         ResetScore();
         CurrentCoins = STARTING_COINS;
         onCoinsChanged?.Invoke(CurrentCoins);
+        // Persist the reset so CoinEconomy doesn't restore the old wallet on next scene load.
+        CoinEconomy.Instance?.SyncFromCollectibleSystem(CurrentCoins);
         Debug.Log($"[CollectibleSystem] Score and coins reset to defaults (coins: {STARTING_COINS}).");
     }
 
