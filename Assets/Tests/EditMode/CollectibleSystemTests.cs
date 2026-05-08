@@ -110,11 +110,11 @@ public class CollectibleSystemTests
     [Test]
     public void SpendCoins_SucceedsWhenSufficient()
     {
-        system.AddCoins(500);
+        // SetUp calls ResetScoreAndCoins() which initializes to STARTING_COINS (500)
         system.AddCoins(100);
         bool result = system.SpendCoins(50);
         Assert.IsTrue(result);
-        Assert.AreEqual(system.currentCoins, 500 + 100 - 50); // 500 starter + 100 added - 50 spent
+        Assert.AreEqual(550, system.currentCoins); // 500 starter + 100 added - 50 spent
     }
 
     [Test]
