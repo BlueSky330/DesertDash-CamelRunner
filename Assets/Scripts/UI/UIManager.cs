@@ -173,7 +173,7 @@ public class UIManager : MonoBehaviour
     {
         if (healthBar != null) healthBar.value = health / 100f; // Assuming health is 0-100
         // Also handle visual warning for low health here
-        if (health <= 25f)
+        if (health < 25f)
         {
             // Trigger visual effect on screen edges or health bar itself
         }
