@@ -110,6 +110,7 @@ public class CollectibleSystemTests
     [Test]
     public void SpendCoins_SucceedsWhenSufficient()
     {
+        system.AddCoins(500);
         system.AddCoins(100);
         bool result = system.SpendCoins(50);
         Assert.IsTrue(result);
