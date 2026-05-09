@@ -1,13 +1,13 @@
 {
-  "_comment": "Camel Runner — Ad Configuration. TEST IDs for M8 QA. Replace with production values before store submission.",
+  "_comment": "Camel Runner — Ad Configuration. Replace placeholder IDs with production values before release.",
 
   "adMob": {
-    "appId_android": "ca-app-pub-3940256099942544~3347511713",
+    "appId_android": "ca-app-pub-6414256245090572~9686881386",
     "appId_ios":     "ca-app-pub-3940256099942544~1458002511",
-    "_note_appIds": "TEST IDs (Google's public test app IDs) for M8 QA. Prefix ca-app-pub-3940256099942544 is official Google test ID. Replace with production App IDs before store submission.",
-    "rewardedAdUnitId_android": "ca-app-pub-3940256099942544/5224354917",
+    "rewardedAdUnitId_android": "ca-app-pub-6414256245090572/7678069259",
     "rewardedAdUnitId_ios":     "ca-app-pub-3940256099942544/1712485313",
-    "_note_adUnits": "TEST ad unit IDs (Google's public test ad units). Replace with production ad unit IDs before store submission.",
+    "bannerAdUnitId_android": "ca-app-pub-6414256245090572/2818220702",
+    "interstitialAdUnitId_android": "ca-app-pub-6414256245090572/6861857202",
     "maxAdContentRating": "G",
     "blockedCategories": ["Gambling", "Alcohol", "Dating", "Adult", "Inappropriate"],
     "_note_contentFilter": "G rating + category blocklist set in AdMob dashboard → Blocking controls → Sensitive categories. Programmatic maxAdContentRating(G) also applied at SDK init."
@@ -16,15 +16,13 @@
   "unityAds": {
     "gameId_android": "1234567",
     "gameId_ios":     "7654321",
-    "_note_gameIds": "TEST VALUES for M8 QA. Replace with production Game IDs from Unity Ads dashboard before store submission.",
     "rewardedAdUnitId_android": "Rewarded_Android",
     "rewardedAdUnitId_ios":     "Rewarded_iOS",
     "_note_contentFilter": "Set content rating to Everyone/Family in Unity Ads dashboard → Project → Ad Quality → Content maturity."
   },
 
   "ironSource": {
-    "appKey": "TEST_IRONSOURCE_APP_KEY",
-    "_note_appKey": "TEST VALUE for M8 QA. Replace with production App Key from LevelPlay dashboard before store submission.",
+    "appKey": "YOUR_LEVPLAY_APP_KEY",
     "mediationWaterfall": [
       { "network": "ironSource",  "priority": 1, "role": "primary demand" },
       { "network": "AdMob",       "priority": 2, "role": "demand partner via LevelPlay" },
