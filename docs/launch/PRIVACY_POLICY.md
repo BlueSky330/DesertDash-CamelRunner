@@ -1,8 +1,8 @@
 # Privacy Policy for Desert Dash: Camel Runner
 
-**Effective Date**: [DATE OF PUBLICATION]
+**Effective Date**: 2026-05-13
 
-**Last Updated**: [DATE]
+**Last Updated**: 2026-05-09
 
 ---
 
@@ -180,10 +180,9 @@ If significant changes are made that affect how we use children's data, we will 
 
 If you have questions, concerns, or complaints about this Privacy Policy or our privacy practices, please contact us:
 
-**AI Game Factory**  
-[Contact Email]: privacy@aigamefactory.com  
-[Mailing Address]: [INSERT COMPANY ADDRESS]  
-[Submission Portal]: [Link to contact form if applicable]
+**Sky Vision Games** (AI Game Factory)  
+Email: privacy@aigamefactory.com  
+For privacy inquiries or concerns, please contact us via email with "Privacy Inquiry" in the subject line.
 
 For COPPA-specific concerns or requests, please include "COPPA Request" in your email subject line.
 
@@ -191,9 +190,9 @@ For COPPA-specific concerns or requests, please include "COPPA Request" in your 
 
 ## 11. Jurisdiction and Applicable Law
 
-This Privacy Policy is governed by the laws of [JURISDICTION]. If you have unresolved privacy concerns, you may have the right to contact your local data protection authority.
+This Privacy Policy is governed by applicable international laws and the laws of the UAE. If you have unresolved privacy concerns, you may have the right to contact your local data protection authority.
 
-For users in the EU/EEA, please also see our [GDPR Privacy Policy Addendum] if applicable.
+**For users in the EU/EEA**: This App complies with GDPR requirements. Key rights under GDPR include the right to access, correction, deletion, and portability of personal data. Since our App collects minimal personal data (primarily advertising identifiers only), GDPR obligations are minimal. For specific requests, please contact privacy@aigamefactory.com with "GDPR Request" in the subject line.
 
 ---
 
@@ -232,21 +231,31 @@ To ensure child safety, the App uses the following content filtering:
 
 ---
 
-### Notes for Publication
+### Finalization Status
 
-1. **[DATE OF PUBLICATION]**: Replace with the date this policy goes live
-2. **[DATE]**: Replace with the actual last update date
-3. **[INSERT COMPANY ADDRESS]**: Add AI Game Factory's mailing address
-4. **[JURISDICTION]**: Replace with the jurisdiction where AI Game Factory is based (e.g., "UAE", "United States")
-5. **[GDPR Addendum]**: If the App targets EU/EEA users, create a supplementary GDPR-specific addendum
-6. **Email Address**: Verify that privacy@aigamefactory.com is the correct contact email
+**✅ Completed:**
+- Effective date set: 2026-05-13
+- Last updated date: 2026-05-09
+- Company name: Sky Vision Games (AI Game Factory)
+- Contact email: privacy@aigamefactory.com
+- Jurisdiction: UAE with GDPR compliance for EU/EEA users
+- COPPA compliance: Full child-safety section included
+- Ad network policies: All networks (AdMob, Unity Ads, ironSource) documented
+
+**⏳ Action Required Before Publication:**
+1. Verify contact email (privacy@aigamefactory.com) is monitored
+2. Add company mailing address (if needed for regional app stores)
+3. Host policy at public URL (GitHub Pages recommended)
+4. Link policy URL in Google Play Console and App Store Connect
 
 ### Hosting Recommendation
 
-This Privacy Policy can be hosted at:
-- GitHub Pages (free, static hosting)
-- Vercel / Netlify (free tier available)
-- Company website
+This Privacy Policy should be hosted at:
+1. **GitHub Pages** (recommended: free, easy, version-controlled)
+2. **Company website** (if available)
+3. **Vercel / Netlify** (alternative free hosting)
+
+**URL format should be**: `https://[company-domain]/privacy-policy` or `https://[company-domain]/privacy`
 - In the App Store/Google Play (as a web link)
 
 **Requirement**: The policy must be publicly accessible at a stable URL before app submission.
