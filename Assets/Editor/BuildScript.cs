@@ -24,9 +24,9 @@ public class BuildScript
 
     private static void ConfigureAndroidSettings()
     {
-        PlayerSettings.companyName = "SkyVision";
-        PlayerSettings.productName = "Desert Dash Camel Runner";
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.skyvision.desertdash");
+        PlayerSettings.companyName = "AI Game Factory";
+        PlayerSettings.productName = "Desert Camel Runner";
+        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.aigamefactory.desertcamelrunner");
         PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
         PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel34;
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64 | AndroidArchitecture.ARMv7;
@@ -35,9 +35,9 @@ public class BuildScript
 
     private static void ConfigureiOSSettings()
     {
-        PlayerSettings.companyName = "SkyVision";
-        PlayerSettings.productName = "Desert Dash Camel Runner";
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.skyvision.desertdash");
+        PlayerSettings.companyName = "AI Game Factory";
+        PlayerSettings.productName = "Desert Camel Runner";
+        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.aigamefactory.desertcamelrunner");
         PlayerSettings.iOS.targetOSVersionString = "12.0";
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
     }
