@@ -48,8 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efeecf2113174e089c9dac0ee1eba3da, type: 3}
   m_Name:
   m_EditorClassIdentifier:
-  saddleBlanketSlot: {fileID: -7906385301949264988}
-  aviatorGogglesSlot: {fileID: -7906385301949264987}
+  saddleBlanketSlot: {fileID: -7906385301949264986}
+  aviatorGogglesSlot: {fileID: -7906385301949264985}
   bodyMaterial: {fileID: 0}
 --- !u!33 &-7906385301949264991
 MeshFilter:
@@ -174,11 +174,3 @@ Transform:
   m_Father: {fileID: -7906385301949264997}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &0
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: (Clone)
-  m_TagString: Untagged
