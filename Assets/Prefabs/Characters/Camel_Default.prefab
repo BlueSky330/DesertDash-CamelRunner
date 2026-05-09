@@ -13,6 +13,11 @@ GameObject:
   - component: {fileID: -7906385301949264991}
   - component: {fileID: -7906385301949264990}
   - component: {fileID: -7906385301949264989}
+  - component: {fileID: -7906385301949264960}
+  - component: {fileID: -7906385301949264961}
+  - component: {fileID: -7906385301949264962}
+  - component: {fileID: -7906385301949264963}
+  - component: {fileID: -7906385301949264964}
   m_Layer: 0
   m_Name: Camel_Default
   m_TagString: Player
@@ -174,3 +179,98 @@ Transform:
   m_Father: {fileID: -7906385301949264997}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &-7906385301949264960
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: -7906385301949264996}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!111 &-7906385301949264961
+CharacterController:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: -7906385301949264996}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 1.8
+  m_Radius: 0.4
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &-7906385301949264962
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: -7906385301949264996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfd347b0478440aab96d69f02a81893a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  laneWidth: 2
+  laneChangeSpeed: 12
+  jumpForce: 12
+  gravity: 22
+  slideDuration: 0.8
+  forwardSpeed: 10
+  lowHealthSpeedMultiplier: 0.6
+--- !u!114 &-7906385301949264963
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: -7906385301949264996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0be22dbe1c2f403f8a3aab0030d9f6ea, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  initialDecayRatePerMinute: 1
+  acceleratedDecayRatePerMinute: 2.5
+  initialDecayDurationMinutes: 30
+  grassRecovery: 10
+  waterRecovery: 15
+  oasisRecovery: 40
+  quickAdRecovery: 25
+  standardAdRecovery: 50
+  premiumAdRecovery: 100
+--- !u!114 &-7906385301949264964
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: -7906385301949264996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92968c764bd344399ba33acf8e7de7c8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  bobAmplitude: 0.05
+  bobFrequency: 4
+  slideScaleY: 0.5
+  slideTransitionSpeed: 5
+  hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashDuration: 0.2
