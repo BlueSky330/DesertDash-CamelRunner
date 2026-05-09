@@ -50,12 +50,12 @@ jobs:
           buildsPath: build
           androidExportType: ${{ github.event.inputs.build_type == 'release' && 'androidAppBundle' || 'androidPackage' }}
           androidSymbolType: none
-          androidKeystoreName: ''
-          androidKeystoreBase64: ''
-          androidKeystorePass: ''
-          androidKeyaliasName: ''
-          androidKeyaliasPass: ''
-          customParameters: -scriptingBackend IL2CPP -architecture ARM64 -Development false
+          androidKeystoreName: aigamefactory.keystore
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          androidKeyaliasName: aigamefactory
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          customParameters: -scriptingBackend IL2CPP -Development false
 
       # ── 4. Upload APK ──────────────────────────────────────────────────────
       - name: Upload APK artifact
