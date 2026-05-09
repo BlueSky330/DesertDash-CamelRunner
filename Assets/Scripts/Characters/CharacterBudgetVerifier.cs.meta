@@ -7,10 +7,10 @@ MonoImporter:
   defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
   scriptClass: CharacterBudgetVerifier
-  guid: 60ef7890abcdef01020304050a0c0f0
-  timeCreated: 0
+  guid: 60ef7890abcdef01020304050a0c0f01
+  timeCreated: 1715000000
   licenseType: Free
