@@ -106,57 +106,57 @@ public class UIManager : MonoBehaviour
     public void ShowMainMenu()
     {
         HideAllPanels();
-        mainMenuPanel.SetActive(true);
+        mainMenuPanel?.SetActive(true);
     }
 
     public void ShowGameplayHUD()
     {
         HideAllPanels();
-        gameplayHUDPanel.SetActive(true);
+        gameplayHUDPanel?.SetActive(true);
     }
 
     public void ShowWatchAndEarnMenu()
     {
         HideAllPanels();
-        watchAndEarnPanel.SetActive(true);
+        watchAndEarnPanel?.SetActive(true);
     }
 
     public void ShowShop()
     {
         HideAllPanels();
-        shopPanel.SetActive(true);
+        shopPanel?.SetActive(true);
     }
 
     public void ShowWorldMap()
     {
         HideAllPanels();
-        worldMapPanel.SetActive(true);
-        PopulateWorldMap();
+        worldMapPanel?.SetActive(true);
+        if (worldMapPanel != null) PopulateWorldMap();
     }
 
     public void ShowGameOverScreen()
     {
         HideAllPanels();
-        gameOverPanel.SetActive(true);
-        finalScoreText.text = "Score: " + CollectibleSystem.Instance.currentScore.ToString();
-        finalCoinsText.text = "Coins: " + CollectibleSystem.Instance.currentCoins.ToString();
+        gameOverPanel?.SetActive(true);
+        if (finalScoreText != null) finalScoreText.text = "Score: " + CollectibleSystem.Instance.currentScore.ToString();
+        if (finalCoinsText != null) finalCoinsText.text = "Coins: " + CollectibleSystem.Instance.currentCoins.ToString();
     }
 
     public void ShowOfflineWarning(bool show, string message = "Go online to earn more coins!")
     {
-        offlineWarningPanel.SetActive(show);
-        offlineWarningText.text = message;
+        offlineWarningPanel?.SetActive(show);
+        if (offlineWarningText != null) offlineWarningText.text = message;
     }
 
     private void HideAllPanels()
     {
-        mainMenuPanel.SetActive(false);
-        gameplayHUDPanel.SetActive(false);
-        watchAndEarnPanel.SetActive(false);
-        shopPanel.SetActive(false);
-        worldMapPanel.SetActive(false);
-        gameOverPanel.SetActive(false);
-        offlineWarningPanel.SetActive(false);
+        mainMenuPanel?.SetActive(false);
+        gameplayHUDPanel?.SetActive(false);
+        watchAndEarnPanel?.SetActive(false);
+        shopPanel?.SetActive(false);
+        worldMapPanel?.SetActive(false);
+        gameOverPanel?.SetActive(false);
+        offlineWarningPanel?.SetActive(false);
     }
 
     private void UpdateScoreDisplay(int score)
