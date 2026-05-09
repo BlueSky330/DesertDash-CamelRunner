@@ -68,9 +68,19 @@ public class GameManager : MonoBehaviour
         runTime = 0f;
         OnScoreChanged?.Invoke(score);
         SetState(GameState.Running);
-        OnGameStarted?.Invoke();
         GameAudioEvents.OnChangeBGM?.Invoke("Egypt");
+        // Fire OnGameStarted after Gameplay scene finishes loading so that
+        // scene-resident objects (PlayerController, etc.) are fully initialised
+        // before they receive the event.
+        SceneManager.sceneLoaded += FireGameStartedAfterLoad;
         SceneManager.LoadScene("Gameplay");
+    }
+
+    private void FireGameStartedAfterLoad(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != "Gameplay") return;
+        SceneManager.sceneLoaded -= FireGameStartedAfterLoad;
+        OnGameStarted?.Invoke();
     }
 
     public void PauseGame()

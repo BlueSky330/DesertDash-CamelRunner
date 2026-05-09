@@ -40,10 +40,21 @@ public class DifficultyManager : MonoBehaviour
     void Start()
     {
         ResetDifficulty();
+        // Reset and start tracking whenever a new game begins
+        GameManager.OnGameStarted += ResetDifficulty;
+    }
+
+    void OnDestroy()
+    {
+        GameManager.OnGameStarted -= ResetDifficulty;
     }
 
     void Update()
     {
+        // Only advance difficulty while the game is actively running
+        if (GameManager.Instance == null || GameManager.Instance.State != GameManager.GameState.Running)
+            return;
+
         gameTime += Time.deltaTime;
         UpdateSpeed();
         UpdateObstacleDensity();
