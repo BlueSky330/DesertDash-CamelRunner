@@ -55,7 +55,8 @@ jobs:
           androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
           androidKeyaliasName: aigamefactory
           androidKeyaliasPass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          customParameters: -scriptingBackend IL2CPP -Development false
+          customBuildMethod: BuildScript.PerformAndroidBuild
+          customParameters: -Development false
 
       # ── 4. Upload APK ──────────────────────────────────────────────────────
       - name: Upload APK artifact
