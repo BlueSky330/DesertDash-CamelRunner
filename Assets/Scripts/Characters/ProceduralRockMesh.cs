@@ -37,6 +37,108 @@ public class ProceduralRockMesh : MonoBehaviour
     [Header("Material Override (null = created procedurally)")]
     public Material bodyMaterial;
 
+    // ── Geometry constants (Unity metres) ─────────────────────────────────────
+
+    // Main body
+    private const float MainBody_CentreY  = 1.00f;
+    private const float MainBody_Width    = 2.00f;
+    private const float MainBody_Height   = 1.80f;
+    private const float MainBody_Depth    = 1.80f;
+
+    // Side lobe 1 (+X)
+    private const float Lobe1_X = 0.75f;  private const float Lobe1_Y = 0.85f;  private const float Lobe1_Z =  0.22f;
+    private const float Lobe1_W = 0.90f;  private const float Lobe1_H = 1.50f;  private const float Lobe1_D = 1.10f;
+    private const float Lobe1_TiltY =  14f;  private const float Lobe1_TiltZ =  6f;
+
+    // Side lobe 2 (-X)
+    private const float Lobe2_X = -0.75f; private const float Lobe2_Y = 0.90f;  private const float Lobe2_Z = -0.15f;
+    private const float Lobe2_W =  0.85f; private const float Lobe2_H = 1.40f;  private const float Lobe2_D =  1.20f;
+    private const float Lobe2_TiltY = -10f;  private const float Lobe2_TiltZ = -5f;
+
+    // Side lobe 3 (+Z)
+    private const float Lobe3_X =  0.20f; private const float Lobe3_Y = 0.80f;  private const float Lobe3_Z =  0.70f;
+    private const float Lobe3_W =  1.30f; private const float Lobe3_H = 1.30f;  private const float Lobe3_D =  0.80f;
+    private const float Lobe3_TiltX =  4f;   private const float Lobe3_TiltY =   6f;
+
+    // Side lobe 4 (-Z)
+    private const float Lobe4_X = -0.10f; private const float Lobe4_Y = 0.88f;  private const float Lobe4_Z = -0.65f;
+    private const float Lobe4_W =  1.20f; private const float Lobe4_H = 1.25f;  private const float Lobe4_D =  0.90f;
+    private const float Lobe4_TiltX = -3f;   private const float Lobe4_TiltY =  -8f;
+
+    // Top cap
+    private const float TopCap_X =  0.08f; private const float TopCap_Y = 1.90f; private const float TopCap_Z = -0.06f;
+    private const float TopCap_W =  1.40f; private const float TopCap_H = 0.30f; private const float TopCap_D =  1.30f;
+    private const float TopCap_TiltX = 3f; private const float TopCap_TiltY = 12f; private const float TopCap_TiltZ = 4f;
+
+    // Corner slabs (ground-contact reinforcement)
+    private const float Corner_Height = 0.20f;
+    private const float Corner1_X =  0.60f; private const float Corner1_Z =  0.50f;
+    private const float Corner1_W =  0.50f; private const float Corner1_H = 0.40f; private const float Corner1_D = 0.60f;
+    private const float Corner1_TiltY =  18f;
+
+    private const float Corner2_X = -0.60f; private const float Corner2_Z =  0.50f;
+    private const float Corner2_W =  0.50f; private const float Corner2_H = 0.40f; private const float Corner2_D = 0.60f;
+    private const float Corner2_TiltY = -18f;
+
+    private const float Corner3_X =  0.55f; private const float Corner3_Z = -0.45f;
+    private const float Corner3_W =  0.45f; private const float Corner3_H = 0.38f; private const float Corner3_D = 0.55f;
+    private const float Corner3_TiltY = -14f;
+
+    private const float Corner4_X = -0.55f; private const float Corner4_Z = -0.45f;
+    private const float Corner4_W =  0.45f; private const float Corner4_H = 0.38f; private const float Corner4_D = 0.55f;
+    private const float Corner4_TiltY =  14f;
+
+    // Surface bumps
+    private const float Bump1_X =  0.45f; private const float Bump1_Y = 1.70f; private const float Bump1_Z =  0.35f;
+    private const float Bump1_W =  0.40f; private const float Bump1_H = 0.28f; private const float Bump1_D =  0.36f;
+    private const float Bump1_TiltX = -5f; private const float Bump1_TiltY =  22f; private const float Bump1_TiltZ =  9f;
+
+    private const float Bump2_X = -0.35f; private const float Bump2_Y = 1.55f; private const float Bump2_Z = -0.40f;
+    private const float Bump2_W =  0.36f; private const float Bump2_H = 0.24f; private const float Bump2_D =  0.44f;
+    private const float Bump2_TiltX =  5f; private const float Bump2_TiltY = -18f; private const float Bump2_TiltZ = -7f;
+
+    private const float Bump3_X =  0.10f; private const float Bump3_Y = 1.78f; private const float Bump3_Z =  0.55f;
+    private const float Bump3_W =  0.44f; private const float Bump3_H = 0.24f; private const float Bump3_D =  0.32f;
+    private const float Bump3_TiltX = -4f; private const float Bump3_TiltY =  10f; private const float Bump3_TiltZ =  5f;
+
+    private const float Bump4_X = -0.55f; private const float Bump4_Y = 1.42f; private const float Bump4_Z =  0.30f;
+    private const float Bump4_W =  0.32f; private const float Bump4_H = 0.20f; private const float Bump4_D =  0.40f;
+    private const float Bump4_TiltX =  7f; private const float Bump4_TiltY = -28f; private const float Bump4_TiltZ =  3f;
+
+    private const float Bump5_X =  0.30f; private const float Bump5_Y = 1.60f; private const float Bump5_Z = -0.50f;
+    private const float Bump5_W =  0.36f; private const float Bump5_H = 0.22f; private const float Bump5_D =  0.28f;
+    private const float Bump5_TiltX = -5f; private const float Bump5_TiltY =  20f; private const float Bump5_TiltZ = -6f;
+
+    // Base rubble slabs
+    private const float Rubble_Y    = 0.07f;
+    private const float Rubble1_X   =  0.85f; private const float Rubble1_Z   =  0.30f;
+    private const float Rubble1_W   =  0.55f; private const float Rubble1_H   =  0.13f; private const float Rubble1_D   =  0.70f;
+    private const float Rubble1_TiltY =  22f;
+
+    private const float Rubble2_X   = -0.70f; private const float Rubble2_Z   = -0.20f;
+    private const float Rubble2_W   =  0.65f; private const float Rubble2_H   =  0.11f; private const float Rubble2_D   =  0.55f;
+    private const float Rubble2_TiltY = -20f;
+
+    private const float Rubble3_X   =  0.10f; private const float Rubble3_Z   =  0.80f;
+    private const float Rubble3_W   =  0.90f; private const float Rubble3_H   =  0.10f; private const float Rubble3_D   =  0.44f;
+    private const float Rubble3_TiltY =   6f;
+
+    // Hieroglyph panel
+    private const float Panel_CentreY  = 1.00f;
+    private const float Panel_OffsetZ  = 0.92f;
+    private const float Panel_Width    = 0.60f;
+    private const float Panel_Height   = 0.80f;
+    private const float Panel_Depth    = 0.08f;
+
+    // Cartouche bar marks (interior lines on panel)
+    private const float Mark_OffsetZ   = 0.965f;
+    private const float Mark_Width1    = 0.44f;  private const float Mark_Width2 = 0.40f;
+    private const float Mark_Height    = 0.07f;
+    private const float Mark_Depth     = 0.025f;
+    private const float MarkTop_Y      = 1.22f;
+    private const float MarkMid_Y      = 1.00f;
+    private const float MarkBot_Y      = 0.78f;
+
     void Awake()
     {
 #if UNITY_EDITOR
@@ -58,87 +160,87 @@ public class ProceduralRockMesh : MonoBehaviour
     {
         var parts = new List<(Vector3 centre, Vector3 size, Quaternion rot)>();
 
-        // ── Main body: slightly squashed 2×2×2 boulder ────────────────────────
-        parts.Add((new Vector3(0f, 1.0f, 0f),
-                   new Vector3(2.0f, 1.8f, 1.8f),
+        // ── Main body: slightly squashed boulder ──────────────────────────────
+        parts.Add((new Vector3(0f, MainBody_CentreY, 0f),
+                   new Vector3(MainBody_Width, MainBody_Height, MainBody_Depth),
                    Quaternion.identity));
 
         // ── Side lobes: overlap main body for irregular lumpy silhouette ───────
-        parts.Add((new Vector3( 0.75f, 0.85f,  0.22f),
-                   new Vector3(0.90f, 1.50f, 1.10f),
-                   Quaternion.Euler(0f,  14f,  6f)));
-        parts.Add((new Vector3(-0.75f, 0.90f, -0.15f),
-                   new Vector3(0.85f, 1.40f, 1.20f),
-                   Quaternion.Euler(0f, -10f, -5f)));
-        parts.Add((new Vector3( 0.20f, 0.80f,  0.70f),
-                   new Vector3(1.30f, 1.30f, 0.80f),
-                   Quaternion.Euler( 4f,   6f,  0f)));
-        parts.Add((new Vector3(-0.10f, 0.88f, -0.65f),
-                   new Vector3(1.20f, 1.25f, 0.90f),
-                   Quaternion.Euler(-3f,  -8f,  0f)));
+        parts.Add((new Vector3(Lobe1_X, Lobe1_Y, Lobe1_Z),
+                   new Vector3(Lobe1_W, Lobe1_H, Lobe1_D),
+                   Quaternion.Euler(0f, Lobe1_TiltY, Lobe1_TiltZ)));
+        parts.Add((new Vector3(Lobe2_X, Lobe2_Y, Lobe2_Z),
+                   new Vector3(Lobe2_W, Lobe2_H, Lobe2_D),
+                   Quaternion.Euler(0f, Lobe2_TiltY, Lobe2_TiltZ)));
+        parts.Add((new Vector3(Lobe3_X, Lobe3_Y, Lobe3_Z),
+                   new Vector3(Lobe3_W, Lobe3_H, Lobe3_D),
+                   Quaternion.Euler(Lobe3_TiltX, Lobe3_TiltY, 0f)));
+        parts.Add((new Vector3(Lobe4_X, Lobe4_Y, Lobe4_Z),
+                   new Vector3(Lobe4_W, Lobe4_H, Lobe4_D),
+                   Quaternion.Euler(Lobe4_TiltX, Lobe4_TiltY, 0f)));
 
         // ── Top cap: rougher upper surface capping the boulder ─────────────────
-        parts.Add((new Vector3( 0.08f, 1.90f, -0.06f),
-                   new Vector3(1.40f, 0.30f, 1.30f),
-                   Quaternion.Euler(3f, 12f, 4f)));
+        parts.Add((new Vector3(TopCap_X, TopCap_Y, TopCap_Z),
+                   new Vector3(TopCap_W, TopCap_H, TopCap_D),
+                   Quaternion.Euler(TopCap_TiltX, TopCap_TiltY, TopCap_TiltZ)));
 
         // ── Corner slabs: ground-contact reinforcement for stability ───────────
-        parts.Add((new Vector3( 0.60f, 0.20f,  0.50f),
-                   new Vector3(0.50f, 0.40f, 0.60f),
-                   Quaternion.Euler(0f,  18f, 0f)));
-        parts.Add((new Vector3(-0.60f, 0.20f,  0.50f),
-                   new Vector3(0.50f, 0.40f, 0.60f),
-                   Quaternion.Euler(0f, -18f, 0f)));
-        parts.Add((new Vector3( 0.55f, 0.20f, -0.45f),
-                   new Vector3(0.45f, 0.38f, 0.55f),
-                   Quaternion.Euler(0f, -14f, 0f)));
-        parts.Add((new Vector3(-0.55f, 0.20f, -0.45f),
-                   new Vector3(0.45f, 0.38f, 0.55f),
-                   Quaternion.Euler(0f,  14f, 0f)));
+        parts.Add((new Vector3(Corner1_X, Corner_Height, Corner1_Z),
+                   new Vector3(Corner1_W, Corner1_H, Corner1_D),
+                   Quaternion.Euler(0f, Corner1_TiltY, 0f)));
+        parts.Add((new Vector3(Corner2_X, Corner_Height, Corner2_Z),
+                   new Vector3(Corner2_W, Corner2_H, Corner2_D),
+                   Quaternion.Euler(0f, Corner2_TiltY, 0f)));
+        parts.Add((new Vector3(Corner3_X, Corner_Height, Corner3_Z),
+                   new Vector3(Corner3_W, Corner3_H, Corner3_D),
+                   Quaternion.Euler(0f, Corner3_TiltY, 0f)));
+        parts.Add((new Vector3(Corner4_X, Corner_Height, Corner4_Z),
+                   new Vector3(Corner4_W, Corner4_H, Corner4_D),
+                   Quaternion.Euler(0f, Corner4_TiltY, 0f)));
 
         // ── Surface bumps: small protrusions for rocky texture ─────────────────
-        parts.Add((new Vector3( 0.45f, 1.70f,  0.35f),
-                   new Vector3(0.40f, 0.28f, 0.36f),
-                   Quaternion.Euler(-5f,  22f,  9f)));
-        parts.Add((new Vector3(-0.35f, 1.55f, -0.40f),
-                   new Vector3(0.36f, 0.24f, 0.44f),
-                   Quaternion.Euler( 5f, -18f, -7f)));
-        parts.Add((new Vector3( 0.10f, 1.78f,  0.55f),
-                   new Vector3(0.44f, 0.24f, 0.32f),
-                   Quaternion.Euler(-4f,  10f,  5f)));
-        parts.Add((new Vector3(-0.55f, 1.42f,  0.30f),
-                   new Vector3(0.32f, 0.20f, 0.40f),
-                   Quaternion.Euler( 7f, -28f,  3f)));
-        parts.Add((new Vector3( 0.30f, 1.60f, -0.50f),
-                   new Vector3(0.36f, 0.22f, 0.28f),
-                   Quaternion.Euler(-5f,  20f, -6f)));
+        parts.Add((new Vector3(Bump1_X, Bump1_Y, Bump1_Z),
+                   new Vector3(Bump1_W, Bump1_H, Bump1_D),
+                   Quaternion.Euler(Bump1_TiltX, Bump1_TiltY, Bump1_TiltZ)));
+        parts.Add((new Vector3(Bump2_X, Bump2_Y, Bump2_Z),
+                   new Vector3(Bump2_W, Bump2_H, Bump2_D),
+                   Quaternion.Euler(Bump2_TiltX, Bump2_TiltY, Bump2_TiltZ)));
+        parts.Add((new Vector3(Bump3_X, Bump3_Y, Bump3_Z),
+                   new Vector3(Bump3_W, Bump3_H, Bump3_D),
+                   Quaternion.Euler(Bump3_TiltX, Bump3_TiltY, Bump3_TiltZ)));
+        parts.Add((new Vector3(Bump4_X, Bump4_Y, Bump4_Z),
+                   new Vector3(Bump4_W, Bump4_H, Bump4_D),
+                   Quaternion.Euler(Bump4_TiltX, Bump4_TiltY, Bump4_TiltZ)));
+        parts.Add((new Vector3(Bump5_X, Bump5_Y, Bump5_Z),
+                   new Vector3(Bump5_W, Bump5_H, Bump5_D),
+                   Quaternion.Euler(Bump5_TiltX, Bump5_TiltY, Bump5_TiltZ)));
 
         // ── Base rubble: low flat slabs at ground level ───────────────────────
-        parts.Add((new Vector3( 0.85f, 0.07f,  0.30f),
-                   new Vector3(0.55f, 0.13f, 0.70f),
-                   Quaternion.Euler(0f, 22f, 0f)));
-        parts.Add((new Vector3(-0.70f, 0.07f, -0.20f),
-                   new Vector3(0.65f, 0.11f, 0.55f),
-                   Quaternion.Euler(0f, -20f, 0f)));
-        parts.Add((new Vector3( 0.10f, 0.07f,  0.80f),
-                   new Vector3(0.90f, 0.10f, 0.44f),
-                   Quaternion.Euler(0f,   6f, 0f)));
+        parts.Add((new Vector3(Rubble1_X, Rubble_Y, Rubble1_Z),
+                   new Vector3(Rubble1_W, Rubble1_H, Rubble1_D),
+                   Quaternion.Euler(0f, Rubble1_TiltY, 0f)));
+        parts.Add((new Vector3(Rubble2_X, Rubble_Y, Rubble2_Z),
+                   new Vector3(Rubble2_W, Rubble2_H, Rubble2_D),
+                   Quaternion.Euler(0f, Rubble2_TiltY, 0f)));
+        parts.Add((new Vector3(Rubble3_X, Rubble_Y, Rubble3_Z),
+                   new Vector3(Rubble3_W, Rubble3_H, Rubble3_D),
+                   Quaternion.Euler(0f, Rubble3_TiltY, 0f)));
 
         // ── Hieroglyph panel: raised rectangular relief on +Z face ────────────
         // Simulates carved cartouche on the facing side of the boulder.
-        parts.Add((new Vector3(0f, 1.0f, 0.92f),
-                   new Vector3(0.60f, 0.80f, 0.08f),
+        parts.Add((new Vector3(0f, Panel_CentreY, Panel_OffsetZ),
+                   new Vector3(Panel_Width, Panel_Height, Panel_Depth),
                    Quaternion.identity));
 
         // Three horizontal bar marks (cartouche interior lines)
-        parts.Add((new Vector3(0f, 1.22f, 0.965f),
-                   new Vector3(0.44f, 0.07f, 0.025f),
+        parts.Add((new Vector3(0f, MarkTop_Y, Mark_OffsetZ),
+                   new Vector3(Mark_Width1, Mark_Height, Mark_Depth),
                    Quaternion.identity));
-        parts.Add((new Vector3(0f, 1.00f, 0.965f),
-                   new Vector3(0.40f, 0.07f, 0.025f),
+        parts.Add((new Vector3(0f, MarkMid_Y, Mark_OffsetZ),
+                   new Vector3(Mark_Width2, Mark_Height, Mark_Depth),
                    Quaternion.identity));
-        parts.Add((new Vector3(0f, 0.78f, 0.965f),
-                   new Vector3(0.44f, 0.07f, 0.025f),
+        parts.Add((new Vector3(0f, MarkBot_Y, Mark_OffsetZ),
+                   new Vector3(Mark_Width1, Mark_Height, Mark_Depth),
                    Quaternion.identity));
 
         return CombineBoxes(parts);
