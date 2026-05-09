@@ -33,6 +33,47 @@ public class ProceduralCamelMesh : MonoBehaviour
     [Header("Material Override (null = create procedurally)")]
     public Material bodyMaterial;
 
+    // ── Geometry constants (Unity metres) ─────────────────────────────────────
+
+    // Body
+    private const float Body_Width  = 0.50f;
+    private const float Body_Height = 0.60f;
+    private const float Body_Depth  = 1.00f;
+
+    // Hump (sits above body, slightly toward rear)
+    private const float Hump_YAboveBodyTop = 0.15f;
+    private const float Hump_ZOffset       = -0.05f;
+    private const float Hump_Width         =  0.25f;
+    private const float Hump_Height        =  0.30f;
+    private const float Hump_Depth         =  0.30f;
+
+    // Neck
+    private const float Neck_TiltX         = -30f;   // degrees, forward lean
+    private const float Neck_YAboveBody    =  0.10f;
+    private const float Neck_HalfLength    =  0.25f; // half of full 0.5 neck length
+    private const float Neck_FullLength    =  0.50f;
+    private const float Neck_Width         =  0.15f;
+
+    // Head
+    private const float Head_TiltX         = -10f;   // degrees, slight forward dip
+    private const float Head_HalfHeight    =  0.125f;
+    private const float Head_Width         =  0.35f;
+    private const float Head_Height        =  0.25f;
+    private const float Head_Depth         =  0.25f;
+
+    // Tail
+    private const float Tail_YBelowBodyCentre = 0.05f;
+    private const float Tail_TiltX             = 25f;   // degrees, backward-downward
+    private const float Tail_HalfLength        = 0.125f;
+    private const float Tail_Width             = 0.05f;
+    private const float Tail_Height            = 0.25f;
+
+    // Accessory slot positions (local space)
+    private const float SaddleSlot_Y    = 1.30f;
+    private const float SaddleSlot_Z    = -0.05f;
+    private const float GogglesSlot_YOffset = 0.10f;
+    private const float GogglesSlot_ZOffset = 0.10f;
+
     // Cached head-centre position so EnsureAccessorySlots() can place the goggle slot.
     private Vector3 _headCentre;
 
@@ -87,62 +128,61 @@ public class ProceduralCamelMesh : MonoBehaviour
         //   Legs: 0.12 × 0.5 × 0.12  (each)
         //   Tail: 0.05 × 0.25 × 0.05
 
-        const float legHeight = 0.5f;
-        const float bodyHalfH = 0.3f;          // half of 0.6
-        const float bodyHalfZ = 0.5f;          // half of 1.0 (front/rear extents)
-        float bodyY = legHeight + bodyHalfH;   // 0.8 — body centre Y
+        const float legHeight = 0.50f;
+        const float bodyHalfH = Body_Height * 0.5f;   // half of Body_Height
+        const float bodyHalfZ = Body_Depth  * 0.5f;   // half of Body_Depth (front/rear extents)
+        float bodyY = legHeight + bodyHalfH;           // body centre Y
 
         var parts = new List<(Vector3 centre, Vector3 size, Quaternion rot)>();
 
         // ── Body ──────────────────────────────────────────────────────────────
         parts.Add((
             new Vector3(0f, bodyY, 0f),
-            new Vector3(0.5f, 0.6f, 1.0f),
+            new Vector3(Body_Width, Body_Height, Body_Depth),
             Quaternion.identity
         ));
 
         // ── Hump ─────────────────────────────────────────────────────────────
-        // Sits atop the body, slightly toward rear (Z = -0.05)
-        float bodyTopY = bodyY + bodyHalfH;   // 1.1
+        // Sits atop the body, slightly toward rear
+        float bodyTopY = bodyY + bodyHalfH;
         parts.Add((
-            new Vector3(0f, bodyTopY + 0.15f, -0.05f),
-            new Vector3(0.25f, 0.3f, 0.3f),
+            new Vector3(0f, bodyTopY + Hump_YAboveBodyTop, Hump_ZOffset),
+            new Vector3(Hump_Width, Hump_Height, Hump_Depth),
             Quaternion.identity
         ));
 
         // ── Neck ─────────────────────────────────────────────────────────────
-        // Base at upper-front of body face, angled 30° forward (Euler X = -30°)
-        var neckRot  = Quaternion.Euler(-30f, 0f, 0f);
-        var neckBase = new Vector3(0f, bodyY + 0.1f, bodyHalfZ);
-        // Centre of neck box is half-way along the neck's local Y axis
-        var neckCentre = neckBase + neckRot * new Vector3(0f, 0.25f, 0f);
-        var neckTip    = neckBase + neckRot * new Vector3(0f, 0.5f,  0f);
-        parts.Add((neckCentre, new Vector3(0.15f, 0.5f, 0.15f), neckRot));
+        // Base at upper-front of body face, angled forward
+        var neckRot    = Quaternion.Euler(Neck_TiltX, 0f, 0f);
+        var neckBase   = new Vector3(0f, bodyY + Neck_YAboveBody, bodyHalfZ);
+        var neckCentre = neckBase + neckRot * new Vector3(0f, Neck_HalfLength, 0f);
+        var neckTip    = neckBase + neckRot * new Vector3(0f, Neck_FullLength, 0f);
+        parts.Add((neckCentre, new Vector3(Neck_Width, Neck_FullLength, Neck_Width), neckRot));
 
         // ── Head ─────────────────────────────────────────────────────────────
         // Attached at neck tip, slight forward tilt
-        var headRot = Quaternion.Euler(-10f, 0f, 0f);
-        _headCentre = neckTip + headRot * new Vector3(0f, 0.125f, 0f);
-        parts.Add((_headCentre, new Vector3(0.35f, 0.25f, 0.25f), headRot));
+        var headRot = Quaternion.Euler(Head_TiltX, 0f, 0f);
+        _headCentre = neckTip + headRot * new Vector3(0f, Head_HalfHeight, 0f);
+        parts.Add((_headCentre, new Vector3(Head_Width, Head_Height, Head_Depth), headRot));
 
         // ── Front legs ───────────────────────────────────────────────────────
-        // Leg centres: Y=0.25 so feet are at Y=0 and tops at Y=0.5 (body bottom)
+        // Leg centres: Y=legHeight*0.5 so feet at Y=0, tops at Y=legHeight (body bottom)
         const float legXOff = 0.16f;
         const float legZOff = 0.32f;
         var legSize = new Vector3(0.12f, legHeight, 0.12f);
-        parts.Add((new Vector3(-legXOff, 0.25f,  legZOff), legSize, Quaternion.identity));
-        parts.Add((new Vector3( legXOff, 0.25f,  legZOff), legSize, Quaternion.identity));
+        parts.Add((new Vector3(-legXOff, legHeight * 0.5f,  legZOff), legSize, Quaternion.identity));
+        parts.Add((new Vector3( legXOff, legHeight * 0.5f,  legZOff), legSize, Quaternion.identity));
 
         // ── Rear legs ────────────────────────────────────────────────────────
-        parts.Add((new Vector3(-legXOff, 0.25f, -legZOff), legSize, Quaternion.identity));
-        parts.Add((new Vector3( legXOff, 0.25f, -legZOff), legSize, Quaternion.identity));
+        parts.Add((new Vector3(-legXOff, legHeight * 0.5f, -legZOff), legSize, Quaternion.identity));
+        parts.Add((new Vector3( legXOff, legHeight * 0.5f, -legZOff), legSize, Quaternion.identity));
 
         // ── Tail ─────────────────────────────────────────────────────────────
-        // Base at rear face of body, angles backward-downward (Euler X = +25°)
-        var tailBase = new Vector3(0f, bodyY - 0.05f, -bodyHalfZ);
-        var tailRot  = Quaternion.Euler(25f, 0f, 0f);
-        var tailCentre = tailBase + tailRot * new Vector3(0f, -0.125f, 0f);
-        parts.Add((tailCentre, new Vector3(0.05f, 0.25f, 0.05f), tailRot));
+        // Base at rear face of body, angles backward-downward
+        var tailBase   = new Vector3(0f, bodyY - Tail_YBelowBodyCentre, -bodyHalfZ);
+        var tailRot    = Quaternion.Euler(Tail_TiltX, 0f, 0f);
+        var tailCentre = tailBase + tailRot * new Vector3(0f, -Tail_HalfLength, 0f);
+        parts.Add((tailCentre, new Vector3(Tail_Width, Tail_Height, Tail_Width), tailRot));
 
         return CombineBoxes(parts);
     }
@@ -268,12 +308,12 @@ public class ProceduralCamelMesh : MonoBehaviour
         // Saddle blanket: centred above body/hump
         if (saddleBlanketSlot == null)
             saddleBlanketSlot = FindOrCreateSlot("[Slot] SaddleBlanket",
-                new Vector3(0f, 1.3f, -0.05f));
+                new Vector3(0f, SaddleSlot_Y, SaddleSlot_Z));
 
         // Aviator goggles: at the camel's forehead
         if (aviatorGogglesSlot == null)
             aviatorGogglesSlot = FindOrCreateSlot("[Slot] AviatorGoggles",
-                _headCentre + new Vector3(0f, 0.1f, 0.1f));
+                _headCentre + new Vector3(0f, GogglesSlot_YOffset, GogglesSlot_ZOffset));
     }
 
     private Transform FindOrCreateSlot(string slotName, Vector3 localPos)

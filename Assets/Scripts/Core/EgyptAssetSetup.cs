@@ -28,6 +28,12 @@ public class EgyptAssetSetup : MonoBehaviour
     private static Texture2D _coinTex;
     private static bool _texturesLoaded;
 
+    // One material instance per pool tag — reused across all pool activations to
+    // prevent the material-instance leak that occurs when accessing renderer.material
+    // on every activation.
+    private static readonly System.Collections.Generic.Dictionary<string, Material>
+        _instancedMaterials = new System.Collections.Generic.Dictionary<string, Material>();
+
     void Awake()
     {
         if (!_texturesLoaded)
@@ -72,11 +78,16 @@ public class EgyptAssetSetup : MonoBehaviour
         if (tex == null) return;
 
         var mr = go.GetComponentInChildren<MeshRenderer>();
-        if (mr != null && mr.sharedMaterial != null)
+        if (mr == null || mr.sharedMaterial == null) return;
+
+        // Reuse a single cached material instance per pool tag so we never call
+        // renderer.material (which creates a new instance on every activation).
+        if (!_instancedMaterials.TryGetValue(poolTag, out Material mat))
         {
-            // Instance the material so we don't stomp shared prefab material
-            mr.material.mainTexture = tex;
+            mat = new Material(mr.sharedMaterial) { mainTexture = tex };
+            _instancedMaterials[poolTag] = mat;
         }
+        mr.sharedMaterial = mat;
     }
 
     /// <summary>
