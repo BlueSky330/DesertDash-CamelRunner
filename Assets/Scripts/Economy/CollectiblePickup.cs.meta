@@ -7,10 +7,10 @@ MonoImporter:
   defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
   scriptClass: CollectiblePickup
-  guid: 1089234567890abcdef010203040508
-  timeCreated: 0
+  guid: 1089234567890abcdef0102030405082
+  timeCreated: 1715000000
   licenseType: Free
