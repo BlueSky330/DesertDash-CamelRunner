@@ -5,11 +5,11 @@ PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 25
   productName: Desert Dash: Camel Runner
-  companyName: Sky Vision
+  companyName: AI Game Factory
   applicationIdentifier:
-    Android: com.skyvision.desertdash
-    Standalone: com.skyvision.desertdash
-    iPhone: com.skyvision.desertdash
+    Android: com.aigamefactory.desertdash
+    Standalone: com.aigamefactory.desertdash
+    iPhone: com.aigamefactory.desertdash
   bundleVersion: 1.0.0
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 24
