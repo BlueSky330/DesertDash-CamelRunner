@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
         SetState(GameState.Running);
         OnGameStarted?.Invoke();
         GameAudioEvents.OnChangeBGM?.Invoke("Egypt");
-        SceneManager.LoadScene("GameplayScene");
+        SceneManager.LoadScene("Gameplay");
     }
 
     public void PauseGame()
@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenuScene");
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void ResetGame()
