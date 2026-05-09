@@ -1,170 +1,48 @@
 using UnityEditor;
-using UnityEditor.Build.Reporting;
-using System.Collections.Generic;
-using System.IO;
+using UnityEngine;
+using System;
 
-public class BuildScript
+public static class BuildScript
 {
-    private static readonly string[] Scenes = {
-        "Assets/Scenes/MainMenu.unity",
-        "Assets/Scenes/Gameplay.unity",
-        "Assets/Scenes/GameOver.unity"
-    };
-
-    private static List<string> GetValidScenes()
+    public static void PerformAndroidBuild()
     {
-        List<string> validScenes = new List<string>();
-        foreach (string scene in Scenes)
-        {
-            if (File.Exists(scene))
-                validScenes.Add(scene);
-        }
-        return validScenes;
-    }
-
-    private static void ConfigureAndroidSettings()
-    {
-        PlayerSettings.companyName = "AI Game Factory";
-        PlayerSettings.productName = "Desert Camel Runner";
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.aigamefactory.desertcamelrunner");
-        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
-        PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel34;
+        // Force ARM64 + ARMv7 for broad device compatibility
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64 | AndroidArchitecture.ARMv7;
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-    }
-
-    private static void ConfigureiOSSettings()
-    {
+        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+        PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel33;
         PlayerSettings.companyName = "AI Game Factory";
-        PlayerSettings.productName = "Desert Camel Runner";
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.aigamefactory.desertcamelrunner");
-        PlayerSettings.iOS.targetOSVersionString = "12.0";
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
-    }
+        PlayerSettings.productName = "Desert Dash Camel Runner";
+        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.aigamefactory.desertdash");
 
-    public static void BuildAPK()
-    {
-        string outputDir = "Builds";
-        if (!Directory.Exists(outputDir))
-            Directory.CreateDirectory(outputDir);
-
-        string outputPath = Path.Combine(outputDir, "DesertDash.apk");
-        List<string> validScenes = GetValidScenes();
-
-        BuildPlayerOptions options = new BuildPlayerOptions();
-        options.scenes = validScenes.ToArray();
-        options.locationPathName = outputPath;
-        options.target = BuildTarget.Android;
-        options.options = BuildOptions.None;
-
-        ConfigureAndroidSettings();
-
-        UnityEngine.Debug.Log("========== Starting Android APK build with test ad IDs ==========");
-        BuildReport report = BuildPipeline.BuildPlayer(options);
-
-        if (report.summary.result == BuildResult.Succeeded)
+        var buildPlayerOptions = new BuildPlayerOptions
         {
-            UnityEngine.Debug.Log("========== APK BUILD SUCCEEDED ==========");
-            UnityEngine.Debug.Log("Output: " + Path.GetFullPath(outputPath));
+            scenes = GetScenes(),
+            locationPathName = "build/Android/DesertDash-CamelRunner.apk",
+            target = BuildTarget.Android,
+            options = BuildOptions.None
+        };
+
+        var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+        if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+        {
+            Debug.LogError("Build failed: " + report.summary.result);
+            EditorApplication.Exit(1);
         }
         else
         {
-            UnityEngine.Debug.LogError("========== APK BUILD FAILED ==========");
+            Debug.Log("Build succeeded: " + report.summary.outputPath);
+            EditorApplication.Exit(0);
         }
     }
 
-    public static void BuildAAB()
+    private static string[] GetScenes()
     {
-        string outputDir = "Builds";
-        if (!Directory.Exists(outputDir))
-            Directory.CreateDirectory(outputDir);
-
-        string outputPath = Path.Combine(outputDir, "DesertDash.aab");
-        List<string> validScenes = GetValidScenes();
-
-        BuildPlayerOptions options = new BuildPlayerOptions();
-        options.scenes = validScenes.ToArray();
-        options.locationPathName = outputPath;
-        options.target = BuildTarget.Android;
-        options.options = BuildOptions.None;
-
-        ConfigureAndroidSettings();
-        EditorUserBuildSettings.buildAppBundle = true;
-
-        UnityEngine.Debug.Log("========== Starting Android AAB (App Bundle) build with test ad IDs ==========");
-        BuildReport report = BuildPipeline.BuildPlayer(options);
-
-        if (report.summary.result == BuildResult.Succeeded)
+        var scenes = new System.Collections.Generic.List<string>();
+        foreach (var scene in EditorBuildSettings.scenes)
         {
-            UnityEngine.Debug.Log("========== AAB BUILD SUCCEEDED ==========");
-            UnityEngine.Debug.Log("Output: " + Path.GetFullPath(outputPath));
+            if (scene.enabled) scenes.Add(scene.path);
         }
-        else
-        {
-            UnityEngine.Debug.LogError("========== AAB BUILD FAILED ==========");
-        }
-    }
-
-    public static void BuildiOS()
-    {
-        string outputDir = "Builds";
-        if (!Directory.Exists(outputDir))
-            Directory.CreateDirectory(outputDir);
-
-        string outputPath = Path.Combine(outputDir, "DesertDash_iOS");
-        List<string> validScenes = GetValidScenes();
-
-        BuildPlayerOptions options = new BuildPlayerOptions();
-        options.scenes = validScenes.ToArray();
-        options.locationPathName = outputPath;
-        options.target = BuildTarget.iOS;
-        options.options = BuildOptions.None;
-
-        ConfigureiOSSettings();
-
-        UnityEngine.Debug.Log("========== Starting iOS build with test ad IDs (generates Xcode project) ==========");
-        BuildReport report = BuildPipeline.BuildPlayer(options);
-
-        if (report.summary.result == BuildResult.Succeeded)
-        {
-            UnityEngine.Debug.Log("========== iOS BUILD SUCCEEDED ==========");
-            UnityEngine.Debug.Log("Xcode project generated at: " + Path.GetFullPath(outputPath));
-            UnityEngine.Debug.Log("Next: Open in Xcode, configure signing, and archive for App Store");
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("========== iOS BUILD FAILED ==========");
-        }
-    }
-
-    public static void ExportAndroidStudio()
-    {
-        string outputDir = "Builds";
-        if (!Directory.Exists(outputDir))
-            Directory.CreateDirectory(outputDir);
-
-        string studioPath = Path.Combine(outputDir, "DesertDashStudio");
-        List<string> validScenes = GetValidScenes();
-
-        BuildPlayerOptions options = new BuildPlayerOptions();
-        options.scenes = validScenes.ToArray();
-        options.locationPathName = studioPath;
-        options.target = BuildTarget.Android;
-        options.options = BuildOptions.None;
-
-        ConfigureAndroidSettings();
-
-        UnityEngine.Debug.Log("Exporting to Android Studio with test ad IDs...");
-        BuildReport report = BuildPipeline.BuildPlayer(options);
-
-        if (report.summary.result == BuildResult.Succeeded)
-        {
-            UnityEngine.Debug.Log("========== ANDROID STUDIO EXPORT SUCCEEDED ==========");
-            UnityEngine.Debug.Log("Output: " + Path.GetFullPath(studioPath));
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("========== ANDROID STUDIO EXPORT FAILED ==========");
-        }
+        return scenes.ToArray();
     }
 }
