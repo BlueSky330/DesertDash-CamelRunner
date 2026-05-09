@@ -202,7 +202,7 @@ public static class PlaceholderAssetBuilder
 
     private static void BuildObstacles()
     {
-        // Rock: use ProceduralRockMesh for detailed hieroglyph geometry
+        // Rock: sphere placeholder
         BuildRock();
 
         // Cactus: green cylinder
@@ -225,8 +225,13 @@ public static class PlaceholderAssetBuilder
     {
         var root = new GameObject("Obstacle_Rock");
 
-        var rockMesh = root.AddComponent<ProceduralRockMesh>();
-        rockMesh.Build();
+        var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.name = "RockMesh";
+        sphere.transform.SetParent(root.transform);
+        sphere.transform.localScale = new Vector3(2.0f, 1.8f, 1.8f);
+        sphere.transform.localPosition = new Vector3(0f, 1.0f, 0f);
+        Object.DestroyImmediate(sphere.GetComponent<SphereCollider>());
+        SetMat(sphere, MakeMat("RockSurface", new Color(0.65f, 0.55f, 0.40f)));
 
         var box = root.AddComponent<BoxCollider>();
         box.center = new Vector3(0f, 1.0f, 0f);
