@@ -1,48 +1,64 @@
 using UnityEditor;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public static class BuildScript
 {
     public static void PerformAndroidBuild()
     {
-        // Force ARM64 + ARMv7 for broad device compatibility
-        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64 | AndroidArchitecture.ARMv7;
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
-        PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel33;
+        // ── Player Settings ────────────────────────────────────────────────
         PlayerSettings.companyName = "AI Game Factory";
         PlayerSettings.productName = "Desert Dash Camel Runner";
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.aigamefactory.desertdash");
+        PlayerSettings.applicationIdentifier = "com.aigamefactory.desertdash";
+        PlayerSettings.bundleVersion = "1.0.0";
+        PlayerSettings.Android.bundleVersionCode = 1;
 
-        var buildPlayerOptions = new BuildPlayerOptions
+        // ── Android Architecture — ARMv7 + ARM64 ──────────────────────────
+        PlayerSettings.Android.targetArchitectures =
+            AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
+
+        // ── Scripting backend ─────────────────────────────────────────────
+        PlayerSettings.SetScriptingBackend(
+            BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+
+        // ── Android SDK versions ───────────────────────────────────────────
+        PlayerSettings.Android.minSdkVersion  = AndroidSdkVersions.AndroidApiLevel24;
+        PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel33;
+
+        // ── Scenes ────────────────────────────────────────────────────────
+        var scenes = EditorBuildSettings.scenes
+            .Where(s => s.enabled)
+            .Select(s => s.path)
+            .ToArray();
+
+        if (scenes.Length == 0)
         {
-            scenes = GetScenes(),
-            locationPathName = "build/Android/DesertDash-CamelRunner.apk",
-            target = BuildTarget.Android,
-            options = BuildOptions.None
+            // Fallback: include all scenes found in project
+            scenes = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" })
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .ToArray();
+            Debug.LogWarning($"[BuildScript] No scenes in BuildSettings — using all {scenes.Length} scenes found.");
+        }
+
+        // ── Build options ─────────────────────────────────────────────────
+        var options = new BuildPlayerOptions
+        {
+            scenes            = scenes,
+            locationPathName  = "build/Android/DesertDash-CamelRunner.apk",
+            target            = BuildTarget.Android,
+            options           = BuildOptions.None,
         };
 
-        var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+        Debug.Log($"[BuildScript] Building APK — scenes: {scenes.Length}, arch: ARMv7+ARM64");
+
+        var report = BuildPipeline.BuildPlayer(options);
+
         if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
         {
-            Debug.LogError("Build failed: " + report.summary.result);
-            EditorApplication.Exit(1);
+            throw new Exception($"[BuildScript] Build FAILED: {report.summary.result} — {report.summary.totalErrors} errors");
         }
-        else
-        {
-            Debug.Log("Build succeeded: " + report.summary.outputPath);
-            EditorApplication.Exit(0);
-        }
-    }
 
-    private static string[] GetScenes()
-    {
-        var scenes = new System.Collections.Generic.List<string>();
-        foreach (var scene in EditorBuildSettings.scenes)
-        {
-            if (scene.enabled) scenes.Add(scene.path);
-        }
-        return scenes.ToArray();
+        Debug.Log($"[BuildScript] Build SUCCESS — {report.summary.totalSize} bytes");
     }
 }
