@@ -2,7 +2,8 @@
     "name": "CamelRunner.Editor",
     "rootNamespace": "",
     "references": [
-        "CamelRunner.Runtime"
+        "CamelRunner.Runtime",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"
