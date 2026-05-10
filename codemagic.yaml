@@ -1,117 +1,52 @@
-# Codemagic CI/CD — Desert Dash: Camel Runner
-# iOS IPA build configuration
-# Issue: AIG-540 (Set Up Codemagic + Build Signed iOS IPA)
-#
-# PREREQUISITES (must be set up in Codemagic UI before triggering a build):
-#   Environment variable group "apple_credentials" containing:
-#     APP_STORE_CONNECT_KEY_IDENTIFIER   - App Store Connect API key ID
-#     APP_STORE_CONNECT_ISSUER_ID        - App Store Connect Issuer ID
-#     APP_STORE_CONNECT_PRIVATE_KEY      - App Store Connect API private key (.p8 content)
-#     CERTIFICATE_PRIVATE_KEY            - iOS Distribution certificate private key (.p12 content, base64)
-#     CERTIFICATE_PRIVATE_KEY_PASSWORD   - Password for the .p12 certificate
-#
-#   Environment variable group "unity_credentials" containing:
-#     UNITY_SERIAL          - Unity license serial number
-#     UNITY_USERNAME        - Unity account email
-#     UNITY_PASSWORD        - Unity account password
-#
-# BUNDLE ID: com.skyvision.desertdash
-# MIN iOS: 13.0
-# Unity version: 6000.3.10f1
-
 workflows:
-  unity-ios-release:
-    name: Desert Dash iOS Release (IPA)
+  unity-ios-appstore:
+    name: Desert Dash — iOS App Store Release
     max_build_duration: 120
-    instance_type: mac_mini_m2
-
+    instance_type: mac_mini_m1
     environment:
+      unity: 2022.3.62f1
       groups:
-        - apple_credentials   # APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_PRIVATE_KEY, CERTIFICATE_PRIVATE_KEY, CERTIFICATE_PRIVATE_KEY_PASSWORD
-        - unity_credentials   # UNITY_SERIAL, UNITY_USERNAME, UNITY_PASSWORD
+        - unity_credentials      # UNITY_SERIAL, UNITY_EMAIL, UNITY_PASSWORD
+        - apple_credentials      # APP_STORE_CONNECT_PRIVATE_KEY, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_ISSUER_ID
+        - apple_signing          # CM_CERTIFICATE, CM_CERTIFICATE_PASSWORD, CM_PROVISIONING_PROFILE
       vars:
-        UNITY_VERSION: "6000.3.10f1"
-        BUNDLE_ID: "com.skyvision.desertdash"
+        BUNDLE_ID: "com.aigamefactory.desertdash"
         XCODE_SCHEME: "Unity-iPhone"
-        APP_STORE_APP_ID: "REPLACE_WITH_APP_STORE_CONNECT_APP_ID"  # Set this once app is created in App Store Connect
-        BUILD_NUMBER: $(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID") + 1))
-      xcode: latest
-      cocoapods: default
-
+        XCODE_CONFIGURATION: "Release"
     scripts:
       - name: Activate Unity license
         script: |
-          /Applications/Unity/Hub/Editor/${UNITY_VERSION}/Unity.app/Contents/MacOS/Unity \
-            -batchmode \
-            -quit \
-            -logFile /dev/stdout \
+          $UNITY_HOME/Unity \
+            -batchmode -quit -logFile /dev/stdout \
             -serial "$UNITY_SERIAL" \
-            -username "$UNITY_USERNAME" \
+            -username "$UNITY_EMAIL" \
             -password "$UNITY_PASSWORD"
-
-      - name: Export Unity iOS project
+      - name: Build Unity iOS Xcode project
         script: |
-          /Applications/Unity/Hub/Editor/${UNITY_VERSION}/Unity.app/Contents/MacOS/Unity \
-            -batchmode \
-            -quit \
-            -logFile /dev/stdout \
-            -projectPath "$CM_BUILD_DIR" \
+          $UNITY_HOME/Unity \
+            -batchmode -quit -logFile /dev/stdout \
+            -projectPath . \
             -buildTarget iOS \
-            -executeMethod BuildScript.BuildIOS \
-            -outputPath "$CM_BUILD_DIR/ios_build"
-
-      - name: Set up keychain for code signing
+            -executeMethod BuildScript.PerformIOSBuild \
+            -nographics
+      - name: Set up code signing
         script: |
           keychain initialize
-
-      - name: Fetch App Store signing files (certificate + provisioning profile)
-        script: |
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --create
-
-      - name: Add certificate to keychain
-        script: |
           keychain add-certificates
-
-      - name: Configure Xcode code signing
+          xcode-project use-profiles
+      - name: Build and archive IPA
         script: |
-          xcode-project use-profiles \
-            --project "$CM_BUILD_DIR/ios_build/Unity-iPhone.xcodeproj"
-
-      - name: Set minimum iOS deployment target to 13.0
-        script: |
-          xcode-project update-settings \
-            --project "$CM_BUILD_DIR/ios_build/Unity-iPhone.xcodeproj" \
-            --target Unity-iPhone \
-            IPHONEOS_DEPLOYMENT_TARGET=13.0
-
-      - name: Install CocoaPods dependencies
-        script: |
-          cd "$CM_BUILD_DIR/ios_build"
-          pod install --repo-update
-
-      - name: Build and archive iOS IPA
-        script: |
+          XCWORKSPACE=$(find "$CM_BUILD_DIR/ios" -name '*.xcworkspace' | head -1)
           xcode-project build-ipa \
-            --workspace "$CM_BUILD_DIR/ios_build/Unity-iPhone.xcworkspace" \
+            --workspace "$XCWORKSPACE" \
             --scheme "$XCODE_SCHEME" \
-            --config Release
-
-      - name: Return Unity license
-        script: |
-          /Applications/Unity/Hub/Editor/${UNITY_VERSION}/Unity.app/Contents/MacOS/Unity \
-            -batchmode \
-            -quit \
-            -logFile /dev/stdout \
-            -returnlicense
-        ignore_failure: true
-
+            --config "$XCODE_CONFIGURATION"
     artifacts:
       - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
-
     publishing:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
