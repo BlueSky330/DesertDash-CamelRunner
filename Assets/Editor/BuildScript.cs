@@ -3,119 +3,87 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-/// <summary>
-/// Headless build script for CI/CD pipelines (Codemagic, GitHub Actions, Unity Build Agent).
-/// Invoked via Unity -executeMethod BuildScript.BuildIOS or BuildScript.PerformAndroidBuild.
-/// </summary>
 public static class BuildScript
 {
-    private const string BundleId      = "com.skyvision.desertdash";
-    private const string CompanyName   = "SkyVision";
-    private const string ProductName   = "Desert Dash: Camel Runner";
-    private const string BundleVersion = "1.0.0";
-
-    // iOS Build (invoked by Codemagic: -executeMethod BuildScript.BuildIOS)
-    public static void BuildIOS()
-    {
-        Debug.Log("[BuildScript] Starting iOS build...");
-
-        PlayerSettings.companyName   = CompanyName;
-        PlayerSettings.productName   = ProductName;
-        PlayerSettings.bundleVersion = BundleVersion;
-        PlayerSettings.iOS.buildNumber = "1";
-
-        PlayerSettings.applicationIdentifier = BundleId;
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, BundleId);
-
-        // iOS 13.0 minimum
-        PlayerSettings.iOS.targetOSVersionString = "13.0";
-
-        // IL2CPP scripting backend
-        PlayerSettings.SetScriptingBackend(
-            BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
-
-        PlayerSettings.SetApiCompatibilityLevel(
-            BuildTargetGroup.iOS, ApiCompatibilityLevel.NET_Standard_2_1);
-
-        PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneAndiPad;
-
-        // Codemagic manages code signing via xcode-project use-profiles
-        PlayerSettings.iOS.appleEnableAutomaticSigning = false;
-
-        var scenes = GetScenes();
-
-        string outputPath = "ios_build";
-        System.IO.Directory.CreateDirectory(outputPath);
-
-        var options = new BuildPlayerOptions
-        {
-            scenes           = scenes,
-            locationPathName = outputPath,
-            target           = BuildTarget.iOS,
-            options          = BuildOptions.None,
-        };
-
-        Debug.Log($"[BuildScript] iOS build: {scenes.Length} scenes -> {outputPath}");
-
-        var report = BuildPipeline.BuildPlayer(options);
-
-        if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
-        {
-            throw new Exception(
-                $"[BuildScript] iOS build FAILED: {report.summary.result} - {report.summary.totalErrors} errors");
-        }
-
-        Debug.Log($"[BuildScript] iOS build SUCCESS - {report.summary.totalSize} bytes");
-    }
-
-    // Android Build (invoked by Unity Build Agent batch mode)
     public static void PerformAndroidBuild()
     {
-        Debug.Log("[BuildScript] Starting Android build...");
-
-        PlayerSettings.companyName   = CompanyName;
-        PlayerSettings.productName   = ProductName;
-        PlayerSettings.bundleVersion = BundleVersion;
+        // ── Player Settings ────────────────────────────────────────────────
+        PlayerSettings.companyName = "AI Game Factory";
+        PlayerSettings.productName = "Desert Dash Camel Runner";
+        PlayerSettings.applicationIdentifier = "com.aigamefactory.desertdash";
+        PlayerSettings.bundleVersion = "1.0.0";
         PlayerSettings.Android.bundleVersionCode = 1;
 
-        PlayerSettings.applicationIdentifier = BundleId;
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, BundleId);
-
+        // ── Android Architecture — ARMv7 + ARM64 ──────────────────────────
         PlayerSettings.Android.targetArchitectures =
             AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
 
+        // ── Scripting backend ─────────────────────────────────────────────
         PlayerSettings.SetScriptingBackend(
             BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
 
-        PlayerSettings.Android.minSdkVersion    = AndroidSdkVersions.AndroidApiLevel24;
+        // ── Android SDK versions ───────────────────────────────────────────
+        PlayerSettings.Android.minSdkVersion  = AndroidSdkVersions.AndroidApiLevel24;
         PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel33;
 
-        var scenes = GetScenes();
+        // ── Scenes ────────────────────────────────────────────────────────
+        var scenes = EditorBuildSettings.scenes
+            .Where(s => s.enabled)
+            .Select(s => s.path)
+            .ToArray();
 
-        System.IO.Directory.CreateDirectory("build/Android");
+        if (scenes.Length == 0)
+        {
+            // Fallback: include all scenes found in project
+            scenes = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" })
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .ToArray();
+            Debug.LogWarning($"[BuildScript] No scenes in BuildSettings — using all {scenes.Length} scenes found.");
+        }
+
+        // ── Build options ─────────────────────────────────────────────────
         var options = new BuildPlayerOptions
         {
-            scenes           = scenes,
-            locationPathName = "build/Android/DesertDash-CamelRunner.apk",
-            target           = BuildTarget.Android,
-            options          = BuildOptions.None,
+            scenes            = scenes,
+            locationPathName  = "build/Android/DesertDash-CamelRunner.apk",
+            target            = BuildTarget.Android,
+            options           = BuildOptions.None,
         };
 
-        Debug.Log($"[BuildScript] Android build: {scenes.Length} scenes -> APK");
+        Debug.Log($"[BuildScript] Building APK — scenes: {scenes.Length}, arch: ARMv7+ARM64");
 
         var report = BuildPipeline.BuildPlayer(options);
 
         if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
         {
-            throw new Exception(
-                $"[BuildScript] Android build FAILED: {report.summary.result} - {report.summary.totalErrors} errors");
+            throw new Exception($"[BuildScript] Build FAILED: {report.summary.result} — {report.summary.totalErrors} errors");
         }
 
-        Debug.Log($"[BuildScript] Android build SUCCESS - {report.summary.totalSize} bytes");
+        Debug.Log($"[BuildScript] Build SUCCESS — {report.summary.totalSize} bytes");
     }
 
-    private static string[] GetScenes()
+    public static void PerformIOSBuild()
     {
+        // ── Player Settings ────────────────────────────────────────────────
+        PlayerSettings.companyName = "AI Game Factory";
+        PlayerSettings.productName = "Desert Dash Camel Runner";
+        PlayerSettings.applicationIdentifier = "com.aigamefactory.desertdash";
+        PlayerSettings.bundleVersion = "1.0.0";
+        PlayerSettings.iOS.buildNumber = "1";
+
+        // ── Scripting backend ─────────────────────────────────────────────
+        PlayerSettings.SetScriptingBackend(
+            BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
+
+        // ── iOS version ───────────────────────────────────────────────────
+        PlayerSettings.iOS.targetOSVersionString = "13.0";
+
+        // ── Signing — manual, handled by Codemagic ────────────────────────
+        PlayerSettings.iOS.appleEnableAutomaticSigning = false;
+        PlayerSettings.iOS.iOSManualProvisioningProfileType =
+            ProvisioningProfileType.Distribution;
+
+        // ── Scenes ────────────────────────────────────────────────────────
         var scenes = EditorBuildSettings.scenes
             .Where(s => s.enabled)
             .Select(s => s.path)
@@ -126,10 +94,31 @@ public static class BuildScript
             scenes = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" })
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .ToArray();
-            Debug.LogWarning(
-                $"[BuildScript] No enabled scenes in BuildSettings - falling back to all {scenes.Length} scenes.");
+            Debug.LogWarning($"[BuildScript] No scenes in BuildSettings — using all {scenes.Length} scenes found.");
         }
 
-        return scenes;
+        // ── Build output path (Codemagic injects CM_BUILD_DIR) ────────────
+        var buildPath = Environment.GetEnvironmentVariable("CM_BUILD_DIR") + "/ios"
+                        ?? "build/ios/xcode";
+
+        // ── Build options ─────────────────────────────────────────────────
+        var options = new BuildPlayerOptions
+        {
+            scenes           = scenes,
+            locationPathName = buildPath,
+            target           = BuildTarget.iOS,
+            options          = BuildOptions.None,
+        };
+
+        Debug.Log($"[BuildScript] Building iOS Xcode project — scenes: {scenes.Length}, output: {buildPath}");
+
+        var report = BuildPipeline.BuildPlayer(options);
+
+        if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+        {
+            throw new Exception($"[BuildScript] iOS Build FAILED: {report.summary.result} — {report.summary.totalErrors} errors");
+        }
+
+        Debug.Log($"[BuildScript] iOS Build SUCCESS — {report.summary.totalSize} bytes");
     }
 }
