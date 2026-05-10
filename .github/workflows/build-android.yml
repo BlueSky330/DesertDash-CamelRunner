@@ -31,9 +31,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-Android-IL2CPP-ARM64-v3-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-Android-v4-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
-            Library-Android-IL2CPP-ARM64-v3-
+            Library-Android-v4-
             Library-Android-
 
       # ── 3. Build ───────────────────────────────────────────────────────────
@@ -50,13 +50,8 @@ jobs:
           buildsPath: build
           androidExportType: ${{ github.event.inputs.build_type == 'release' && 'androidAppBundle' || 'androidPackage' }}
           androidSymbolType: none
-          androidKeystoreName: aigamefactory.keystore
-          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          androidKeyaliasName: aigamefactory
-          androidKeyaliasPass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          customBuildMethod: BuildScript.PerformAndroidBuild
-          customParameters: -Development false
+          androidTargetSdkVersion: AndroidApiLevel33
+          allowDirtyBuild: true
 
       # ── 4. Upload APK ──────────────────────────────────────────────────────
       - name: Upload APK artifact
