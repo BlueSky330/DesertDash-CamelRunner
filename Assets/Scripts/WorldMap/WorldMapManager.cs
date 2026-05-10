@@ -106,7 +106,7 @@ public class WorldMapManager : MonoBehaviour
         CountryData country = GetCountryData(countryName);
         if (country == null || country.isUnlocked) return false;
 
-        if (!CoinEconomy.Instance.TrySpend(country.unlockCost, $"Unlock {countryName}"))
+        if (CoinEconomy.Instance == null || !CoinEconomy.Instance.TrySpend(country.unlockCost, $"Unlock {countryName}"))
         {
             Debug.Log($"[WorldMapManager] Not enough coins to unlock {countryName}.");
             return false;
