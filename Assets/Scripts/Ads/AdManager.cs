@@ -63,14 +63,15 @@ public class AdManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void OnEnable()
+    void Start()
     {
-        // Subscribe to SDK completion callbacks
+        // Subscribe after all Awake() calls — AdSDKIntegration.Instance is guaranteed
+        // to exist by this point, so the subscription is never silently skipped.
         AdSDKIntegration.Instance?.SubscribeCompletionCallback(HandleAdCompleted);
         AdMediation.Instance?.SubscribeCompletionCallback(HandleAdCompleted);
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         AdSDKIntegration.Instance?.UnsubscribeCompletionCallback(HandleAdCompleted);
         AdMediation.Instance?.UnsubscribeCompletionCallback(HandleAdCompleted);
@@ -171,9 +172,9 @@ public class AdManager : MonoBehaviour
 
     private bool CanShowAd(AdPurpose purpose)
     {
-        if (!OfflineManager.Instance.CanAccessOnlineFeatures())
+        if (OfflineManager.Instance == null || !OfflineManager.Instance.CanAccessOnlineFeatures())
         {
-            Debug.LogWarning("[AdManager] Cannot show ad: offline.");
+            Debug.LogWarning("[AdManager] Cannot show ad: offline or OfflineManager not ready.");
             return false;
         }
 

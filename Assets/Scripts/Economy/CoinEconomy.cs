@@ -57,7 +57,7 @@ public class CoinEconomy : MonoBehaviour
     {
         if (amount <= 0) return;
         Coins += amount;
-        CollectibleSystem.Instance.SetCoins(Coins);
+        CollectibleSystem.Instance?.SetCoins(Coins);
         SaveCoins();
         onCoinsChanged?.Invoke(Coins);
         Debug.Log($"[CoinEconomy] Earned {amount}. Wallet: {Coins}");
@@ -75,7 +75,7 @@ public class CoinEconomy : MonoBehaviour
             return false;
         }
         Coins -= amount;
-        CollectibleSystem.Instance.SetCoins(Coins);
+        CollectibleSystem.Instance?.SetCoins(Coins);
         SaveCoins();
         onCoinsChanged?.Invoke(Coins);
         Debug.Log($"[CoinEconomy] Spent {amount} on '{reason}'. Wallet: {Coins}");
@@ -96,6 +96,7 @@ public class CoinEconomy : MonoBehaviour
     /// <summary>Flush end-of-run score conversion into wallet.</summary>
     public void ConvertScoreToCoins()
     {
+        if (CollectibleSystem.Instance == null) return;
         int before = Coins;
         CollectibleSystem.Instance.ConvertScoreToCoins();
         // CollectibleSystem.AddCoins calls SetCoins which updates Coins via sync
