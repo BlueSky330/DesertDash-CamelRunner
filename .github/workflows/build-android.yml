@@ -52,6 +52,7 @@ jobs:
           androidSymbolType: none
           androidTargetSdkVersion: AndroidApiLevel33
           allowDirtyBuild: true
+          customParameters: -androidTargetArchitectures ARMv7,ARM64
 
       # ── 4. Upload APK ──────────────────────────────────────────────────────
       - name: Upload APK artifact
